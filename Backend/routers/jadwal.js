@@ -2,12 +2,12 @@
 const express = require('express');
 const router = express.Router();
 const Controller = require('../controllers/jadwal');
-const authenticateToken = require('../middleware/authentication');
+const {authenticateUser, authenticateAdmin} = require('../middleware/authentication');
 
-router.get('/', authenticateToken, Controller.get);
-router.get('/:_id', authenticateToken, Controller.getOne);
-router.post('/', Controller.post);
-router.put('/:_id', authenticateToken, Controller.put);
-router.delete('/:_id', authenticateToken, Controller.delete);
+router.get('/', authenticateUser, Controller.get);
+router.get('/:_id', authenticateUser, Controller.getOne);
+router.post('/', authenticateUser,Controller.post);
+router.put('/:_id', authenticateUser, Controller.put);
+router.delete('/:_id', authenticateUser, Controller.delete);
 
 module.exports = router;
