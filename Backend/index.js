@@ -24,12 +24,12 @@ mongoose.connect(process.env.DATABASE_URL)
 // database connection
 
 // routes
-// const laporanRouter = require('./routers/laporan');
+const jadwalRouter = require('./routers/jadwal');
 const userRouter = require('./routers/user');
 // routes
 
 // use routes
-// app.use('/laporan', laporanRouter);
+app.use('/jadwal', jadwalRouter);
 app.use('/user', userRouter);
 // use routes
 
