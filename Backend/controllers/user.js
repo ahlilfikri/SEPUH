@@ -1,15 +1,18 @@
 const mongoose = require("mongoose");
 const userModel = require("../models/user");
+const dokterModel = require("../models/dokter");
+const pasienModel = require("../models/pasien");
 const bcrypt = require("bcryptjs");
 const { validationResult } = require('express-validator');
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const response = require("../response/response_valid");
+const dokter = require("../models/dokter");
 
 module.exports = {
     register: async (req, res) => {
         try {
-            const { username, password, email, nama, alamat, usia, role } = req.body;
+            const { username, password, email, nama, alamat, usia, role, spesialisasi } = req.body;
 
             if (!username || !password || !email) {
                 return response(400, null, 'Username, password, and email are required', res);
@@ -18,12 +21,12 @@ module.exports = {
             const userExist = await userModel.findOne({ $or: [{ email }, { username }] });
 
             if (userExist) {
-              if (userExist.email === email) {
-                return response(400, null, 'Email sudah terdaftar', res);
-              }
-              if (userExist.username === username) {
-                return response(400, null, 'Username sudah terdaftar', res);
-              }
+                if (userExist.email === email) {
+                    return response(400, null, 'Email sudah terdaftar', res);
+                }
+                if (userExist.username === username) {
+                    return response(400, null, 'Username sudah terdaftar', res);
+                }
             }
 
             const saltRounds = 10;
@@ -34,13 +37,41 @@ module.exports = {
                 username,
                 password: passwordEncrypted,
                 email,
-                nama, 
-                alamat, 
+                nama,
+                alamat,
                 usia,
-                role 
+                role
             });
-            await newUser.save();
-            return response(201, newUser, 'User berhasil didaftarkan', res);
+
+            const resultUser = await newUser.save();
+
+            dataReturn = {
+                user: resultUser
+            }
+
+            if (spesialisasi && role === 1) {
+                const newDokter = new dokterModel({
+                    user: resultUser._id,
+                    spesialisasi
+                })
+                const resultDokter = await newDokter.save();
+                dataReturn = {
+                    user: resultUser,
+                    dokter: resultDokter
+                }
+            } else if (role === 0) {
+                const newPasien = new pasienModel({
+                    user: resultUser._id,
+                })
+                const resultPasien = await newPasien.save();
+                dataReturn = {
+                    user: resultUser,
+                    pasien: resultPasien
+                }
+            }
+
+            console.log(dataReturn);
+            return response(201, dataReturn, 'User berhasil didaftarkan', res);
         } catch (error) {
             if (error.code === 11000) {
                 return response(400, null, 'Email sudah terdaftar', res);
@@ -132,11 +163,57 @@ module.exports = {
     delete: async (req, res) => {
         try {
             const id = req.params.id;
-            const result = await userModel.findByIdAndRemove(id);
+
+            const searchResult = await userModel.findById(id);
+            const resultUser = await userModel.findByIdAndDelete(id);
+            var result = {};
+
+            if (searchResult.role === 0) {
+                const resultPasien = await pasienModel.findOneAndDelete({ user: id });
+                result = {
+                    user : resultUser,
+                    pasien : resultPasien
+                }
+            } else if (searchResult.role === 1) {
+                const resultDokter = await dokterModel.findOneAndDelete({ user: id });
+                result = {
+                    user : resultUser,
+                    dokter : resultDokter
+                }
+            }else{
+                result = {
+                    user : resultUser
+                }
+            }
+
             return response(200, result, 'User berhasil dihapus', res);
+        } catch (error) {
+            console.error(error.message);
+            return response(500, error, 'internal server error', res);
+        }
+    },
+    getDokter: async (req, res) => {
+        try {
+            const dokter = await dokterModel.find();
+            return response(200, dokter, 'Menampilkan semua dokter', res);
         } catch (error) {
             console.error(error.message);
             return response(500, error, 'internal server error', res)
         }
+    },
+    updateDokter: async (req, res) => {
+
+    },
+    getPasien: async (req, res) => {
+        try {
+            const pasien = await pasienModel.find();
+            return response(200, pasien, 'Menampilkan semua pasien', res);
+        } catch (error) {
+            console.error(error.message);
+            return response(500, error, 'internal server error', res)
+        }
+    },
+    updatePasien: async (req, res) => {
+
     }
 }

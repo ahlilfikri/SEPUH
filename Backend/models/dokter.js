@@ -3,7 +3,7 @@ const { Schema } = mongoose;
 
 const dokterSchema = new Schema({
     spesialisasi: { type: String, required: true },
-    jadwal: { type: String, required: true },
+    jadwal: { type: String, required: false },
     user: { type: mongoose.Schema.Types.ObjectId, ref: "user" },
 }, { timestamps: true })
 

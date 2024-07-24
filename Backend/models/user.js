@@ -9,7 +9,7 @@ const userSchema = new Schema({
     password: { type: String, required: true },
     email: { type: String, required: true },
     token: { type: String, default: null },
-    role: { type: String, required: true, default: 0 }, // 0 pasien, 1 dokter, 2 admin
+    role: { type: Number, required: true, default: 0 }, // 0 pasien, 1 dokter, 2 admin
 }, { timestamps: true })
 
 const user = mongoose.model('user', userSchema);
