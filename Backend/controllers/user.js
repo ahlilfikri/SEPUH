@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const userModel = require("../models/user");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const { validationResult } = require('express-validator');
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
