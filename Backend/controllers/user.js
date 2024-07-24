@@ -49,15 +49,19 @@ module.exports = {
                 user: resultUser
             }
 
-            if (spesialisasi && role === 1) {
-                const newDokter = new dokterModel({
-                    user: resultUser._id,
-                    spesialisasi
-                })
-                const resultDokter = await newDokter.save();
-                dataReturn = {
-                    user: resultUser,
-                    dokter: resultDokter
+            if (role === 1) {
+                if ( spesialisasi){
+                    const newDokter = new dokterModel({
+                        user: resultUser._id,
+                        spesialisasi
+                    })
+                    const resultDokter = await newDokter.save();
+                    dataReturn = {
+                        user: resultUser,
+                        dokter: resultDokter
+                    }
+                }else{
+                    return response(500, null, 'spesialisasi dibutuhkan', res);
                 }
             } else if (role === 0) {
                 const newPasien = new pasienModel({
