@@ -2,9 +2,9 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const dokterSchema = new Schema({
+    nama : {type: String, required: true},
     spesialisasi: { type: String, required: true },
-    jadwal: { type: String, required: false },
-    user: { type: mongoose.Schema.Types.ObjectId, ref: "user" },
+    jadwal: { type: [String], required: false },
 }, { timestamps: true })
 
 const dokter = mongoose.model('dokter', dokterSchema);

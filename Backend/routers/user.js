@@ -12,9 +12,6 @@ router.post('/', authenticateAdmin, userController.post);
 router.put('/:id', authenticateAdmin, userController.put);
 router.delete('/:id', authenticateAdmin, userController.delete);
 
-//dokter
-router.get('/dokter',authenticateAdmin, userController.getDokter);
-
 //pasien
 router.get('/pasien',authenticateAdmin, userController.getPasien);
 

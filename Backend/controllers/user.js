@@ -48,22 +48,7 @@ module.exports = {
             dataReturn = {
                 user: resultUser
             }
-
-            if (role === 1) {
-                if ( spesialisasi){
-                    const newDokter = new dokterModel({
-                        user: resultUser._id,
-                        spesialisasi
-                    })
-                    const resultDokter = await newDokter.save();
-                    dataReturn = {
-                        user: resultUser,
-                        dokter: resultDokter
-                    }
-                }else{
-                    return response(500, null, 'spesialisasi dibutuhkan', res);
-                }
-            } else if (role === 0) {
+            if (role === 0) {
                 const newPasien = new pasienModel({
                     user: resultUser._id,
                 })
@@ -175,18 +160,12 @@ module.exports = {
             if (searchResult.role === 0) {
                 const resultPasien = await pasienModel.findOneAndDelete({ user: id });
                 result = {
-                    user : resultUser,
-                    pasien : resultPasien
+                    user: resultUser,
+                    pasien: resultPasien
                 }
-            } else if (searchResult.role === 1) {
-                const resultDokter = await dokterModel.findOneAndDelete({ user: id });
+            }else {
                 result = {
-                    user : resultUser,
-                    dokter : resultDokter
-                }
-            }else{
-                result = {
-                    user : resultUser
+                    user: resultUser
                 }
             }
 
@@ -195,18 +174,6 @@ module.exports = {
             console.error(error.message);
             return response(500, error, 'internal server error', res);
         }
-    },
-    getDokter: async (req, res) => {
-        try {
-            const dokter = await dokterModel.find();
-            return response(200, dokter, 'Menampilkan semua dokter', res);
-        } catch (error) {
-            console.error(error.message);
-            return response(500, error, 'internal server error', res)
-        }
-    },
-    updateDokter: async (req, res) => {
-
     },
     getPasien: async (req, res) => {
         try {
@@ -218,6 +185,16 @@ module.exports = {
         }
     },
     updatePasien: async (req, res) => {
+        const id = req.params._id;
+        try {
+            const { riwayat } = req.body;
+            const updatePasien = { riwayat};
 
+            const result = await pasienModel.findByIdAndUpdate(id, updatePasien, { new: true });
+            return response(200, result, 'Pasien Berhasil Diupdate', res);
+        } catch (error) {
+            console.error(error.message);
+            return response(500, error, 'Internal server error', res);
+        }
     }
 }
