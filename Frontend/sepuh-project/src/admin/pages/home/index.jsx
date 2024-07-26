@@ -1,10 +1,10 @@
 import React, { Fragment, useState } from 'react';
 
-const Home = ({ toggleLoginPopup }) => {
+const Home = () => {
 
     return (
         <Fragment>
-            <h1>TEST HOME</h1>
+            <h1>TEST Home</h1>
         </Fragment>
     );
 };
