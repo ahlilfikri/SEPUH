@@ -14,5 +14,6 @@ router.delete('/:id', authenticateAdmin, userController.delete);
 
 //pasien
 router.get('/pasien',authenticateAdmin, userController.getPasien);
+router.get('/pasien',authenticateAdmin, userController.updatePasien);
 
 module.exports = router;
