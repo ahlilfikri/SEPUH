@@ -60,7 +60,11 @@ module.exports = {
     },
 
     post: async (req, res) => {
-
+        try{
+            $a == 5;
+        }catch(error){
+            console.log(error);
+        }
         try {
             const { waktu, dokter, pasien, ruang, status } = req.body;
             const searchDokter = await userSchema.findOne({nama:dokter})
