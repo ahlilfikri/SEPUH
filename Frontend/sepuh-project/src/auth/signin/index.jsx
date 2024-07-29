@@ -1,10 +1,13 @@
 import React, { Fragment, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Signin = ({ toggleSigninPopup }) => {
     const [formData, setFormData] = useState({
         email: '',
         password: '',
     });
+
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         setFormData({
@@ -17,6 +20,10 @@ const Signin = ({ toggleSigninPopup }) => {
         e.preventDefault();
         // handle sign in logic here
         console.log(formData);
+    };
+
+    const handleSignUp = () => {
+        navigate('/signup');
     };
 
     return (
@@ -32,7 +39,7 @@ const Signin = ({ toggleSigninPopup }) => {
                     <div className="col-md-6 p-5">
                         <div className="d-flex justify-content-center mb-4">
                             <h2 className="mr-3" style={{ color: '#003580', cursor: 'pointer', fontWeight: 'bold' }}>Sign In</h2>
-                            <h2 className='ms-4' style={{ color: '#8C8C8C', cursor: 'pointer' }}>Sign Up</h2>
+                            <h2 className='ms-4' style={{ color: '#8C8C8C', cursor: 'pointer' }} onClick={handleSignUp}>Sign Up</h2>
                         </div>
                         <form onSubmit={handleSubmit}>
                             <div className="form-group row align-items-center mb-3 mt-5">
