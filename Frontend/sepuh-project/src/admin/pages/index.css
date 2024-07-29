@@ -1,0 +1,19 @@
+/* Add this CSS to your stylesheet */
+.sidebar {
+    transition: width 0.3s ease;
+    overflow: hidden;
+    width: 0%;
+}
+
+.sidebar.open {
+    width: 25%;
+}
+
+.content {
+    transition: width 0.3s ease;
+    width: 100%;
+}
+
+.content.shrink {
+    width: 75%;
+}

@@ -45,8 +45,6 @@ const SignUp = () => {
             const response = await axios.post(`${port}user/register`, formData);
             console.log(formData);
             if (response.data.data) {
-                const token = response.data.data;
-                sessionStorage.setItem('token', token);
                 setSuccess('Berhasil Membuat Akun');
                 setTimeout(() => {
                     navigate('/signin');

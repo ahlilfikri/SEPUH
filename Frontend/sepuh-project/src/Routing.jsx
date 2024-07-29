@@ -7,6 +7,7 @@ import Signup from './auth/signup';
 import Pasien from './admin/pages/pasien';
 import Dokter from './admin/pages/dokter';
 import Jadwal from './admin/pages/jadwal';
+import Dashboard from './admin/pages';
 // import ProtectedRoute from './ProtectedRoute';
 
 const router = createBrowserRouter([
@@ -37,6 +38,10 @@ const router = createBrowserRouter([
       {
         path: '/jadwal',
         element: <Jadwal />,
+      },
+      {
+        path: '/dashboard',
+        element: <Dashboard />,
       },
     ],
   },
