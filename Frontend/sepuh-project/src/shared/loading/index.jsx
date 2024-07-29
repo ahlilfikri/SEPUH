@@ -18,7 +18,9 @@ const Loading = () => {
                 <div className="modal-dialog modal-dialog-centered" role="document">
                     <div className="modal-content text-center">
                         <div className="modal-body p-4">
-                            <img src={Gambar1} className="img-fluid" alt="Loading" />
+                            <div className="d-flex justify-content-center">
+                                <img src={Gambar1} className="img-fluid ps-4" style={{ width: '250px' }} alt="Loading" />
+                            </div>
                             <p>Loading{dots}</p>
                         </div>
                     </div>

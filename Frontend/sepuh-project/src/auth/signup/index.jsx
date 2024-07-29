@@ -6,15 +6,20 @@ import Modal from '../../shared/modal';
 
 const SignUp = () => {
     const [formData, setFormData] = useState({
-        nama: '',
+        username: '',
         email: '',
         password: '',
         confirmPassword: '',
     });
-    const [loading, setLoading] = useState(false)
-    const [error, setError] = useState('')
-    const [success, setSuccess] = useState('')
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
     const port = `${import.meta.env.VITE_BASE_URL}`;
+    const handleClose = () => {
+        setError('');
+        setSuccess('');
+    };
 
     const navigate = useNavigate();
 
@@ -29,16 +34,26 @@ const SignUp = () => {
         e.preventDefault();
         setLoading(true);
         setError('');
+        
+        if (formData.password !== formData.confirmPassword) {
+            setError('Passwords dan confirm password tidak sesuai');
+            setLoading(false);
+            return;
+        }
+
         try {
             const response = await axios.post(`${port}user/register`, formData);
+            console.log(formData);
             if (response.data.data) {
-                console.log(response.data.data);
+                console.log(response);
                 const token = response.data.data;
                 sessionStorage.setItem('token', token);
                 setSuccess('Berhasil Membuat Akun');
-                navigate('/signin');
+                setTimeout(() => {
+                    navigate('/signin');
+                }, 3000);
             } else {
-                setError('Username atau Password Tidak Terdaftar');
+                setError('Gagal Membuat Akun');
             }
         } catch (error) {
             setError(error.message);
@@ -49,7 +64,11 @@ const SignUp = () => {
 
     const handleSignIn = () => {
         navigate('/signin');
-    }
+    };
+
+    const toggleShowPassword = () => {
+        setShowPassword(!showPassword);
+    };
 
     return (
         <Fragment>
@@ -69,13 +88,13 @@ const SignUp = () => {
                             </div>
                             <form onSubmit={handleSubmit}>
                                 <div className="form-group row align-items-center mb-3">
-                                    <label style={{ fontSize: '14px' }} htmlFor="nama" className="col-sm-4 col-form-label">Nama</label>
+                                    <label style={{ fontSize: '14px' }} htmlFor="username" className="col-sm-4 col-form-label">User Name</label>
                                     <div className="col-sm-8">
                                         <input
                                             type="text"
-                                            name="nama"
+                                            name="username"
                                             className="form-control"
-                                            value={formData.nama}
+                                            value={formData.username}
                                             onChange={handleChange}
                                             style={{ borderRadius: '15px' }}
                                         />
@@ -96,28 +115,44 @@ const SignUp = () => {
                                 </div>
                                 <div className="form-group row align-items-center mb-3">
                                     <label style={{ fontSize: '14px' }} htmlFor="password" className="col-sm-4 col-form-label">Password</label>
-                                    <div className="col-sm-8">
+                                    <div className="col-sm-8 position-relative">
                                         <input
-                                            type="password"
+                                            type={showPassword ? "text" : "password"}
                                             name="password"
                                             className="form-control"
                                             value={formData.password}
                                             onChange={handleChange}
-                                            style={{ borderRadius: '15px' }}
+                                            style={{ borderRadius: '15px', paddingRight: '40px' }}
                                         />
+                                        <button
+                                            type="button"
+                                            className="btn btn-outline-secondary position-absolute end-0 top-50 translate-middle-y"
+                                            style={{ borderRadius: '0 15px 15px 0' }}
+                                            onClick={toggleShowPassword}
+                                        >
+                                            {showPassword ? "Hide" : "Show"}
+                                        </button>
                                     </div>
                                 </div>
                                 <div className="form-group row align-items-center mb-3">
                                     <label style={{ fontSize: '14px' }} htmlFor="confirmPassword" className="col-sm-4 col-form-label">Confirm Password</label>
-                                    <div className="col-sm-8">
+                                    <div className="col-sm-8 position-relative">
                                         <input
-                                            type="password"
+                                            type={showPassword ? "text" : "password"}
                                             name="confirmPassword"
                                             className="form-control"
                                             value={formData.confirmPassword}
                                             onChange={handleChange}
-                                            style={{ borderRadius: '15px' }}
+                                            style={{ borderRadius: '15px', paddingRight: '40px' }}
                                         />
+                                        <button
+                                            type="button"
+                                            className="btn btn-outline-secondary position-absolute end-0 top-50 translate-middle-y"
+                                            style={{ borderRadius: '0 15px 15px 0' }}
+                                            onClick={toggleShowPassword}
+                                        >
+                                            {showPassword ? "Hide" : "Show"}
+                                        </button>
                                     </div>
                                 </div>
                                 <button
@@ -143,8 +178,9 @@ const SignUp = () => {
                     </div>
                 </div>
             </div>
-            {loading && <Loading></Loading>}
-            {error != '' && <Modal data={error} status={'error'}></Modal>}
+            {loading && <Loading />}
+            {error && <Modal data={error} status={'error'} onClose={handleClose} />}
+            {success && <Modal data={success} status={'success'} onClose={handleClose} />}
         </Fragment>
     );
 };
