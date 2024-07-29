@@ -35,7 +35,7 @@ const Signin = ({ toggleSigninPopup }) => {
                             <h2 className='ms-4' style={{ color: '#8C8C8C', cursor: 'pointer' }}>Sign Up</h2>
                         </div>
                         <form onSubmit={handleSubmit}>
-                            <div className="form-group row align-items-center mb-3">
+                            <div className="form-group row align-items-center mb-3 mt-5">
                                 <div className="col-sm-2">
                                     <i className="fa fa-user" style={{ fontSize: '24px' }}></i>
                                 </div>
@@ -55,7 +55,7 @@ const Signin = ({ toggleSigninPopup }) => {
                                 <div className="col-sm-2">
                                     <i className="fa fa-lock" style={{ fontSize: '24px' }}></i>
                                 </div>
-                                <div className="col-sm-10">
+                                <div className="col-sm-10 mt-3">
                                     <input
                                         type="password"
                                         name="password"
@@ -67,25 +67,25 @@ const Signin = ({ toggleSigninPopup }) => {
                                     />
                                 </div>
                             </div>
-                            <div className="d-flex justify-content-between align-items-center mb-3">
+                            <div className="d-flex justify-content-between align-items-center mb-3 mt-5">
                                 <a href="#" style={{ textDecoration: 'none', color: '#003580' }}>Forgot password?</a>
                                 <button
                                     type="submit"
                                     className="btn btn-success"
                                     style={{ borderRadius: '15px', padding: '10px 20px' }}
                                 >
-                                    Login
+                                    Sign In
                                 </button>
                             </div>
                         </form>
                     </div>
                     <div
                         className="col-md-6 d-flex justify-content-center align-items-center"
-                        style={{ background: '#225374', padding: '20px' }}
+                        style={{ background: '#225374', padding: '20px', height:'430px' }}
                     >
                         <img
                             src="/dokter.png"
-                            alt="Sign Up Image"
+                            alt="Sign In Image"
                             className="img-fluid"
                             style={{ width: '80%', borderRadius: '15px' }}
                         />
