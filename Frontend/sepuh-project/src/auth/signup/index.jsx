@@ -34,7 +34,7 @@ const SignUp = () => {
         e.preventDefault();
         setLoading(true);
         setError('');
-        
+
         if (formData.password !== formData.confirmPassword) {
             setError('Passwords dan confirm password tidak sesuai');
             setLoading(false);
@@ -45,7 +45,6 @@ const SignUp = () => {
             const response = await axios.post(`${port}user/register`, formData);
             console.log(formData);
             if (response.data.data) {
-                console.log(response);
                 const token = response.data.data;
                 sessionStorage.setItem('token', token);
                 setSuccess('Berhasil Membuat Akun');
@@ -53,7 +52,8 @@ const SignUp = () => {
                     navigate('/signin');
                 }, 3000);
             } else {
-                setError('Gagal Membuat Akun');
+                console.log(response);
+                setError(response.data.message);
             }
         } catch (error) {
             setError(error.message);
@@ -82,13 +82,13 @@ const SignUp = () => {
                 >
                     <div className="row no-gutters">
                         <div className="col-md-8 p-5">
-                            <div className="d-flex justify-round">
-                                <h2 className='mb-4' onClick={handleSignIn}>Sign In</h2>
-                                <h2 className="mb-4 ms-4">Sign Up</h2>
+                            <div className="d-flex justify-content-center mb-4">
+                                <h2 className="mr-3" onClick={handleSignIn} style={{ color: '#8C8C8C', cursor: 'pointer' }}>Sign In</h2>
+                                <h2 className='ms-4' style={{color: '#225374', cursor: 'pointer', fontWeight: 'bold' }}>Sign Up</h2>
                             </div>
                             <form onSubmit={handleSubmit}>
                                 <div className="form-group row align-items-center mb-3">
-                                    <label style={{ fontSize: '14px' }} htmlFor="username" className="col-sm-4 col-form-label">User Name</label>
+                                    <label style={{ fontSize: '18px', fontWeight: 'bold', color : '#225374' }} htmlFor="username" className="col-sm-4 col-form-label">User Name</label>
                                     <div className="col-sm-8">
                                         <input
                                             type="text"
@@ -101,7 +101,7 @@ const SignUp = () => {
                                     </div>
                                 </div>
                                 <div className="form-group row align-items-center mb-3">
-                                    <label style={{ fontSize: '14px' }} htmlFor="email" className="col-sm-4 col-form-label">Email</label>
+                                    <label style={{ fontSize: '18px', fontWeight: 'bold', color : '#225374' }} htmlFor="email" className="col-sm-4 col-form-label">Email</label>
                                     <div className="col-sm-8">
                                         <input
                                             type="email"
@@ -114,7 +114,7 @@ const SignUp = () => {
                                     </div>
                                 </div>
                                 <div className="form-group row align-items-center mb-3">
-                                    <label style={{ fontSize: '14px' }} htmlFor="password" className="col-sm-4 col-form-label">Password</label>
+                                    <label style={{ fontSize: '18px', fontWeight: 'bold', color : '#225374' }} htmlFor="password" className="col-sm-4 col-form-label">Password</label>
                                     <div className="col-sm-8 position-relative">
                                         <input
                                             type={showPassword ? "text" : "password"}
@@ -122,12 +122,12 @@ const SignUp = () => {
                                             className="form-control"
                                             value={formData.password}
                                             onChange={handleChange}
-                                            style={{ borderRadius: '15px', paddingRight: '40px' }}
+                                            style={{ borderRadius: '15px' }}
                                         />
                                         <button
                                             type="button"
-                                            className="btn btn-outline-secondary position-absolute end-0 top-50 translate-middle-y"
-                                            style={{ borderRadius: '0 15px 15px 0' }}
+                                            className="btn btn-secondary position-absolute end-0 top-50 translate-middle-y me-2"
+                                            style={{ borderRadius: '0 15px 15px 0', background:'#225374' }}
                                             onClick={toggleShowPassword}
                                         >
                                             {showPassword ? "Hide" : "Show"}
@@ -135,33 +135,35 @@ const SignUp = () => {
                                     </div>
                                 </div>
                                 <div className="form-group row align-items-center mb-3">
-                                    <label style={{ fontSize: '14px' }} htmlFor="confirmPassword" className="col-sm-4 col-form-label">Confirm Password</label>
+                                    <label style={{ fontSize: '18px', fontWeight: 'bold', color : '#225374' }} htmlFor="confirmPassword" className="col-sm-4 col-form-label">Confirm Password</label>
                                     <div className="col-sm-8 position-relative">
                                         <input
                                             type={showPassword ? "text" : "password"}
                                             name="confirmPassword"
-                                            className="form-control"
+                                            className="form-control "
                                             value={formData.confirmPassword}
                                             onChange={handleChange}
-                                            style={{ borderRadius: '15px', paddingRight: '40px' }}
+                                            style={{ borderRadius: '15px' }}
                                         />
                                         <button
                                             type="button"
-                                            className="btn btn-outline-secondary position-absolute end-0 top-50 translate-middle-y"
-                                            style={{ borderRadius: '0 15px 15px 0' }}
+                                            className="btn btn-secondary position-absolute end-0 top-50 translate-middle-y me-2"
+                                            style={{ borderRadius: '0 15px 15px 0', background:'#225374' }}
                                             onClick={toggleShowPassword}
                                         >
                                             {showPassword ? "Hide" : "Show"}
                                         </button>
                                     </div>
                                 </div>
-                                <button
-                                    type="submit"
-                                    className="btn btn-success btn-block mt-3"
-                                    style={{ borderRadius: '15px' }}
-                                >
-                                    Sign Up
-                                </button>
+                                <div className="d-flex justify-content-end">
+                                    <button
+                                        type="submit"
+                                        className="btn btn-success mt-3"
+                                        style={{ borderRadius: '15px', background: '#50D68A' }}
+                                    >
+                                        Sign Up
+                                    </button>
+                                </div>
                             </form>
                         </div>
                         <div
