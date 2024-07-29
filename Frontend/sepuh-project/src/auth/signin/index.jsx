@@ -1,94 +1,98 @@
 import React, { Fragment, useState } from 'react';
-// import axios from 'axios';
-// import { useNavigate } from 'react-router-dom';
-// import Gambar1 from './assets/logo.png';
-// import Color from '../../shared/colors';
-// import Loading from '../../shared/pages/loading';
 
 const Signin = ({ toggleSigninPopup }) => {
-    // const port = `${import.meta.env.VITE_API_URL}`;
-    // const navigate = useNavigate();
+    const [formData, setFormData] = useState({
+        email: '',
+        password: '',
+    });
 
-    // const [SigninData, setSigninData] = useState({
-    //     username: '',
-    //     password: ''
-    // });
-    // const [loading, setLoading] = useState(false);
-    // const [error, setError] = useState('');
+    const handleChange = (e) => {
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value,
+        });
+    };
 
-    // const handleSigninChange = (e) => {
-    //     const { name, value } = e.target;
-    //     setSigninData({ ...SigninData, [name]: value });
-    // };
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        // handle sign in logic here
+        console.log(formData);
+    };
 
-    // const handleSigninSubmit = async (e) => {
-    //     e.preventDefault();
-    //     setLoading(true);
-    //     setError('');
-    //     try {
-    //         const response = await axios.post(`${port}user/Signin`, SigninData);
-    //         if (response.data.data) {
-    //             const token = response.data.data;
-    //             sessionStorage.setItem('token', token);
-    //             navigate('/dashboard');
-    //         } else {
-    //             setError('Username atau Password Tidak Terdaftar');
-    //         }
-    //     } catch (error) {
-    //         setError('Username atau Password Tidak Terdaftar');
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // };
-
-    // return (
-    //     <Fragment>
-    //         <div className="modal d-block" tabIndex="1" role="dialog">
-    //             <div className="modal-dialog" role="document" style={{ minWidth: '70vw' }}>
-    //                 <div className="modal-content">
-    //                     <div className="modal-header d-none">
-    //                     </div>
-    //                     <div className="modal-body p-0">
-    //                         <div className="container-fluid">
-    //                             <div className="row p-0">
-    //                                 <div className="col-0 col-md-6 py-5 px-4" style={{ background: Color.color1 }}>
-    //                                     <p className='text-light text-center '>SISTEM PELAPORAN KEJADIAN GANGGUAN, KEAMANAN DAN KETERTIBAN MASYARAKAT</p>
-    //                                     <img src={Gambar1} style={{ width: '100%' }} alt="Logo" />
-    //                                 </div>
-    //                                 <div className="col-12 col-md-6">
-    //                                     <button type="button" className="btn-close p-0 m-0 pt-3" aria-label="Close" style={{ position: 'relative', left: '95%' }} onClick={toggleSigninPopup}></button>
-    //                                     {error && <div className="alert alert-danger">{error}</div>}
-    //                                     <div className="logo d-flex align-items-center justify-content-center">
-    //                                         <img src={Gambar1} alt="Logo" className="me-2" style={{ width: '15%' }} />
-    //                                         <p className="mb-0">SIJAGAMAS</p>
-    //                                     </div>
-    //                                     <p className='py-4 text-center' style={{ fontWeight: 'bold', color: Color.color1, fontSize: '16px' }}>Masuk untuk halaman pengelola</p>
-    //                                     <form onSubmit={handleSigninSubmit} className="d-flex flex-column align-items-center">
-    //                                         <div className="my-3" style={{ width: '70%' }}>
-    //                                             <input style={{ border: 'none', borderBottom: '1px solid black', borderRadius: 0 }} type="text" placeholder='Masukkan Username' className="form-control" name="username" value={SigninData.username} onChange={handleSigninChange} required />
-    //                                         </div>
-    //                                         <div className="my-3" style={{ width: '70%' }}>
-    //                                             <input style={{ border: 'none', borderBottom: '1px solid black', borderRadius: 0 }} type="password" placeholder='Masukkan Password' className="form-control" name="password" value={SigninData.password} onChange={handleSigninChange} required />
-    //                                         </div>
-    //                                         <button type="submit" className="btn my-5" style={{ color: Color.color2, background: Color.color1 }} disabled={loading}>
-    //                                             {loading ? 'Loading...' : 'Sign In'}
-    //                                         </button>
-    //                                     </form>
-    //                                 </div>
-    //                             </div>
-    //                         </div>
-    //                     </div>
-    //                 </div>
-    //             </div>
-    //         </div>
-    //         <div className="modal-backdrop show" onClick={toggleSigninPopup}></div>
-    //         {loading && <Loading></Loading>}
-    //     </Fragment>
-    // );
     return (
-        <Fragment>
-            <h1>TEST Signin</h1>
-        </Fragment>
+        <div
+            className="container-fluid d-flex justify-content-center align-items-center vh-100"
+            style={{ background: 'linear-gradient(135deg, #225374, #28A09E)' }}
+        >
+            <div
+                className="card shadow"
+                style={{ borderRadius: '15px', overflow: 'hidden', width: '900px' }}
+            >
+                <div className="row no-gutters">
+                    <div className="col-md-6 p-5">
+                        <div className="d-flex justify-content-center mb-4">
+                            <h2 className="mr-3" style={{ color: '#003580', cursor: 'pointer', fontWeight: 'bold' }}>Sign In</h2>
+                            <h2 className='ms-4' style={{ color: '#8C8C8C', cursor: 'pointer' }}>Sign Up</h2>
+                        </div>
+                        <form onSubmit={handleSubmit}>
+                            <div className="form-group row align-items-center mb-3">
+                                <div className="col-sm-2">
+                                    <i className="fa fa-user" style={{ fontSize: '24px' }}></i>
+                                </div>
+                                <div className="col-sm-10">
+                                    <input
+                                        type="email"
+                                        name="email"
+                                        placeholder="Email"
+                                        className="form-control"
+                                        value={formData.email}
+                                        onChange={handleChange}
+                                        style={{ borderRadius: '15px' }}
+                                    />
+                                </div>
+                            </div>
+                            <div className="form-group row align-items-center mb-3">
+                                <div className="col-sm-2">
+                                    <i className="fa fa-lock" style={{ fontSize: '24px' }}></i>
+                                </div>
+                                <div className="col-sm-10">
+                                    <input
+                                        type="password"
+                                        name="password"
+                                        placeholder="Password"
+                                        className="form-control"
+                                        value={formData.password}
+                                        onChange={handleChange}
+                                        style={{ borderRadius: '15px' }}
+                                    />
+                                </div>
+                            </div>
+                            <div className="d-flex justify-content-between align-items-center mb-3">
+                                <a href="#" style={{ textDecoration: 'none', color: '#003580' }}>Forgot password?</a>
+                                <button
+                                    type="submit"
+                                    className="btn btn-success"
+                                    style={{ borderRadius: '15px', padding: '10px 20px' }}
+                                >
+                                    Login
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    <div
+                        className="col-md-6 d-flex justify-content-center align-items-center"
+                        style={{ background: '#225374', padding: '20px' }}
+                    >
+                        <img
+                            src="/dokter.png"
+                            alt="Sign Up Image"
+                            className="img-fluid"
+                            style={{ width: '80%', borderRadius: '15px' }}
+                        />
+                    </div>
+                </div>
+            </div>
+        </div>
     );
 };
 
