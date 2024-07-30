@@ -4,7 +4,7 @@ const Dokter = () => {
 
     return (
         <Fragment>
-            <h1>TEST Dokter</h1>
+            <h1>TEST sbjaslaslasaslaskal</h1>
         </Fragment>
     );
 };
