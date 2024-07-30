@@ -17,3 +17,14 @@
 .content.shrink {
     width: 75%;
 }
+@media (max-width: 900px) {
+    .sidebar.open {
+        width: 100%;
+        min-width: 100%;
+    }
+
+    .content.shrink {
+        width: 100%;
+        min-width: 100%;
+    }
+}

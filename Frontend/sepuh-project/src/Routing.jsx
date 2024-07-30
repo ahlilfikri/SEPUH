@@ -1,14 +1,12 @@
+import React from 'react';
 import { createBrowserRouter, RouterProvider, Route, Routes } from 'react-router-dom';
 import App from './App';
 import Home from './admin/pages/home';
 import Signin from './auth/signin';
 import Signup from './auth/signup';
-// import Reset from './auth/signup';
-import Pasien from './admin/pages/pasien';
-import Dokter from './admin/pages/dokter';
-import Jadwal from './admin/pages/jadwal';
+import Profile from './admin/pages/profile';
 import Dashboard from './admin/pages';
-// import ProtectedRoute from './ProtectedRoute';
+import ProtectedRoute from './ProtectedRoute';
 
 const router = createBrowserRouter([
   {
@@ -28,20 +26,16 @@ const router = createBrowserRouter([
         element: <Signup />,
       },
       {
-        path: '/pasien',
-        element: <Pasien />,
-      },
-      {
-        path: '/dokter',
-        element: <Dokter />,
-      },
-      {
-        path: '/jadwal',
-        element: <Jadwal />,
+        path: '/profile',
+        element: (
+          <ProtectedRoute component={Profile} role={0} />
+        ),
       },
       {
         path: '/dashboard',
-        element: <Dashboard />,
+        element: (
+          <ProtectedRoute component={Dashboard} role={1}/>
+        ),
       },
     ],
   },
