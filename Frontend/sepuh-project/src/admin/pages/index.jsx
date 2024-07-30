@@ -109,6 +109,28 @@ const Dashboard = () => {
                 >
                     {clickedMenu ? 'x' : '='}
                 </div>
+                <div
+                    className="menu-button"
+                    onClick={handleClickMenu}
+                    style={{
+                        position: 'absolute',
+                        top: '0px',
+                        left: clickedMenu ? '23.2%' : '10px',
+                        right: clickedMenu ? '10px' : 'auto',
+                        zIndex: 1000,
+                        cursor: 'pointer',
+                        fontSize: '24px',
+                        backgroundColor: 'transparent',
+                        border: 'none',
+                        outline: 'none',
+                        color: '#225374',
+                        fontSize: '24px',
+                        fontWeight: 'bold',
+                        color: clickedMenu ? '#225374' : 'white'
+                    }}
+                >
+                    {clickedMenu ? 'x' : '='}
+                </div>
                 <div className="row p-0 m-0">
                     <div className={`sidebar text-center p-0 m-0 ${clickedMenu ? 'open' : ''}`}>
                         <div className="top d-flex justify-content-around align-items-center">
