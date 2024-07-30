@@ -14,6 +14,11 @@ const Profile = () => {
         handleIsLogin();
     }, []);
 
+    const handleResetPassword = () => {
+        // Logic untuk mereset password
+        console.log("Reset password clicked");
+    };
+
     return (
         <Fragment>
             <header>
@@ -25,7 +30,7 @@ const Profile = () => {
             >
                 <div className="text-center text-white p-4">
                     <img src={Gambar} alt="Logo" className="img-fluid mb-3" style={{ width: '100px' }} />
-                    <h3>Profil Anda</h3>
+                    <h3>KENTANG GORENG</h3>
                     <div className="profile-info mt-4">
                         <div className="profile-item p-3 mb-3" style={{ backgroundColor: 'rgba(255, 255, 255, 0.2)', borderRadius: '10px' }}>
                             <p><strong>Nama:</strong> Nama Pengguna</p>
@@ -36,6 +41,9 @@ const Profile = () => {
                         <div className="profile-item p-3 mb-3" style={{ backgroundColor: 'rgba(255, 255, 255, 0.2)', borderRadius: '10px' }}>
                             <p><strong>Password:</strong> ********</p>
                         </div>
+                    </div>
+                    <div className="text-center mt-4">
+                        <button onClick={handleResetPassword} className="btn btn-warning">Reset Password</button>
                     </div>
                 </div>
             </div>
