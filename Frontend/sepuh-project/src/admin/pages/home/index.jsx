@@ -19,7 +19,7 @@ const Home = () => {
 
     useEffect(() => {
         handleIsLogin();
-    }, []); // This effect should run only once, hence an empty dependency array
+    }, []);
 
     return (
         <Fragment>
