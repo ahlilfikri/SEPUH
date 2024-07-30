@@ -41,7 +41,7 @@ const Signin = ({ toggleSigninPopup }) => {
                 sessionStorage.setItem('token', token);
                 setSuccess('Berhasil Masuk');
                 setTimeout(() => {
-                    navigate('/pasien');
+                    navigate('/dashboard');
                 }, 3000);
             } else {
                 setError(response.data.message);
