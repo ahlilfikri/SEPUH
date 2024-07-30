@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Loading from '../../shared/loading';
 import Modal from '../../shared/modal';
+import { jwtDecode } from 'jwt-decode';
 
 const Signin = ({ toggleSigninPopup }) => {
     const [formData, setFormData] = useState({
@@ -39,9 +40,14 @@ const Signin = ({ toggleSigninPopup }) => {
                 const token = response.data.data;
                 console.log(response.data);
                 sessionStorage.setItem('token', token);
+                const decodedToken = jwtDecode(token);
                 setSuccess('Berhasil Masuk');
                 setTimeout(() => {
-                    navigate('/dashboard');
+                    if (decodedToken.role === 1) {
+                        navigate('/dashboard');
+                    } else {
+                        navigate('/profile');
+                    }
                 }, 3000);
             } else {
                 setError(response.data.message);
@@ -63,12 +69,13 @@ const Signin = ({ toggleSigninPopup }) => {
 
     const handleIsLogin = () => {
         const token = sessionStorage.getItem('token');
-        if (token){
+        if (token) {
             setError('Anda sudah masuk harap keluar terlebih dahulu');
             setIsLogin(true);
             setTimeout(() => {
-                navigate('/pasien');
-            }, 3000);        }
+                navigate('/');
+            }, 3000);
+        }
     };
 
     useEffect(() => {
@@ -93,7 +100,7 @@ const Signin = ({ toggleSigninPopup }) => {
                             <form onSubmit={handleSubmit}>
                                 <div className="form-group row align-items-center mb-3 mt-5">
                                     <div className="col-sm-2">
-                                        <i className="fa fa-user" style={{ fontSize: '24px', color:'#225374' }}></i>
+                                        <i className="fa fa-user" style={{ fontSize: '24px', color: '#225374' }}></i>
                                     </div>
                                     <div className="col-sm-10">
                                         <input
@@ -110,7 +117,7 @@ const Signin = ({ toggleSigninPopup }) => {
                                 </div>
                                 <div className="form-group row align-items-center mb-3">
                                     <div className="col-sm-2">
-                                        <i className="fa fa-lock" style={{ fontSize: '24px', color:'#225374' }}></i>
+                                        <i className="fa fa-lock" style={{ fontSize: '24px', color: '#225374' }}></i>
                                     </div>
                                     <div className="col-sm-10 mt-3 position-relative">
                                         <input
@@ -126,7 +133,7 @@ const Signin = ({ toggleSigninPopup }) => {
                                         <button
                                             type="button"
                                             className="btn btn-secondary position-absolute end-0 top-50 translate-middle-y me-2"
-                                            style={{ borderRadius: '0 15px 15px 0', background:'#225374' }}
+                                            style={{ borderRadius: '0 15px 15px 0', background: '#225374' }}
                                             onClick={toggleShowPassword}
                                         >
                                             {showPassword ? "Hide" : "Show"}
@@ -138,7 +145,7 @@ const Signin = ({ toggleSigninPopup }) => {
                                     <button
                                         type="submit"
                                         className="btn btn-success"
-                                        style={{ borderRadius: '15px', padding: '10px 20px',background:'#50D68A' }}
+                                        style={{ borderRadius: '15px', padding: '10px 20px', background: '#50D68A' }}
                                     >
                                         Sign In
                                     </button>

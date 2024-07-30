@@ -1,13 +1,33 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import Gambar from '/logo.svg';
 import Dokter from '/doksuster.png';
 import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
     const navigate = useNavigate();
+    const [isLogin, setIsLogin] = useState(false);
+
     const handleSignin = () => {
         navigate('/signin');
     }
+
+    const handleProfile = () => {
+        navigate('/profile');
+    }
+    
+    const handleDashboard = () => {
+        navigate('/dashboard');
+    }
+
+    const handleIsLogin = () => {
+        const token = sessionStorage.getItem('token');
+        setIsLogin(token != null);
+    };
+
+    useEffect(() => {
+        handleIsLogin();
+    }, []); // This effect should run only once, hence an empty dependency array
+
     return (
         <Fragment>
             <header>
@@ -23,13 +43,26 @@ const Home = () => {
                         <div className="collapse navbar-collapse" id="navbarNav">
                             <ul className="navbar-nav ms-auto">
                                 <li className="nav-item">
-                                    <a className="nav-link active d-flex align-items-center pe-5 pt-4" aria-current="page" href="#">
-                                        <p style={{ fontWeight: 'bold', margin: 0, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }} className="pe-4">Home</p>
-                                        <div className="" onClick={handleSignin()}>
-                                            <i className="fas fa-user" style={{ fontSize: '24px', color: '#28A09E' }}></i>
-                                            <span style={{ fontSize: '16px', fontWeight: '700' }} className='ps-1'>Signin</span>
-                                        </div>
-                                    </a>
+                                    {
+                                        !isLogin &&
+                                        <a className="nav-link active d-flex align-items-center pe-5 pt-4" aria-current="page" href="#">
+                                            <p style={{ fontWeight: 'bold', margin: 0, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }} className="pe-4">Home</p>
+                                            <div onClick={handleSignin}>
+                                                <i className="fas fa-user" style={{ fontSize: '24px', color: '#28A09E' }}></i>
+                                                <span style={{ fontSize: '16px', fontWeight: '700', margin: '-10px 0 0 0' }} className='ps-1'>Signin</span>
+                                            </div>
+                                        </a>
+                                    }
+                                    {isLogin &&
+                                        <a className="nav-link active d-flex align-items-center pe-5 pt-4" aria-current="page" href="#">
+                                            <p style={{ fontWeight: 'bold', margin: 0, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }} onClick={handleDashboard} className="pe-4">Dashboard</p>
+                                             <div onClick={handleProfile}>
+                                                <i className="fas fa-user" style={{ fontSize: '24px', color: '#28A09E' }}></i>
+                                                <span style={{ fontSize: '16px', fontWeight: '700', margin: '-10px 0 0 0' }} className='ps-1'>Profile</span>
+                                            </div>
+                                        </a>
+
+                                    }
                                 </li>
                             </ul>
                         </div>
@@ -52,7 +85,7 @@ const Home = () => {
                 </div>
                 <div className="circle-background position-absolute"></div>
             </main>
-        </Fragment>
+        </Fragment >
     );
 };
 

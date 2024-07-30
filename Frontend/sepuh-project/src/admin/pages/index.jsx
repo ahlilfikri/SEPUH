@@ -1,14 +1,23 @@
 import React, { Fragment, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import Loading from '../../shared/loading';
+import Modal from '../../shared/modal';
 import Gambar from '/logo.svg';
 import Pasien from './pasien';
 import Dokter from './dokter';
 import Jadwal from './jadwal';
+import Profile from './profile';
 import './index.css';
 
 const Dashboard = () => {
-    const [clickedMenu, setClickedMenu] = useState(false);
+    const port = `${import.meta.env.VITE_BASE_URL}`;
+
+    const [clickedMenu, setClickedMenu] = useState(true);
     const [activeItem, setActiveItem] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
     const navigate = useNavigate();
     const handleClickMenu = () => {
         setClickedMenu(!clickedMenu);
@@ -26,16 +35,53 @@ const Dashboard = () => {
             case 'Jadwal':
                 return setContent(<Jadwal></Jadwal>);
             case 'Profil':
-                return navigate('/profil');
+                return navigate('/profile');
             case 'Logout':
+                console.log('test');
                 return handleLogout();
             default:
-                return navigate('/');
+                return setContent(<Pasien></Pasien>);
         }
     };
 
-    const handleLogout = () => {
-        // Add logout logic here
+    const handleLogout = async () => {
+        setLoading(true);
+        try {
+            const token = sessionStorage.getItem('token');
+            if (!token) {
+                setSuccess('Berhasil Logout');
+                setTimeout(() => {
+                    navigate('/signin');
+                }, 3000);
+            }
+            const result = await axios.post(`${port}user/logout/${token}`, {}, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            console.log(result);
+            sessionStorage.removeItem('token');
+            setSuccess('Berhasil Logout');
+            setTimeout(() => {
+                navigate('/signin');
+            }, 3000);
+        } catch (error) {
+            console.log(error);
+            if (error.response?.status === 400) {
+                sessionStorage.removeItem('token');
+                setSuccess('Berhasil Logout');
+                setTimeout(() => {
+                    navigate('/signin');
+                }, 3000); 
+            }
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleClose = () => {
+        setError('');
+        setSuccess('');
     };
 
     return (
@@ -73,7 +119,7 @@ const Dashboard = () => {
                             <i className="fa fa-user" style={{ fontSize: '24px', color: '#225374' }}></i>
                         </div>
                         <ul className="menu-list">
-                            {['Home', 'Pasien', 'Dokter', 'Jadwal', 'Profil', 'Logout'].map((item) => (
+                            {['Home', 'Pasien', 'Dokter', 'Jadwal', 'Profile', 'Logout'].map((item) => (
                                 <li
                                     key={item}
                                     className={`mx-auto my-3 p-2 menu-item ${activeItem === item ? 'text-white' : ''}`}
@@ -98,6 +144,9 @@ const Dashboard = () => {
                     </div>
                 </div>
             </div>
+            {loading && <Loading />}
+            {error && <Modal data={error} status={'error'} onClose={handleClose} />}
+            {success && <Modal data={success} status={'success'} onClose={handleClose} />}
         </Fragment>
     );
 };
