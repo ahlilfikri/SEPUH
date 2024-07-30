@@ -175,6 +175,37 @@ module.exports = {
             return response(500, error, 'internal server error', res);
         }
     },
+    reset: async(req, res) => {
+        id = req.params.id;
+        try {
+            const user = await userModel.findById({ _id:id });
+            console.log(user);
+
+            if(!user){
+                return response(404, null, 'User tidak ditemukan', res);
+            }
+
+            const {newPassword, oldPassword} = req.body;
+            const validPassword = await bcrypt.compare(oldPassword, user.password);
+            if (!validPassword) {
+                return response(400, null, 'Password salah', res);
+            }
+
+            const saltRounds = 10;
+            const salt = await bcrypt.genSalt(saltRounds);
+            const passwordEncrypted = await bcrypt.hash(newPassword, salt);
+
+            const updatedData = {
+                password: passwordEncrypted
+            };  
+
+            const result = await userModel.findByIdAndUpdate(id, updatedData, { new: true });
+            return response(200, result, 'Password berhasil direset', res);
+        }catch(error){
+            console.error(error.message);
+            return response(500, error, 'internal server error', res);
+        }
+    },
     getPasien: async (req, res) => {
         try {
             const pasien = await pasienModel.find();
