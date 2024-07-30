@@ -34,7 +34,7 @@ const Dashboard = () => {
                 return setContent(<Dokter></Dokter>);
             case 'Jadwal':
                 return setContent(<Jadwal></Jadwal>);
-            case 'Profil':
+            case 'Profile':
                 return navigate('/profile');
             case 'Logout':
                 console.log('test');
