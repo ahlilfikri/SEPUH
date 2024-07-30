@@ -133,8 +133,8 @@ const Signin = ({ toggleSigninPopup }) => {
                                         </button>
                                     </div>
                                 </div>
-                                <div className="d-flex justify-content-between align-items-center mb-3 mt-5">
-                                    <a href="#" style={{ textDecoration: 'none', color: '#003580' }}>Forgot password?</a>
+                                <div className="d-flex justify-content-end align-items-center mb-3 mt-5">
+                                    {/* <a href="#" style={{ textDecoration: 'none', color: '#003580' }}>Forgot password?</a> */}
                                     <button
                                         type="submit"
                                         className="btn btn-success"
