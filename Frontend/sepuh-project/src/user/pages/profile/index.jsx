@@ -77,7 +77,7 @@ const Profile = () => {
                             <h3>{data.name || 'User Name'}</h3>
                             <div className="profile-info mt-4">
                                 <div className="profile-item p-3 mb-3" style={{ backgroundColor: 'rgba(255, 255, 255, 0.2)', borderRadius: '10px' }}>
-                                    <p><strong>Nama:</strong> {data.name}</p>
+                                    <p><strong>Nama:</strong> {data.nama}</p>
                                 </div>
                                 <div className="profile-item p-3 mb-3" style={{ backgroundColor: 'rgba(255, 255, 255, 0.2)', borderRadius: '10px' }}>
                                     <p><strong>Username:</strong> {data.username}</p>

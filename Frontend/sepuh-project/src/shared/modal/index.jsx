@@ -14,7 +14,7 @@ const Modal = ({ data, status, onClose }) => {
                             </button>
                             {status === 'error' && <img src={Gambar1} className="img-fluid" style={{ width: '250px' }} alt="Error" />}
                             {status === 'success' && <img src={Gambar2} className="img-fluid" style={{ width: '250px' }} alt="Success" />}
-                            <p>{data}</p>
+                            <p style={{ fontSize:'18px' }}>{data}</p>
                         </div>
                     </div>
                 </div>

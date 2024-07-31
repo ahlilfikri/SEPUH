@@ -8,36 +8,9 @@ const response = require("../response/response_valid");
 module.exports = {
     get: async (req, res) => {
         try {
-            // const { aduan, alamat, status, startDate, endDate, page = 1, limit = 20 } = req.query;
-
-            // let filter = {};
-
-            // if (aduan) {
-            //     filter.aduan = { $regex: aduan, $options: 'i' }; // Case insensitive search
-            // }
-            // if (alamat) {
-            //     filter.alamat = alamat;
-            // }
-            // if (status) {
-            //     filter.status = status;
-            // }
-            // if (startDate || endDate) {
-            //     filter.tanggal = {};
-            //     if (startDate) {
-            //         filter.tanggal.$gte = new Date(startDate);
-            //     }
-            //     if (endDate) {
-            //         filter.tanggal.$lte = new Date(endDate);
-            //     }
-            // }
-
-            // const skip = (page - 1) * limit;
-            // const content = await jadwalSchema.find(filter).skip(skip).limit(parseInt(limit));
-            // const content = await jadwalSchema.find().skip(skip).limit(parseInt(limit));
-            // const totalItems = await jadwalSchema.countDocuments(filter);
-
-            // return response(200, { data: content, totalItems, currentPage: page, totalPages: Math.ceil(totalItems / limit) }, 'Menampilkan Semua Jadwal', res);
-            const jadwal = await jadwalSchema.find();
+            const jadwal = await jadwalSchema.find()
+                .populate('dokter', 'nama spesialisasi')
+                .populate('pasien', 'nama username');
             return response(200, jadwal, 'Menampilkan semua Jadwal', res);
         } catch (err) {
             console.error(err.message);
@@ -48,7 +21,9 @@ module.exports = {
     getOne: async (req, res) => {
         const id = req.params._id;
         try {
-            const content = await jadwalSchema.findById(id);
+            const content = await jadwalSchema.findById(id)
+                .populate('dokter', 'nama spesialisasi')
+                .populate('pasien', 'nama username');
             if (!content) {
                 return response(404, null, 'Jadwal Tidak Ditemukan', res);
             }
@@ -60,26 +35,21 @@ module.exports = {
     },
 
     post: async (req, res) => {
-        try{
-            $a == 5;
-        }catch(error){
-            console.log(error);
-        }
         try {
-            const { waktu, dokter, pasien, ruang, status } = req.body;
-            const searchDokter = await userSchema.findOne({nama:dokter})
-            const searchPasien = await userSchema.findOne({nama:pasien})
+            const { waktu, dokter, pasien, ruang } = req.body;
+            const searchDokter = await dokterSchema.findOne({ nama: dokter })
+            const searchPasien = await userSchema.findOne({ nama: pasien })
             if (searchDokter === null || searchPasien === null) {
                 return response(400, null, 'Dokter atau Pasien tidak ditemukan', res);
             }
             const newJadwal = new jadwalSchema({
                 waktu,
-                dokter : searchDokter._id,
-                pasien : searchPasien._id,
+                dokter: searchDokter._id,
+                pasien: searchPasien._id,
                 ruang,
-                status
+                status : 'diajukan'
             });
-            
+
             await newJadwal.save();
             return response(200, newJadwal, 'Jadwal Berhasil Ditambahkan', res);
         } catch (error) {

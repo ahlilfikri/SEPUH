@@ -15,6 +15,6 @@ const dokterSchema = new Schema({
   img: { type: String, required: false },
 }, { timestamps: true });
 
-const Dokter = mongoose.model('Dokter', dokterSchema);
+const Dokter = mongoose.model('dokter', dokterSchema);
 
 module.exports = Dokter;

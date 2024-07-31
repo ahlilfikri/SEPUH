@@ -155,12 +155,10 @@ module.exports = {
         userId = req.params.id;
         const updatedData = req.body;
         try {
-            console.log(updatedData.riwayat);
             var result = {};
             const resultUser = await userModel.findByIdAndUpdate(userId, updatedData, { new: true });
             if (updatedData.riwayat) {
                 const resultPasien = await pasienModel.findOneAndUpdate({user:userId},{riwayat :updatedData.riwayat});
-                console.log(resultPasien);
                 result ={
                     user : resultUser,
                     pasien : resultPasien

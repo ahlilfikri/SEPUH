@@ -198,7 +198,7 @@ const Pasien = () => {
                                 </thead>
                                 <tbody>
                                     {error === '' && data.map((pasien, index) => (
-                                        <tr key={pasien.id}>
+                                        <tr key={index}>
                                             <td style={{ fontSize: '18px', fontWeight: '400' }}>{index + 1}</td>
                                             <td style={{ fontSize: '18px', fontWeight: '400' }}>{pasien.user.nama}</td>
                                             <td style={{ fontSize: '18px', fontWeight: '400' }}>{pasien.user.usia}</td>
@@ -211,10 +211,10 @@ const Pasien = () => {
                                                 </div>
                                             </td>
                                             <td style={{ fontSize: '18px' }} className="text-center">
-                                                <div className="btn" onClick={() => handleEditClick(pasien)}>
+                                                <div className="btn m-1" onClick={() => handleEditClick(pasien)}>
                                                     <FaEdit style={{ cursor: 'pointer', marginRight: '10px', color: '#000' }} />
                                                 </div>
-                                                <FaTrashAlt style={{ cursor: 'pointer', color: '#B22222' }} onClick={() => handleDeleteClick(pasien)} />
+                                                <FaTrashAlt className="m-1" style={{ cursor: 'pointer', color: '#B22222' }} onClick={() => handleDeleteClick(pasien)} />
                                             </td>
                                         </tr>
                                     ))}

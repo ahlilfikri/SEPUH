@@ -49,7 +49,6 @@ const Dokter = () => {
 
     const handleSaveChanges = async (updatedDoctor) => {
         setLoading(true);
-        console.log(updatedDoctor);
         try {
             const response = await axios.put(`${port}dokter/${updatedDoctor.id}`, updatedDoctor, {
                 headers: {
@@ -57,7 +56,6 @@ const Dokter = () => {
                     'Content-Type': 'application/json'
                 }
             });
-            console.log(response);
             setSuccess('Data berhasil diperbarui');
         } catch (error) {
             setError('Tidak dapat menyimpan perubahan, coba lagi');
@@ -81,7 +79,6 @@ const Dokter = () => {
                     'Content-Type': 'application/json'
                 }
             });
-            console.log(response);
             if (response.data.status == 500){
                 setError('Tidak dapat menambahkan dokter, coba lagi');
             }else{
@@ -103,7 +100,6 @@ const Dokter = () => {
 
     const handleDeleteDoctor = async () => {
         setLoading(true);
-        console.log(selectedDoctor);
         try {
             await axios.delete(`${port}dokter/${selectedDoctor._id}`, {
                 headers: {
@@ -199,7 +195,7 @@ const Dokter = () => {
                                 </thead>
                                 <tbody>
                                     {error === '' && data.map((dokter, index) => (
-                                        <tr key={dokter.id}>
+                                        <tr key={index}>
                                             <td style={{ fontSize: '18px', fontWeight: '400', maxWidth: '10%' }}>{index + 1}</td>
                                             <td style={{ fontSize: '18px', fontWeight: '400', maxWidth: '30%' }}>{dokter.nama}</td>
                                             <td style={{ fontSize: '18px', fontWeight: '400', maxWidth: '40%' }}>{dokter.spesialisasi}</td>
@@ -209,10 +205,10 @@ const Dokter = () => {
                                                 </div>
                                             </td>
                                             <td style={{ fontSize: '18px', maxWidth: '5%' }} className="text-center">
-                                                <div className="btn" onClick={() => handleEditClick(dokter)}>
+                                                <div className="btn m-1" onClick={() => handleEditClick(dokter)}>
                                                     <FaEdit style={{ cursor: 'pointer', marginRight: '10px', color: '#000' }} />
                                                 </div>
-                                                <FaTrashAlt style={{ cursor: 'pointer', color: '#B22222' }} onClick={() => handleDeleteClick(dokter)} />
+                                                <FaTrashAlt className='m-1' style={{ cursor: 'pointer', color: '#B22222' }} onClick={() => handleDeleteClick(dokter)} />
                                             </td>
                                         </tr>
                                     ))}

@@ -21,7 +21,7 @@ const Loading = () => {
                             <div className="d-flex justify-content-center">
                                 <img src={Gambar1} className="img-fluid ps-4" style={{ width: '250px' }} alt="Loading" />
                             </div>
-                            <p>Loading{dots}</p>
+                            <p style={{ fontSize:"18px" }}>Loading{dots}</p>
                         </div>
                     </div>
                 </div>

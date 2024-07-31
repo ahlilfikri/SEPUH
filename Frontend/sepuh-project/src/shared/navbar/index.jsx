@@ -1,7 +1,7 @@
 import React, { useState, useEffect, Fragment } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Gambar from '/logo.svg';
-import {jwtDecode} from 'jwt-decode'; // jwtDecode is not a named export
+import {jwtDecode} from 'jwt-decode';
 import axios from 'axios';
 import Loading from '../loading';
 import Modal from '../modal';
@@ -15,7 +15,7 @@ const Navbar = ({ isLogin }) => {
     const port = `${import.meta.env.VITE_BASE_URL}`;
 
     useEffect(() => {
-        handleIsSignin(); // Call handleIsSignin on mount to check login status
+        handleIsSignin(); 
     }, []);
 
     const handleSignin = () => {
@@ -36,7 +36,7 @@ const Navbar = ({ isLogin }) => {
             const decodedToken = jwtDecode(token);
             setIsSignin(decodedToken.role);
         } else {
-            setIsSignin(-1); // User is not signed in
+            setIsSignin(-1); 
         }
     };
 
@@ -93,28 +93,28 @@ const Navbar = ({ isLogin }) => {
                             <li className="nav-item">
                                 {!isLogin && (
                                     <div className="nav-link active d-flex align-items-center pe-5 pt-4">
-                                        <p style={{ fontWeight: 'bold', margin: 0, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }} className="pe-4">Home</p>
+                                        <p style={{ fontWeight: 'bold', margin: 0, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', cursor:'pointer' }} className="pe-4">Home</p>
                                         <div onClick={handleSignin}>
-                                            <i className="fas fa-user" style={{ fontSize: '24px', color: '#28A09E' }}></i>
-                                            <span style={{ fontSize: '16px', fontWeight: '700', margin: '-10px 0 0 0' }} className='ps-1'>Signin</span>
+                                            <i className="fas fa-user" style={{ fontSize: '24px', color: '#28A09E', cursor:'pointer' }}></i>
+                                            <span style={{ fontSize: '16px', fontWeight: '700', margin: '-10px 0 0 0', cursor:'pointer' }} className='ps-1'>Signin</span>
                                         </div>
                                     </div>
                                 )}
                                 {isLogin && isSignin === 1 && (
                                     <div className="nav-link active d-flex align-items-center pe-5 pt-4">
-                                        <p style={{ fontWeight: 'bold', margin: 0, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }} onClick={handleDashboard} className="pe-4">Dashboard</p>
+                                        <p style={{ fontWeight: 'bold', margin: 0, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', cursor:'pointer' }} onClick={handleDashboard} className="pe-4">Dashboard</p>
                                         <div onClick={handleProfile}>
-                                            <i className="fas fa-user" style={{ fontSize: '24px', color: '#28A09E' }}></i>
-                                            <span style={{ fontSize: '16px', fontWeight: '700', margin: '-10px 0 0 0' }} className='ps-1'>Profile</span>
+                                            <i className="fas fa-user" style={{ fontSize: '24px', color: '#28A09E', cursor:'pointer' }}></i>
+                                            <span style={{ fontSize: '16px', fontWeight: '700', margin: '-10px 0 0 0', cursor:'pointer' }} className='ps-1'>Profile</span>
                                         </div>
                                     </div>
                                 )}
                                 {isLogin && isSignin === 0 && (
                                     <div className="nav-link active d-flex align-items-center pe-5 pt-4">
-                                        <p style={{ fontWeight: 'bold', margin: 0, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }} onClick={handleLogout} className="pe-4">Logout</p>
+                                        <p style={{ fontWeight: 'bold', margin: 0, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', cursor:'pointer'  }} onClick={handleLogout} className="pe-4">Logout</p>
                                         <div onClick={handleProfile}>
-                                            <i className="fas fa-user" style={{ fontSize: '24px', color: '#28A09E' }}></i>
-                                            <span style={{ fontSize: '16px', fontWeight: '700', margin: '-10px 0 0 0' }} className='ps-1'>Profile</span>
+                                            <i className="fas fa-user" style={{ fontSize: '24px', color: '#28A09E', cursor:'pointer' }}></i>
+                                            <span style={{ fontSize: '16px', fontWeight: '700', margin: '-10px 0 0 0', cursor:'pointer' }} className='ps-1'>Profile</span>
                                         </div>
                                     </div>
                                 )}
