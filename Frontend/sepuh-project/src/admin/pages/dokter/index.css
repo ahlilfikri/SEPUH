@@ -1,0 +1,24 @@
+.table th, .table td {
+    text-align: center; /* Center-align all table text */
+}
+
+.table th {
+    background: linear-gradient(135deg, #225374, #28A09E);
+    color: white;
+}
+
+.table tbody tr:nth-child(even) {
+    background: #f2f2f2;
+}
+
+.btn-success {
+    background-color: #28A09E;
+    border: none;
+}
+
+.btn-danger {
+    background-color: #B22222;
+    border: none;
+}
+
+

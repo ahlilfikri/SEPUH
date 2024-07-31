@@ -10,13 +10,13 @@ router.post('/logout/:token', userController.logout);
 router.put('/reset/:id', userController.reset);
 
 router.get('/',authenticateAdmin, userController.getAllUser);
-router.get('/:id', userController.getOne);
+router.get('/:id',authenticateUser, userController.getOne);
 router.post('/', authenticateAdmin, userController.post);
 router.put('/:id', authenticateAdmin, userController.put);
 router.delete('/:id', authenticateAdmin, userController.delete);
 
 //pasien
 router.get('/pasien',authenticateAdmin, userController.getPasien);
-router.get('/pasien',authenticateAdmin, userController.updatePasien);
+router.put('/pasien/:id',authenticateAdmin, userController.updatePasien);
 
 module.exports = router;

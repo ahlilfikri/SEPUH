@@ -38,7 +38,6 @@ const Signin = ({ toggleSigninPopup }) => {
             const response = await axios.post(`${port}user/login`, formData);
             if (response.data.data) {
                 const token = response.data.data;
-                console.log(response.data);
                 sessionStorage.setItem('token', token);
                 const decodedToken = jwtDecode(token);
                 setSuccess('Berhasil Masuk');

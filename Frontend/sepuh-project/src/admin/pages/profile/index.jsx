@@ -15,7 +15,6 @@ const Profile = () => {
     }, []);
 
     const handleResetPassword = () => {
-        // Logic untuk mereset password
         console.log("Reset password clicked");
     };
 

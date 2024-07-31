@@ -43,14 +43,12 @@ const SignUp = () => {
 
         try {
             const response = await axios.post(`${port}user/register`, formData);
-            console.log(formData);
             if (response.data.data) {
                 setSuccess('Berhasil Membuat Akun');
                 setTimeout(() => {
                     navigate('/signin');
                 }, 3000);
             } else {
-                console.log(response);
                 setError(response.data.message);
             }
         } catch (error) {

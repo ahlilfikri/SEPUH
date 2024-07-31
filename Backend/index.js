@@ -27,12 +27,14 @@ mongoose.connect(process.env.DATABASE_URL)
 const jadwalRouter = require('./routers/jadwal');
 const dokterRouter = require('./routers/dokter');
 const userRouter = require('./routers/user');
+const pasienRouter = require('./routers/pasien');
 // routes
 
 // use routes
 app.use('/dokter', dokterRouter);
 app.use('/jadwal', jadwalRouter);
 app.use('/user', userRouter);
+app.use('/pasien', pasienRouter);
 // use routes
 
 app.listen(process.env.local_port, () => {

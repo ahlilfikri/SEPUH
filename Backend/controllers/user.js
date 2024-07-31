@@ -12,7 +12,7 @@ const dokter = require("../models/dokter");
 module.exports = {
     register: async (req, res) => {
         try {
-            const { username, password, email, nama, alamat, usia, role, spesialisasi } = req.body;
+            const { username, password, email, nama, alamat, usia, role, riwayat } = req.body;
 
             if (!username || !password || !email) {
                 return response(400, null, 'Username, password, and email are required', res);
@@ -48,9 +48,10 @@ module.exports = {
             dataReturn = {
                 user: resultUser
             }
-            if (role === 0) {
+            if (resultUser.role === 0) {
                 const newPasien = new pasienModel({
                     user: resultUser._id,
+                    riwayat
                 })
                 const resultPasien = await newPasien.save();
                 dataReturn = {
@@ -59,7 +60,6 @@ module.exports = {
                 }
             }
 
-            console.log(dataReturn);
             return response(201, dataReturn, 'User berhasil didaftarkan', res);
         } catch (error) {
             if (error.code === 11000) {
@@ -126,7 +126,7 @@ module.exports = {
         id = req.params.id;
         try {
             const user = await userModel.findById(id);
-            if (!user){
+            if (!user) {
                 return response(404, null, 'User tidak ditemukan', res)
             }
             return response(200, user, 'Menampilkan semua user', res);
@@ -155,7 +155,21 @@ module.exports = {
         userId = req.params.id;
         const updatedData = req.body;
         try {
-            const result = await userModel.findByIdAndUpdate(userId, updatedData, { new: true });
+            console.log(updatedData.riwayat);
+            var result = {};
+            const resultUser = await userModel.findByIdAndUpdate(userId, updatedData, { new: true });
+            if (updatedData.riwayat) {
+                const resultPasien = await pasienModel.findOneAndUpdate({user:userId},{riwayat :updatedData.riwayat});
+                console.log(resultPasien);
+                result ={
+                    user : resultUser,
+                    pasien : resultPasien
+                };
+            }else{
+                result ={
+                    user : resultUser
+                };
+            }
             return response(200, result, 'User berhasil di update', res);
         } catch (error) {
             console.error(error.message);
@@ -176,7 +190,7 @@ module.exports = {
                     user: resultUser,
                     pasien: resultPasien
                 }
-            }else {
+            } else {
                 result = {
                     user: resultUser
                 }
@@ -188,17 +202,16 @@ module.exports = {
             return response(500, error, 'internal server error', res);
         }
     },
-    reset: async(req, res) => {
+    reset: async (req, res) => {
         id = req.params.id;
         try {
-            const user = await userModel.findById({ _id:id });
-            console.log(user);
+            const user = await userModel.findById({ _id: id });
 
-            if(!user){
+            if (!user) {
                 return response(404, null, 'User tidak ditemukan', res);
             }
 
-            const {newPassword, oldPassword} = req.body;
+            const { newPassword, oldPassword } = req.body;
             const validPassword = await bcrypt.compare(oldPassword, user.password);
             if (!validPassword) {
                 return response(400, null, 'Password salah', res);
@@ -210,18 +223,18 @@ module.exports = {
 
             const updatedData = {
                 password: passwordEncrypted
-            };  
+            };
 
             const result = await userModel.findByIdAndUpdate(id, updatedData, { new: true });
             return response(200, result, 'Password berhasil direset', res);
-        }catch(error){
+        } catch (error) {
             console.error(error.message);
             return response(500, error, 'internal server error', res);
         }
     },
     getPasien: async (req, res) => {
         try {
-            const pasien = await pasienModel.find();
+            const pasien = await pasienModel.find().populate('user');
             return response(200, pasien, 'Menampilkan semua pasien', res);
         } catch (error) {
             console.error(error.message);
@@ -232,7 +245,7 @@ module.exports = {
         const id = req.params._id;
         try {
             const { riwayat } = req.body;
-            const updatePasien = { riwayat};
+            const updatePasien = { riwayat };
 
             const result = await pasienModel.findByIdAndUpdate(id, updatePasien, { new: true });
             return response(200, result, 'Pasien Berhasil Diupdate', res);

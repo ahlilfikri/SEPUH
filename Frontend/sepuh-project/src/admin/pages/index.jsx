@@ -37,7 +37,6 @@ const Dashboard = () => {
             case 'Profile':
                 return navigate('/profile');
             case 'Logout':
-                console.log('test');
                 return handleLogout();
             default:
                 return setContent(<Pasien></Pasien>);
@@ -59,14 +58,12 @@ const Dashboard = () => {
                     Authorization: `Bearer ${token}`
                 }
             });
-            console.log(result);
             sessionStorage.removeItem('token');
             setSuccess('Berhasil Logout');
             setTimeout(() => {
                 navigate('/signin');
             }, 3000);
         } catch (error) {
-            console.log(error);
             if (error.response?.status === 400) {
                 sessionStorage.removeItem('token');
                 setSuccess('Berhasil Logout');
@@ -160,7 +157,7 @@ const Dashboard = () => {
                         </ul>
                     </div>
                     <div className={`content p-0 m-0 ${clickedMenu ? 'shrink' : ''}`}>
-                        <h1 className="bg-warning px-5" style={{ background: 'linear-gradient(135deg, #225374, #28A09E)', minHeight: '100vh' }}>
+                        <h1 className="bg-warning px-5 p-0 m-0" style={{ background: 'linear-gradient(135deg, #225374, #28A09E)', minHeight: '100vh' }}>
                             {Content}
                         </h1>
                     </div>

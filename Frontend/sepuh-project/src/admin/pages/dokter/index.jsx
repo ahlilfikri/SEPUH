@@ -1,26 +1,151 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import axios from 'axios';
+import { FaEdit, FaTrashAlt, FaFileAlt } from 'react-icons/fa';
+import Loading from '../../../shared/loading';
+import Modal from '../../../shared/modal';
+import EditModal from './component/modalEdit';
+import AddDoctorModal from './component/modalAdd';
+import ScheduleModal from './component/modalDetail';
+import DeleteModal from '../../../shared/modalDelete';
 
 const Dokter = () => {
-    const [dokters, setDokters] = useState([]);
+    const port = `${import.meta.env.VITE_BASE_URL}`;
+    const [data, setData] = useState([]);
     const token = sessionStorage.getItem('token');
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [selectedDoctor, setSelectedDoctor] = useState(null);
+    const [showAddDoctorModal, setShowAddDoctorModal] = useState(false);
+    const [showScheduleModal, setShowScheduleModal] = useState(false);
+    const [selectedSchedule, setSelectedSchedule] = useState([]);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+    const fetchData = async () => {
+        setLoading(true);
+        try {
+            const response = await axios.get(`${port}dokter`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            setData(response.data.data);
+        } catch (error) {
+            setError('Tidak dapat mengambil data, coba muat ulang laman');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axios.get('https://sepuh-api.vercel.app/dokter', {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-                setDokters(response.data);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        };
-
         fetchData();
     }, [token]);
+
+    const handleEditClick = (doctor) => {
+        setSelectedDoctor({ ...doctor });
+        setShowEditModal(true);
+    };
+
+    const handleSaveChanges = async (updatedDoctor) => {
+        setLoading(true);
+        console.log(updatedDoctor);
+        try {
+            const response = await axios.put(`${port}dokter/${updatedDoctor.id}`, updatedDoctor, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            console.log(response);
+            setSuccess('Data berhasil diperbarui');
+        } catch (error) {
+            setError('Tidak dapat menyimpan perubahan, coba lagi');
+        } finally {
+            setLoading(false);
+            setShowEditModal(false);
+            fetchData();
+        }
+    };
+
+    const handleAddDoctorClick = () => {
+        setShowAddDoctorModal(true);
+    };
+
+    const handleSaveNewDoctor = async (newDoctor) => {
+        setLoading(true);
+        try {
+            const response = await axios.post(`${port}dokter`, newDoctor, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            console.log(response);
+            if (response.data.status == 500){
+                setError('Tidak dapat menambahkan dokter, coba lagi');
+            }else{
+                setSuccess('Dokter berhasil ditambahkan');
+            }
+        } catch (error) {
+            setError('Tidak dapat menambahkan dokter, coba lagi');
+        } finally {
+            setLoading(false);
+            setShowAddDoctorModal(false);
+            fetchData();
+        }
+    };
+
+    const handleDeleteClick = (doctor) => {
+        setSelectedDoctor(doctor);
+        setShowDeleteModal(true);
+    };
+
+    const handleDeleteDoctor = async () => {
+        setLoading(true);
+        console.log(selectedDoctor);
+        try {
+            await axios.delete(`${port}dokter/${selectedDoctor._id}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            if (response.data.status == 500){
+                setError('Tidak dapat menghapus dokter, coba lagi');
+            }else{
+                setSuccess('Dokter berhasil dihapus');
+            }
+        } catch (error) {
+            setError('Tidak dapat menghapus dokter, coba lagi');
+        } finally {
+            setLoading(false);
+            setShowDeleteModal(false);
+            fetchData();
+        }
+    };
+
+    const handleCloseModal = () => {
+        setShowEditModal(false);
+        setError('');
+        setSuccess('');
+    };
+
+    const handleCloseAddDoctorModal = () => {
+        setShowAddDoctorModal(false);
+    };
+
+    const handleScheduleClick = (schedule) => {
+        setSelectedSchedule(schedule);
+        setShowScheduleModal(true);
+    };
+
+    const handleCloseScheduleModal = () => {
+        setShowScheduleModal(false);
+    };
+
+    const handleCloseDeleteModal = () => {
+        setShowDeleteModal(false);
+    };
 
     return (
         <Fragment>
@@ -55,32 +180,73 @@ const Dokter = () => {
                         </div>
                     </div>
                 </div>
-                <p className='pt-5 text-light' style={{ fontWeight: 'bold' }}>Daftar Dokter</p>
+                <div className="d-flex justify-content-between align-items-center p-3 mt-5">
+                    <p className="mb-0 text-light" style={{ fontWeight: 'bold' }}>Daftar Dokter</p>
+                    <button className="btn btn-success" onClick={handleAddDoctorClick}>Tambah Dokter</button>
+                </div>
                 <div className="row">
                     <div className="col-12">
-                        <table className="table table-striped table-bordered bg-white rounded shadow-sm">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Nama</th>
-                                    <th scope="col">Usia</th>
-                                    <th scope="col">Alamat</th>
-                                    <th scope="col">Spesialisasi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {dokters.map((dokter) => (
-                                    <tr key={dokter.id}>
-                                        <td>{dokter.nama}</td>
-                                        <td>{dokter.usia}</td>
-                                        <td>{dokter.alamat}</td>
-                                        <td>{dokter.spesialisasi}</td>
+                        <div className="table-responsive">
+                            <table className="table table-striped table-bordered bg-white rounded shadow-sm">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" style={{ fontWeight: 'normal', fontSize: '18px', textAlign: 'center', fontWeight: '600' }}>No</th>
+                                        <th scope="col" style={{ fontWeight: 'normal', fontSize: '18px', textAlign: 'center', fontWeight: '600' }}>Nama</th>
+                                        <th scope="col" style={{ fontWeight: 'normal', fontSize: '18px', textAlign: 'center', fontWeight: '600' }}>Spesialisasi</th>
+                                        <th scope="col" style={{ fontWeight: 'normal', fontSize: '18px', textAlign: 'center', fontWeight: '600' }}>Jadwal Kerja</th>
+                                        <th scope="col" style={{ fontWeight: 'normal', fontSize: '18px', textAlign: 'center', fontWeight: '600' }}>Aksi</th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    {error === '' && data.map((dokter, index) => (
+                                        <tr key={dokter.id}>
+                                            <td style={{ fontSize: '18px', fontWeight: '400', maxWidth: '10%' }}>{index + 1}</td>
+                                            <td style={{ fontSize: '18px', fontWeight: '400', maxWidth: '30%' }}>{dokter.nama}</td>
+                                            <td style={{ fontSize: '18px', fontWeight: '400', maxWidth: '40%' }}>{dokter.spesialisasi}</td>
+                                            <td style={{ fontSize: '18px', fontWeight: '400', maxWidth: '5%' }} className="text-center">
+                                                <div className="btn" onClick={() => handleScheduleClick(dokter.jadwal)}>
+                                                    <FaFileAlt style={{ color: '#FFD700', cursor: 'pointer' }} />
+                                                </div>
+                                            </td>
+                                            <td style={{ fontSize: '18px', maxWidth: '5%' }} className="text-center">
+                                                <div className="btn" onClick={() => handleEditClick(dokter)}>
+                                                    <FaEdit style={{ cursor: 'pointer', marginRight: '10px', color: '#000' }} />
+                                                </div>
+                                                <FaTrashAlt style={{ cursor: 'pointer', color: '#B22222' }} onClick={() => handleDeleteClick(dokter)} />
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
+            {loading && <Loading />}
+            {error && <Modal data={error} status={'error'} onClose={handleCloseModal} />}
+            {success && <Modal data={success} status={'success'} onClose={handleCloseModal} />}
+            <EditModal
+                show={showEditModal}
+                handleClose={handleCloseModal}
+                data={selectedDoctor}
+                handleSave={handleSaveChanges}
+            />
+            <AddDoctorModal
+                show={showAddDoctorModal}
+                handleClose={handleCloseAddDoctorModal}
+                handleSave={handleSaveNewDoctor}
+            />
+            <ScheduleModal
+                show={showScheduleModal}
+                handleClose={handleCloseScheduleModal}
+                schedule={selectedSchedule}
+            />
+            <DeleteModal
+                show={showDeleteModal}
+                handleClose={handleCloseDeleteModal}
+                handleDelete={handleDeleteDoctor}
+                data={selectedDoctor?.nama}
+            />
         </Fragment>
     );
 };
