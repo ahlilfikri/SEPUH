@@ -28,13 +28,17 @@ module.exports = {
     },
 
     post: async (req, res) => {
-
         try {
-            const { nama, spesialisasi } = req.body;
+            const { nama, spesialisasi, alamat, jadwal, img } = req.body;
 
             const newDokter = new dokterSchema({
-                nama, spesialisasi
+                nama,
+                spesialisasi,
+                alamat,
+                jadwal, 
+                img
             });
+
             await newDokter.save();
             return response(200, newDokter, 'Dokter Berhasil Ditambahkan', res);
         } catch (error) {
@@ -46,17 +50,25 @@ module.exports = {
     put: async (req, res) => {
         const id = req.params._id;
         try {
-            const { nama, spesialisasi } = req.body;
-            const updateDokter = { nama, spesialisasi};
+            const { nama, spesialisasi, alamat, jadwal, img } = req.body;
+            const updateDokter = {
+                nama,
+                spesialisasi,
+                alamat,
+                jadwal, 
+                img
+            };
 
             const result = await dokterSchema.findByIdAndUpdate(id, updateDokter, { new: true });
+            if (!result) {
+                return response(404, null, 'Dokter tidak ditemukan', res);
+            }
             return response(200, result, 'Dokter Berhasil Diupdate', res);
         } catch (error) {
             console.error(error.message);
             return response(500, error, 'Internal server error', res);
         }
     },
-
 
     delete: async (req, res) => {
         const id = req.params._id;

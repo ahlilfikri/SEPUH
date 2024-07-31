@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const jadwalSchema = new Schema({
-    waktu: { type: Date, required: true },
+    waktu: { type: String, required: true },
     dokter: { type: mongoose.Schema.Types.ObjectId, ref: "user" },
     pasien: { type: mongoose.Schema.Types.ObjectId, ref: "user" },
     ruang: { type: [String], required: true },
