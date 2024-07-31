@@ -27,7 +27,7 @@ const Home = () => {
                 <Navbar isLogin={isLogin} />  {/* Use the Navbar component and pass isLogin as a prop */}
             </header>
             <main className="position-relative" style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #225374, #28A09E)' }}>
-                <div className="container text-white" style={{ minHeight: '100vh' }}>
+                <div className="container text-white" style={{ minHeight: '50vh' }}>
                     <div className="row align-items-center h-100">
                         <div className="col-md-6 text-start pt-5 pt-md-0">
                             <h1>SEPUH!</h1>
@@ -41,7 +41,7 @@ const Home = () => {
                     </div>
                 </div>
 
-                <div className="container text-white pt-5">
+                <div className="container text-white ">
                     <h1 style={{ textAlign: 'center', marginTop:'60px', marginBottom:'30px' }} ref={sectionRef}>TENTANG KAMI</h1>
                 </div>
                 

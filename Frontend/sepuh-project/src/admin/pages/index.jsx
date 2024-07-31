@@ -7,14 +7,14 @@ import Gambar from '/logo.svg';
 import Pasien from './pasien';
 import Dokter from './dokter';
 import Jadwal from './jadwal';
-import Profile from './profile';
+import Profile from '../../user/pages/profile';
 import './index.css';
 
 const Dashboard = () => {
     const port = `${import.meta.env.VITE_BASE_URL}`;
 
     const [clickedMenu, setClickedMenu] = useState(true);
-    const [activeItem, setActiveItem] = useState('');
+    const [activeItem, setActiveItem] = useState('Pasien');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');

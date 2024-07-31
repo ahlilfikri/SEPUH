@@ -5,7 +5,7 @@ import Home from './admin/pages/home';
 import Signin from './auth/signin';
 import Signup from './auth/signup';
 import Reset from './auth/reset';
-import Profile from './admin/pages/profile';
+import Profile from './user/pages/profile';
 import Dashboard from './admin/pages';
 import ProtectedRoute from './ProtectedRoute';
 
