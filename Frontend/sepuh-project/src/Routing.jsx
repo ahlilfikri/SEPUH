@@ -4,6 +4,7 @@ import App from './App';
 import Home from './admin/pages/home';
 import Signin from './auth/signin';
 import Signup from './auth/signup';
+import Reset from './auth/reset';
 import Profile from './admin/pages/profile';
 import Dashboard from './admin/pages';
 import ProtectedRoute from './ProtectedRoute';
@@ -29,6 +30,12 @@ const router = createBrowserRouter([
         path: '/profile',
         element: (
           <ProtectedRoute component={Profile} role={0} />
+        ),
+      },
+      {
+        path: '/reset',
+        element: (
+          <ProtectedRoute component={Reset} role={0} />
         ),
       },
       {

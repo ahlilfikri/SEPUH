@@ -1,4 +1,5 @@
 import React, { Fragment, useEffect, useState, useRef } from 'react';
+import Gambar from '/logo.svg';
 import Dokter from '/doksuster.png';
 import Navbar from '../../../shared/navbar';
 
@@ -18,7 +19,7 @@ const Home = () => {
 
     useEffect(() => {
         handleIsLogin();
-    }, []); // This effect should run only once, hence an empty dependency array
+    }, []);
 
     return (
         <Fragment>
