@@ -122,6 +122,19 @@ module.exports = {
             return response(500, error, 'internal server error', res)
         }
     },
+    getOne: async (req, res) => {
+        id = req.params.id;
+        try {
+            const user = await userModel.findById(id);
+            if (!user){
+                return response(404, null, 'User tidak ditemukan', res)
+            }
+            return response(200, user, 'Menampilkan semua user', res);
+        } catch (error) {
+            console.error(error.message);
+            return response(500, error, 'internal server error', res)
+        }
+    },
     post: async (req, res) => {
         const { username, password, email } = req.body;
         const passwordEncripted = await bcrypt.hash(password, 15);

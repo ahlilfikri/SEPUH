@@ -8,7 +8,9 @@ router.post('/register', userController.register);
 router.post('/login', userController.login);
 router.post('/logout/:token', userController.logout);
 router.put('/reset/:id', userController.reset);
+
 router.get('/',authenticateAdmin, userController.getAllUser);
+router.get('/:id',authenticateAdmin, userController.getOne);
 router.post('/', authenticateAdmin, userController.post);
 router.put('/:id', authenticateAdmin, userController.put);
 router.delete('/:id', authenticateAdmin, userController.delete);
