@@ -89,7 +89,7 @@ module.exports = {
                 return response(400, null, 'Password salah', res);
             }
 
-            const token = jwt.sign({ id: user._id, username: user.username, role: user.role }, secret_key, { expiresIn: '1d' });
+            const token = jwt.sign({ id: user._id, username: user.username, role: user.role, nama : user.nama }, secret_key, { expiresIn: '1d' });
             user.token = token;
             await user.save();
             return response(200, token, 'Login berhasil', res);
