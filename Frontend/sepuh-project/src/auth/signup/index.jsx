@@ -68,23 +68,17 @@ const SignUp = () => {
 
     return (
         <Fragment>
-            <div
-                className="container-fluid d-flex justify-content-center align-items-center vh-100"
-                style={{ background: 'linear-gradient(135deg, #225374, #28A09E)' }}
-            >
-                <div
-                    className="card shadow"
-                    style={{ borderRadius: '15px', overflow: 'hidden', width: '900px' }}
-                >
-                    <div className="row no-gutters">
+            <div className="container-fluid py-5 py-md-0 d-flex justify-content-center align-items-center vh-100" style={{ background: 'linear-gradient(135deg, #225374, #28A09E)' }}>
+                <div className="card shadow" style={{ borderRadius: '15px', overflow: 'hidden', width: '90%', maxWidth: '900px' }}>
+                    <div className="row g-0">
                         <div className="col-md-8 p-5">
                             <div className="d-flex justify-content-center mb-4">
                                 <h2 className="mr-3" onClick={handleSignIn} style={{ color: '#8C8C8C', cursor: 'pointer' }}>Sign In</h2>
-                                <h2 className='ms-4' style={{color: '#225374', cursor: 'pointer', fontWeight: 'bold' }}>Sign Up</h2>
+                                <h2 className="ms-4" style={{ color: '#225374', cursor: 'pointer', fontWeight: 'bold' }}>Sign Up</h2>
                             </div>
                             <form onSubmit={handleSubmit}>
                                 <div className="form-group row align-items-center mb-3">
-                                    <label style={{ fontSize: '18px', fontWeight: 'bold', color : '#225374' }} htmlFor="username" className="col-sm-4 col-form-label">User Name</label>
+                                    <label htmlFor="username" className="col-sm-4 col-form-label" style={{ fontSize: '18px', fontWeight: 'bold', color: '#225374' }}>User Name</label>
                                     <div className="col-sm-8">
                                         <input
                                             type="text"
@@ -93,11 +87,12 @@ const SignUp = () => {
                                             value={formData.username}
                                             onChange={handleChange}
                                             style={{ borderRadius: '15px' }}
+                                            required
                                         />
                                     </div>
                                 </div>
                                 <div className="form-group row align-items-center mb-3">
-                                    <label style={{ fontSize: '18px', fontWeight: 'bold', color : '#225374' }} htmlFor="email" className="col-sm-4 col-form-label">Email</label>
+                                    <label htmlFor="email" className="col-sm-4 col-form-label" style={{ fontSize: '18px', fontWeight: 'bold', color: '#225374' }}>Email</label>
                                     <div className="col-sm-8">
                                         <input
                                             type="email"
@@ -106,11 +101,12 @@ const SignUp = () => {
                                             value={formData.email}
                                             onChange={handleChange}
                                             style={{ borderRadius: '15px' }}
+                                            required
                                         />
                                     </div>
                                 </div>
                                 <div className="form-group row align-items-center mb-3">
-                                    <label style={{ fontSize: '18px', fontWeight: 'bold', color : '#225374' }} htmlFor="password" className="col-sm-4 col-form-label">Password</label>
+                                    <label htmlFor="password" className="col-sm-4 col-form-label" style={{ fontSize: '18px', fontWeight: 'bold', color: '#225374' }}>Password</label>
                                     <div className="col-sm-8 position-relative">
                                         <input
                                             type={showPassword ? "text" : "password"}
@@ -119,11 +115,12 @@ const SignUp = () => {
                                             value={formData.password}
                                             onChange={handleChange}
                                             style={{ borderRadius: '15px' }}
+                                            required
                                         />
                                         <button
                                             type="button"
                                             className="btn btn-secondary position-absolute end-0 top-50 translate-middle-y me-2"
-                                            style={{ borderRadius: '0 15px 15px 0', background:'#225374' }}
+                                            style={{ borderRadius: '0 15px 15px 0', background: '#225374' }}
                                             onClick={toggleShowPassword}
                                         >
                                             {showPassword ? "Hide" : "Show"}
@@ -131,20 +128,21 @@ const SignUp = () => {
                                     </div>
                                 </div>
                                 <div className="form-group row align-items-center mb-3">
-                                    <label style={{ fontSize: '18px', fontWeight: 'bold', color : '#225374' }} htmlFor="confirmPassword" className="col-sm-4 col-form-label">Confirm Password</label>
+                                    <label htmlFor="confirmPassword" className="col-sm-4 col-form-label" style={{ fontSize: '18px', fontWeight: 'bold', color: '#225374' }}>Confirm Password</label>
                                     <div className="col-sm-8 position-relative">
                                         <input
                                             type={showPassword ? "text" : "password"}
                                             name="confirmPassword"
-                                            className="form-control "
+                                            className="form-control"
                                             value={formData.confirmPassword}
                                             onChange={handleChange}
                                             style={{ borderRadius: '15px' }}
+                                            required
                                         />
                                         <button
                                             type="button"
                                             className="btn btn-secondary position-absolute end-0 top-50 translate-middle-y me-2"
-                                            style={{ borderRadius: '0 15px 15px 0', background:'#225374' }}
+                                            style={{ borderRadius: '0 15px 15px 0', background: '#225374' }}
                                             onClick={toggleShowPassword}
                                         >
                                             {showPassword ? "Hide" : "Show"}
@@ -152,26 +150,14 @@ const SignUp = () => {
                                     </div>
                                 </div>
                                 <div className="d-flex justify-content-end">
-                                    <button
-                                        type="submit"
-                                        className="btn btn-success mt-3"
-                                        style={{ borderRadius: '15px', background: '#50D68A' }}
-                                    >
+                                    <button type="submit" className="btn btn-success mt-3" style={{ borderRadius: '15px', background: '#50D68A' }}>
                                         Sign Up
                                     </button>
                                 </div>
                             </form>
                         </div>
-                        <div
-                            className="col-md-4 d-flex justify-content-center align-items-center"
-                            style={{ background: '#225374', padding: '20px' }}
-                        >
-                            <img
-                                src="/dokter.png"
-                                alt="Sign Up Image"
-                                className="img-fluid"
-                                style={{ width: '80%', borderRadius: '15px' }}
-                            />
+                        <div className="col-md-4 d-flex justify-content-center align-items-center" style={{ background: '#225374', padding: '20px' }}>
+                            <img src="/dokter.png" alt="Sign Up Image" className="img-fluid" style={{ maxWidth: '80%', borderRadius: '15px' }} />
                         </div>
                     </div>
                 </div>

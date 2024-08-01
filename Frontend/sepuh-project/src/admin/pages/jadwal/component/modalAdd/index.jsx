@@ -2,6 +2,7 @@ import React, { Fragment, useState, useEffect } from 'react';
 import axios from 'axios';
 
 const ModalAdd = ({ show, handleClose, handleSave }) => {
+    const port = `${import.meta.env.VITE_BASE_URL}`;
     const [formData, setFormData] = useState({
         pasien: '',
         dokter: '',
@@ -16,7 +17,7 @@ const ModalAdd = ({ show, handleClose, handleSave }) => {
     useEffect(() => {
         const fetchPatients = async () => {
             try {
-                const response = await axios.get('http://localhost:3000/pasien',
+                const response = await axios.get(`'${port}pasien'`,
                     {
                         headers: {
                             'Authorization': `Bearer ${token}`
@@ -31,7 +32,7 @@ const ModalAdd = ({ show, handleClose, handleSave }) => {
 
         const fetchDoctors = async () => {
             try {
-                const response = await axios.get('http://localhost:3000/dokter',
+                const response = await axios.get(`'${port}dokter'`,
                     {
                         headers: {
                             'Authorization': `Bearer ${token}`

@@ -48,6 +48,7 @@ const Dokter = () => {
     };
 
     const handleSaveChanges = async (updatedDoctor) => {
+        setShowEditModal(false);
         setLoading(true);
         try {
             const response = await axios.put(`${port}dokter/${updatedDoctor.id}`, updatedDoctor, {
@@ -61,7 +62,6 @@ const Dokter = () => {
             setError('Tidak dapat menyimpan perubahan, coba lagi');
         } finally {
             setLoading(false);
-            setShowEditModal(false);
             fetchData();
         }
     };
@@ -71,6 +71,7 @@ const Dokter = () => {
     };
 
     const handleSaveNewDoctor = async (newDoctor) => {
+        setShowAddDoctorModal(false);
         setLoading(true);
         try {
             const response = await axios.post(`${port}dokter`, newDoctor, {
@@ -88,7 +89,6 @@ const Dokter = () => {
             setError('Tidak dapat menambahkan dokter, coba lagi');
         } finally {
             setLoading(false);
-            setShowAddDoctorModal(false);
             fetchData();
         }
     };

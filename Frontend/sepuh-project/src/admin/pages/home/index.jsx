@@ -23,9 +23,8 @@ const Home = () => {
 
     return (
         <Fragment>
-            <header>
-                <Navbar isLogin={isLogin} />  {/* Use the Navbar component and pass isLogin as a prop */}
-            </header>
+
+                <Navbar isLogin={isLogin} />  
             <main className="position-relative" style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #225374, #28A09E)' }}>
                 <div className="container text-white" style={{ minHeight: '50vh' }}>
                     <div className="row align-items-center h-100">

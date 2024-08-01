@@ -14,9 +14,11 @@ const ModalEdit = ({ show, handleClose, handleSave, data }) => {
     const token = sessionStorage.getItem('token');
 
     useEffect(() => {
+        const port = `${import.meta.env.VITE_BASE_URL}`;
+
         const fetchPatients = async () => {
             try {
-                const response = await axios.get('http://localhost:3000/pasien',
+                const response = await axios.get(`${port}pasien`,
                     {
                         headers: {
                             'Authorization': `Bearer ${token}`
@@ -31,7 +33,7 @@ const ModalEdit = ({ show, handleClose, handleSave, data }) => {
 
         const fetchDoctors = async () => {
             try {
-                const response = await axios.get('http://localhost:3000/dokter',
+                const response = await axios.get(`${port}dokter`,
                     {
                         headers: {
                             'Authorization': `Bearer ${token}`
@@ -51,10 +53,10 @@ const ModalEdit = ({ show, handleClose, handleSave, data }) => {
     useEffect(() => {
         if (data) {
             setFormData({
-                pasien: data.pasien.nama || '',
-                dokter: data.dokter.nama || '',
-                waktu: data.waktu || '',
-                id: data._id || '',
+                pasien: data?.pasien?.nama || '',
+                dokter: data?.dokter?.nama || '',
+                waktu: data?.waktu || '',
+                id: data?._id || '',
             });
         }
     }, [data]);

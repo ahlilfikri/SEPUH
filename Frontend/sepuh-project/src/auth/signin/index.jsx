@@ -80,32 +80,27 @@ const Signin = ({ toggleSigninPopup }) => {
     useEffect(() => {
         handleIsLogin();
     }, [isLogin]);
+
     return (
         <Fragment>
-            <div
-                className="container-fluid d-flex justify-content-center align-items-center vh-100"
-                style={{ background: 'linear-gradient(135deg, #225374, #28A09E)' }}
-            >
-                <div
-                    className="card shadow"
-                    style={{ borderRadius: '15px', overflow: 'hidden', width: '900px' }}
-                >
-                    <div className="row no-gutters">
+            <div className="container-fluid d-flex justify-content-center align-items-center vh-100" style={{ background: 'linear-gradient(135deg, #225374, #28A09E)' }}>
+                <div className="card shadow" style={{ borderRadius: '15px', overflow: 'hidden', width: '90%', maxWidth: '900px' }}>
+                    <div className="row g-0">
                         <div className="col-md-7 p-5">
                             <div className="d-flex justify-content-center mb-4">
                                 <h2 className="mr-3" style={{ color: '#003580', cursor: 'pointer', fontWeight: 'bold' }}>Sign In</h2>
-                                <h2 className='ms-4' style={{ color: '#8C8C8C', cursor: 'pointer' }} onClick={handleSignUp}>Sign Up</h2>
+                                <h2 className="ms-4" style={{ color: '#8C8C8C', cursor: 'pointer' }} onClick={handleSignUp}>Sign Up</h2>
                             </div>
                             <form onSubmit={handleSubmit}>
-                                <div className="form-group row align-items-center mb-3 mt-5">
-                                    <div className="col-sm-2">
+                                <div className="form-group row align-items-center mb-3">
+                                    <div className="col-2 text-end">
                                         <i className="fa fa-user" style={{ fontSize: '24px', color: '#225374' }}></i>
                                     </div>
-                                    <div className="col-sm-10">
+                                    <div className="col-10">
                                         <input
-                                            type="username"
+                                            type="text"
                                             name="username"
-                                            placeholder="username"
+                                            placeholder="Username"
                                             className="form-control"
                                             value={formData.username}
                                             onChange={handleChange}
@@ -115,10 +110,10 @@ const Signin = ({ toggleSigninPopup }) => {
                                     </div>
                                 </div>
                                 <div className="form-group row align-items-center mb-3">
-                                    <div className="col-sm-2">
+                                    <div className="col-2 text-end">
                                         <i className="fa fa-lock" style={{ fontSize: '24px', color: '#225374' }}></i>
                                     </div>
-                                    <div className="col-sm-10 mt-3 position-relative">
+                                    <div className="col-10 position-relative">
                                         <input
                                             type={showPassword ? "text" : "password"}
                                             name="password"
@@ -131,16 +126,15 @@ const Signin = ({ toggleSigninPopup }) => {
                                         />
                                         <button
                                             type="button"
-                                            className="btn btn-secondary position-absolute end-0 top-50 translate-middle-y me-2"
-                                            style={{ borderRadius: '0 15px 15px 0', background: '#225374' }}
+                                            className="btn btn-secondary position-absolute end-0 top-50 translate-middle-y"
+                                            style={{ borderRadius: '0 15px 15px 0', background: '#225374', marginRight:'10px' }}
                                             onClick={toggleShowPassword}
                                         >
                                             {showPassword ? "Hide" : "Show"}
                                         </button>
                                     </div>
                                 </div>
-                                <div className="d-flex justify-content-end align-items-center mb-3 mt-5">
-                                    {/* <a href="#" style={{ textDecoration: 'none', color: '#003580' }}>Forgot password?</a> */}
+                                <div className="d-flex justify-content-end align-items-center mb-3">
                                     <button
                                         type="submit"
                                         className="btn btn-success"
@@ -151,15 +145,12 @@ const Signin = ({ toggleSigninPopup }) => {
                                 </div>
                             </form>
                         </div>
-                        <div
-                            className="col-md-5 d-flex justify-content-center align-items-center"
-                            style={{ background: '#225374', padding: '20px', height: '430px' }}
-                        >
+                        <div className="col-md-5 d-flex justify-content-center align-items-center" style={{ background: '#225374', padding: '20px' }}>
                             <img
                                 src="/dokter.png"
                                 alt="Sign In Image"
                                 className="img-fluid"
-                                style={{ width: '80%', borderRadius: '15px' }}
+                                style={{ maxWidth: '80%', borderRadius: '15px' }}
                             />
                         </div>
                     </div>

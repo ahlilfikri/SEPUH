@@ -14,11 +14,11 @@ const ModalEdit = ({ show, handleClose, handleSave, data }) => {
     useEffect(() => {
         if (data) {
             setFormData({
-                id: data.user._id || '',
-                nama: data.user.nama || '',
-                usia: data.user.usia || '',
-                alamat: data.user.alamat || '',
-                riwayat: data.riwayat || [''] // Ensure riwayat is initialized correctly
+                id: data?.user?._id || '',
+                nama: data?.user?.nama || '',
+                usia: data?.user?.usia || '',
+                alamat: data?.user?.alamat || '',
+                riwayat: data?.riwayat || [''] // Ensure riwayat is initialized correctly
             });
         }
     }, [data]);

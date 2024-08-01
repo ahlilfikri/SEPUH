@@ -112,7 +112,7 @@ const Dashboard = () => {
             outline: 'none',
             color: '#225374',
             fontWeight: 'bold',
-            color: clickedMenu ?'#225374' : 'white'
+            color: clickedMenu ? '#225374' : 'white'
           }}
         >
           {clickedMenu ? 'x' : <i class="fa-solid fa-bars"></i>}

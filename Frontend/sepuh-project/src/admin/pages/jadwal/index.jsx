@@ -240,8 +240,8 @@ const Jadwal = () => {
                                     {error === '' && data.map((jadwal, index) => (
                                         <tr key={index}>
                                             <td style={{ fontSize: '18px', fontWeight: '400' }}>{index + 1}</td>
-                                            <td style={{ fontSize: '18px', fontWeight: '400' }}>{jadwal.pasien.nama}</td>
-                                            <td style={{ fontSize: '18px', fontWeight: '400' }}>{jadwal.dokter.nama}</td>
+                                            <td style={{ fontSize: '18px', fontWeight: '400' }}>{jadwal?.pasien?.nama ? jadwal?.pasien?.nama : 'data tidak ditemukan'}</td>
+                                            <td style={{ fontSize: '18px', fontWeight: '400' }}>{jadwal?.dokter?.nama ? jadwal?.dokter?.nama : 'data tidak ditemukan'}</td>
                                             <td style={{ fontSize: '18px', fontWeight: '400' }}>
                                                 {new Date(jadwal.waktu).toLocaleString('id-ID', { timeZone: 'Asia/Jakarta', dateStyle: 'full', timeStyle: 'short' })}
                                             </td>

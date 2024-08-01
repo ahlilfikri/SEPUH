@@ -1,7 +1,7 @@
 import React, { useState, useEffect, Fragment } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Gambar from '/logo.svg';
-import {jwtDecode} from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 import Loading from '../loading';
 import Modal from '../modal';
@@ -15,7 +15,7 @@ const Navbar = ({ isLogin }) => {
     const port = `${import.meta.env.VITE_BASE_URL}`;
 
     useEffect(() => {
-        handleIsSignin(); 
+        handleIsSignin();
     }, []);
 
     const handleSignin = () => {
@@ -36,7 +36,7 @@ const Navbar = ({ isLogin }) => {
             const decodedToken = jwtDecode(token);
             setIsSignin(decodedToken.role);
         } else {
-            setIsSignin(-1); 
+            setIsSignin(-1);
         }
     };
 
@@ -79,46 +79,54 @@ const Navbar = ({ isLogin }) => {
 
     return (
         <Fragment>
-            <nav className="navbar navbar-expand-lg navbar-custom" style={{ background: 'linear-gradient(135deg, #225374, #28A09E)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+            <nav className="navbar navbar-expand-lg navbar-custom" >
                 <div className="container-fluid">
-                    <a className="navbar-brand d-flex pe-5 pt-4" href="#">
+                    <a className="navbar-brand d-flex align-items-center" href="#">
                         <img src={Gambar} alt="Logo" width="32" height="24" className="d-inline-block align-text-top" />
-                        <p style={{ fontWeight: 'bold', marginLeft: '10px' }}>SEPUH</p>
+                        <span style={{ fontWeight: 'bold', marginLeft: '10px' }}>SEPUH</span>
                     </a>
                     <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                         <span className="navbar-toggler-icon"></span>
                     </button>
                     <div className="collapse navbar-collapse" id="navbarNav">
-                        <ul className="navbar-nav ms-auto">
+                        <ul className="navbar-nav ms-auto align-items-center">
                             <li className="nav-item">
-                                {!isLogin && (
-                                    <div className="nav-link active d-flex align-items-center pe-5 pt-4">
-                                        <p style={{ fontWeight: 'bold', margin: 0, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', cursor:'pointer' }} className="pe-4">Home</p>
-                                        <div onClick={handleSignin}>
-                                            <i className="fas fa-user" style={{ fontSize: '24px', color: '#28A09E', cursor:'pointer' }}></i>
-                                            <span style={{ fontSize: '16px', fontWeight: '700', margin: '-10px 0 0 0', cursor:'pointer' }} className='ps-1'>Signin</span>
-                                        </div>
-                                    </div>
-                                )}
-                                {isLogin && isSignin === 1 && (
-                                    <div className="nav-link active d-flex align-items-center pe-5 pt-4">
-                                        <p style={{ fontWeight: 'bold', margin: 0, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', cursor:'pointer' }} onClick={handleDashboard} className="pe-4">Dashboard</p>
-                                        <div onClick={handleProfile}>
-                                            <i className="fas fa-user" style={{ fontSize: '24px', color: '#28A09E', cursor:'pointer' }}></i>
-                                            <span style={{ fontSize: '16px', fontWeight: '700', margin: '-10px 0 0 0', cursor:'pointer' }} className='ps-1'>Profile</span>
-                                        </div>
-                                    </div>
-                                )}
-                                {isLogin && isSignin === 0 && (
-                                    <div className="nav-link active d-flex align-items-center pe-5 pt-4">
-                                        <p style={{ fontWeight: 'bold', margin: 0, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', cursor:'pointer'  }} onClick={handleLogout} className="pe-4">Logout</p>
-                                        <div onClick={handleProfile}>
-                                            <i className="fas fa-user" style={{ fontSize: '24px', color: '#28A09E', cursor:'pointer' }}></i>
-                                            <span style={{ fontSize: '16px', fontWeight: '700', margin: '-10px 0 0 0', cursor:'pointer' }} className='ps-1'>Profile</span>
-                                        </div>
-                                    </div>
-                                )}
+                                <p className="nav-link mt-3 mx-0 mx-md-1" style={{ fontWeight: 'bold', cursor: 'pointer' }} onClick={() => navigate('/')}>Home</p>
                             </li>
+                            {!isLogin && (
+                                <li className="nav-item">
+                                    <div onClick={handleSignin} className="d-flex align-items-center" style={{ cursor: 'pointer' }}>
+                                        <i className="fas fa-user" style={{ fontSize: '24px', color: '#28A09E' }}></i>
+                                        <span style={{ fontSize: '16px', fontWeight: '700', marginLeft: '5px' }}>Signin</span>
+                                    </div>
+                                </li>
+                            )}
+                            {isLogin && isSignin === 1 && (
+                                <>
+                                    <li className="nav-item mx-0 mx-md-1 mt-md-3 ">
+                                        <p className="nav-link" style={{ fontWeight: 'bold', cursor: 'pointer' }} onClick={handleDashboard}>Dashboard</p>
+                                    </li>
+                                    <li className="nav-item py-3">
+                                        <div onClick={handleProfile} className="d-flex align-items-center " style={{ cursor: 'pointer' }}>
+                                            <i className="fas fa-user" style={{ fontSize: '24px', color: '#28A09E' }}></i>
+                                            <span style={{ fontSize: '16px', fontWeight: '700', marginLeft: '5px' }}>Profile</span>
+                                        </div>
+                                    </li>
+                                </>
+                            )}
+                            {isLogin && isSignin === 0 && (
+                                <>
+                                    <li className="nav-item">
+                                        <p className="nav-link" style={{ fontWeight: 'bold', cursor: 'pointer' }} onClick={handleLogout}>Logout</p>
+                                    </li>
+                                    <li className="nav-item">
+                                        <div onClick={handleProfile} className="d-flex align-items-center" style={{ cursor: 'pointer' }}>
+                                            <i className="fas fa-user" style={{ fontSize: '24px', color: '#28A09E' }}></i>
+                                            <span style={{ fontSize: '16px', fontWeight: '700', marginLeft: '5px' }}>Profile</span>
+                                        </div>
+                                    </li>
+                                </>
+                            )}
                         </ul>
                     </div>
                 </div>

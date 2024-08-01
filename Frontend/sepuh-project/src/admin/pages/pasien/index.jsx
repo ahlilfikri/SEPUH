@@ -48,6 +48,7 @@ const Pasien = () => {
     };
 
     const handleSaveChanges = async (updatedPasien) => {
+        setShowEditModal(false);
         setLoading(true);
         try {
             const response = await axios.put(`${port}user/${updatedPasien.id}`, updatedPasien, {
@@ -61,7 +62,6 @@ const Pasien = () => {
             setError('Tidak dapat menyimpan perubahan, coba lagi');
         } finally {
             setLoading(false);
-            setShowEditModal(false);
             fetchData();
         }
     };
@@ -71,6 +71,7 @@ const Pasien = () => {
     };
 
     const handleSaveNewPasien = async (newPasien) => {
+        setShowAddPasienModal(false);
         setLoading(true);
         try {
             const response = await axios.post(`${port}user/register`, newPasien, {
@@ -88,7 +89,6 @@ const Pasien = () => {
             setError('Tidak dapat menambahkan pasien, coba lagi');
         } finally {
             setLoading(false);
-            setShowAddPasienModal(false);
             fetchData();
         }
     };
@@ -99,6 +99,7 @@ const Pasien = () => {
     };
 
     const handleDeletePasien = async () => {
+        setShowDeleteModal(false);
         setLoading(true);
         try {
             const response = await axios.delete(`${port}user/${selectedPasien.user._id}`, {
@@ -115,7 +116,6 @@ const Pasien = () => {
             setError('Tidak dapat menghapus pasien, coba lagi');
         } finally {
             setLoading(false);
-            setShowDeleteModal(false);
             fetchData();
         }
     };
