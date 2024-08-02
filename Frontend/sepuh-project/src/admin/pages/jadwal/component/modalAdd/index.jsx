@@ -101,7 +101,7 @@ const ModalAdd = ({ show, handleClose, handleSave }) => {
                 <div className="modal-dialog" role="document">
                     <div className="modal-content">
                         <div className="modal-header">
-                            <h5 className="modal-title">Tambah Waktu</h5>
+                            <h5 className="modal-title">Tambah Jadwal</h5>
                             <button type="button" className="close" onClick={handleClose}>
                                 <span>&times;</span>
                             </button>

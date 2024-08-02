@@ -8,6 +8,7 @@ import AddPasienModal from './component/modalAdd';
 import RiwayatModal from './component/modalDetail';
 import DeleteModal from '../../../shared/modalDelete';
 import useDebounce from '../../../shared/debouncedValue';
+import Pagination from '../../../shared/pagination'; 
 
 const Pasien = () => {
     const port = `${import.meta.env.VITE_BASE_URL}`;
@@ -29,6 +30,10 @@ const Pasien = () => {
     });
     const debouncedFilters = useDebounce(filters, 1500);
 
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1); 
+    const itemsPerPage = 10; 
+
     const fetchData = async () => {
         setLoading(true);
         try {
@@ -39,13 +44,16 @@ const Pasien = () => {
                 params: {
                     nama: debouncedFilters.nama,
                     usia: debouncedFilters.usia,
-                    alamat: debouncedFilters.alamat
+                    alamat: debouncedFilters.alamat,
+                    page: currentPage,
+                    limit: itemsPerPage
                 }
             });
             if (response.data.status === 500) {
                 setError('Tidak dapat mengambil data pasien, coba muat ulang laman');
             } else {
                 setData(response.data.data.data);
+                setTotalPages(response.data.data.totalPages); 
             }
         } catch (error) {
             setError('Tidak dapat mengambil data, coba muat ulang laman');
@@ -56,7 +64,7 @@ const Pasien = () => {
 
     useEffect(() => {
         fetchData();
-    }, [token, debouncedFilters]);
+    }, [token, debouncedFilters, currentPage]); 
 
     const handleEditClick = (pasien) => {
         setSelectedPasien({ ...pasien });
@@ -173,6 +181,11 @@ const Pasien = () => {
     const handleClearFilters = () => {
         setFilters({ nama: '', usia: '', alamat: '' });
     };
+
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+    };
+
     return (
         <Fragment>
             <div className="container pt-4">
@@ -181,22 +194,22 @@ const Pasien = () => {
                         <div className="p-4 bg-white rounded shadow-sm">
                             <h1 className="mb-4">Filter</h1>
                             <div className="row">
-                                <div className="col-6 col-md-3">
+                                <div className="col-12 col-sm-6 col-md-3">
                                     <div className="mb-3">
                                         <input type="text" className="form-control" placeholder="Nama" name="nama" value={filters.nama} onChange={handleInputChange} />
                                     </div>
                                 </div>
-                                <div className="col-6 col-md-3">
+                                <div className="col-12 col-sm-6 col-md-3">
                                     <div className="mb-3">
                                         <input type="number" className="form-control" placeholder="Usia" name="usia" value={filters.usia} onChange={handleInputChange} />
                                     </div>
                                 </div>
-                                <div className="col-6 col-md-3">
+                                <div className="col-12 col-sm-6 col-md-3">
                                     <div className="mb-3">
                                         <input type="text" className="form-control" placeholder="Alamat" name="alamat" value={filters.alamat} onChange={handleInputChange} />
                                     </div>
                                 </div>
-                                <div className="col-6 col-md-3">
+                                <div className="col-12 col-sm-6 col-md-3">
                                     <div className="d-flex gap-3">
                                         <button className="btn btn-success" onClick={fetchData}>Filter</button>
                                         <button className="btn btn-danger" onClick={handleClearFilters}>Clear</button>
@@ -253,7 +266,16 @@ const Pasien = () => {
                         </div>
                     </div>
                 </div>
+
+                <div className="py-1"></div>
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                />
+                <div className="py-3"></div>
             </div>
+
             {loading && <Loading />}
             {error && <Modal data={error} status={'error'} onClose={handleCloseModal} />}
             {success && <Modal data={success} status={'success'} onClose={handleCloseModal} />}

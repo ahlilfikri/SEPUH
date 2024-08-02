@@ -27,17 +27,17 @@ const Profile = () => {
         try {
             const token = sessionStorage.getItem('token');
             const decodedToken = jwtDecode(token);
-            const result = await axios.get(`${port}user/${decodedToken.id}`,
+            const response = await axios.get(`${port}user/${decodedToken.id}`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
                 }
             );
-            if (response.data.status === 500) {
+            if (!response.data.data) {
                 setError('Gagal mengambil data profil, silahkan muat ulang halaman');
             } else {
-                setData(result.data.data);
+                setData(response.data.data);
             }
         } catch (error) {
             setError('Gagal mengambil data profil, silahkan muat ulang halaman');

@@ -8,6 +8,7 @@ import AddDoctorModal from './component/modalAdd';
 import ScheduleModal from './component/modalDetail';
 import DeleteModal from '../../../shared/modalDelete';
 import useDebounce from '../../../shared/debouncedValue';
+import Pagination from '../../../shared/pagination'; 
 
 const Dokter = () => {
     const port = `${import.meta.env.VITE_BASE_URL}`;
@@ -25,8 +26,10 @@ const Dokter = () => {
 
     const [filters, setFilters] = useState({ nama: '', spesialisasi: '', alamat: '' });
     const debouncedFilters = useDebounce(filters, 1500);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
 
-    const fetchData = async () => {
+    const fetchData = async (page = currentPage) => {
         setLoading(true);
         try {
             const response = await axios.get(`${port}dokter/filter`, {
@@ -36,13 +39,17 @@ const Dokter = () => {
                 params: {
                     nama: debouncedFilters.nama,
                     spesialisasi: debouncedFilters.spesialisasi,
-                    alamat: debouncedFilters.alamat
+                    alamat: debouncedFilters.alamat,
+                    page, limit: 20
                 }
             });
-            if (response.data.status === 500) {
+            if (!response.data.data.data) {
                 setError('Tidak dapat mengambil data, coba muat ulang laman');
             } else {
                 setData(response.data.data.data);
+                setTotalPages(response.data.data.totalPages);
+                setCurrentPage(page);
+                setLoading(false);
             }
         } catch (error) {
             setError('Tidak dapat mengambil data, coba muat ulang laman');
@@ -53,13 +60,14 @@ const Dokter = () => {
 
     useEffect(() => {
         fetchData();
-    }, [debouncedFilters, token]);
+    }, [debouncedFilters, token, currentPage]);
 
     const handleFilterChange = (e) => {
         setFilters({
             ...filters,
             [e.target.name]: e.target.value
         });
+        setCurrentPage(1);
     };
 
     const handleEditClick = (doctor) => {
@@ -104,7 +112,7 @@ const Dokter = () => {
                     'Content-Type': 'application/json'
                 }
             });
-            if (response.data.status == 500) {
+            if (response.data.status === 500) {
                 setError('Tidak dapat menambahkan dokter, coba lagi');
             } else {
                 setSuccess('Dokter berhasil ditambahkan');
@@ -130,7 +138,7 @@ const Dokter = () => {
                     'Authorization': `Bearer ${token}`
                 }
             });
-            if (response.data.status == 500) {
+            if (response.data.status === 500) {
                 setError('Tidak dapat menghapus dokter, coba lagi');
             } else {
                 setSuccess('Dokter berhasil dihapus');
@@ -148,10 +156,13 @@ const Dokter = () => {
         setShowEditModal(false);
         setError('');
         setSuccess('');
+        setSelectedDoctor(null);
     };
 
     const handleCloseAddDoctorModal = () => {
         setShowAddDoctorModal(false);
+        setError('');
+        setSuccess('');
     };
 
     const handleScheduleClick = (schedule) => {
@@ -161,10 +172,19 @@ const Dokter = () => {
 
     const handleCloseScheduleModal = () => {
         setShowScheduleModal(false);
+        setSelectedSchedule([]);
     };
 
     const handleCloseDeleteModal = () => {
         setShowDeleteModal(false);
+        setSelectedDoctor(null);
+        setError('');
+        setSuccess('');
+    };
+
+    const onPageChange = (page) => {
+        setCurrentPage(page);
+        fetchData(page);
     };
 
     return (
@@ -175,7 +195,7 @@ const Dokter = () => {
                         <div className="p-4 bg-white rounded shadow-sm">
                             <h1 className="mb-4">Filter</h1>
                             <div className="row">
-                                <div className="col-6 col-md-3">
+                                <div className="col-12 col-sm-6 col-md-3">
                                     <div className="mb-3">
                                         <input
                                             type="text"
@@ -187,7 +207,7 @@ const Dokter = () => {
                                         />
                                     </div>
                                 </div>
-                                <div className="col-6 col-md-3">
+                                <div className="col-12 col-sm-6 col-md-3">
                                     <div className="mb-3">
                                         <input
                                             type="text"
@@ -199,7 +219,7 @@ const Dokter = () => {
                                         />
                                     </div>
                                 </div>
-                                <div className="col-6 col-md-3">
+                                <div className="col-12 col-sm-6 col-md-3">
                                     <div className="mb-3">
                                         <input
                                             type="text"
@@ -211,7 +231,7 @@ const Dokter = () => {
                                         />
                                     </div>
                                 </div>
-                                <div className="col-6 col-md-3">
+                                <div className="col-12 col-sm-6 col-md-3">
                                     <div className="d-flex gap-3">
                                         <button className="btn btn-success" onClick={fetchData}>Filter</button>
                                         <button className="btn btn-danger" onClick={() => setFilters({ nama: '', spesialisasi: '', alamat: '' })}>Clear</button>
@@ -240,56 +260,71 @@ const Dokter = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {error === '' && data.map((dokter, index) => (
-                                        <tr key={index}>
-                                            <td style={{ fontSize: '18px', fontWeight: '400', maxWidth: '10%' }}>{index + 1}</td>
-                                            <td style={{ fontSize: '18px', fontWeight: '400', maxWidth: '20%' }}>{dokter.nama}</td>
-                                            <td style={{ fontSize: '18px', fontWeight: '400', maxWidth: '30%' }}>{dokter.spesialisasi}</td>
-                                            <td style={{ fontSize: '18px', fontWeight: '400', maxWidth: '30%' }}>{dokter.alamat}</td>
-                                            <td style={{ fontSize: '18px', fontWeight: '400', maxWidth: '10%' }} className="text-center">
-                                                <div className="btn" onClick={() => handleScheduleClick(dokter.jadwal)}>
-                                                    <FaFileAlt style={{ color: '#FFD700', cursor: 'pointer' }} />
-                                                </div>
-                                            </td>
-                                            <td style={{ fontSize: '18px', maxWidth: '5%' }} className="text-center">
-                                                <div className="btn m-1" onClick={() => handleEditClick(dokter)}>
-                                                    <FaEdit style={{ cursor: 'pointer', marginRight: '10px', color: '#000' }} />
-                                                </div>
-                                                <FaTrashAlt className='m-1' style={{ cursor: 'pointer', color: '#B22222' }} onClick={() => handleDeleteClick(dokter)} />
-                                            </td>
+                                    {data.length === 0 ? (
+                                        <tr>
                                         </tr>
-                                    ))}
+                                    ) : (
+                                        data.map((doctor, index) => (
+                                            <tr key={doctor._id}>
+                                                <td style={{ textAlign: 'center', fontWeight: 'normal', fontSize: '18px'}}>{index + 1 + (currentPage - 1) * 20}</td>
+                                                <td style={{ fontWeight: 'normal', fontSize: '18px' }}>{doctor.nama}</td>
+                                                <td style={{ fontWeight: 'normal', fontSize: '18px' }}>{doctor.spesialisasi}</td>
+                                                <td style={{ fontWeight: 'normal', fontSize: '18px' }}>{doctor.alamat}</td>
+                                                <td style={{ textAlign: 'center' }}>
+                                                    <FaFileAlt style={{ cursor: 'pointer',fontWeight: 'normal', fontSize: '18px' }} onClick={() => handleScheduleClick(doctor.schedule)} />
+                                                </td>
+                                                <td style={{ textAlign: 'center',fontWeight: 'normal', fontSize: '18px' }}>
+                                                    <FaEdit
+                                                        style={{ cursor: 'pointer', marginRight: '10px' }}
+                                                        onClick={() => handleEditClick(doctor)}
+                                                    />
+                                                    <FaTrashAlt
+                                                        style={{ cursor: 'pointer', color: 'red' }}
+                                                        onClick={() => handleDeleteClick(doctor)}
+                                                    />
+                                                </td>
+                                            </tr>
+                                        ))
+                                    )}
                                 </tbody>
                             </table>
                         </div>
+                        <div className="py-1"></div>
+                        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={onPageChange} />
+                        <div className="py-3"></div>
                     </div>
                 </div>
             </div>
             {loading && <Loading />}
-            {error && <Modal data={error} status={'error'} onClose={handleCloseModal} />}
-            {success && <Modal data={success} status={'success'} onClose={handleCloseModal} />}
-            <EditModal
-                show={showEditModal}
-                handleClose={handleCloseModal}
-                data={selectedDoctor}
-                handleSave={handleSaveChanges}
-            />
-            <AddDoctorModal
-                show={showAddDoctorModal}
-                handleClose={handleCloseAddDoctorModal}
-                handleSave={handleSaveNewDoctor}
-            />
-            <ScheduleModal
-                show={showScheduleModal}
-                handleClose={handleCloseScheduleModal}
-                schedule={selectedSchedule}
-            />
-            <DeleteModal
-                show={showDeleteModal}
-                handleClose={handleCloseDeleteModal}
-                handleDelete={handleDeleteDoctor}
-                data={selectedDoctor?.nama}
-            />
+            {showEditModal && (
+                <EditModal
+                    show={showEditModal}
+                    onClose={handleCloseModal}
+                    doctor={selectedDoctor}
+                    onSaveChanges={handleSaveChanges}
+                />
+            )}
+            {showAddDoctorModal && (
+                <AddDoctorModal
+                    show={showAddDoctorModal}
+                    handleClose={handleCloseAddDoctorModal}
+                    handleSave={handleSaveNewDoctor}
+                />
+            )}
+            {showScheduleModal && (
+                <ScheduleModal
+                    show={showScheduleModal}
+                    handleClose={handleCloseScheduleModal}
+                    schedule={selectedSchedule}
+                />
+            )}
+            {showDeleteModal && (
+                <DeleteModal
+                    show={showDeleteModal}
+                    handleClose={handleCloseDeleteModal}
+                    handleDelete={handleDeleteDoctor}
+                />
+            )}
         </Fragment>
     );
 };

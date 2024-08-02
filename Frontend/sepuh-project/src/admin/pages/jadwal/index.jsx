@@ -7,6 +7,7 @@ import EditModal from './component/modalEdit';
 import AddJadwalModal from './component/modalAdd';
 import DeleteModal from '../../../shared/modalDelete';
 import useDebounce from '../../../shared/debouncedValue';
+import Pagination from '../../../shared/pagination';
 
 const Jadwal = () => {
     const port = `${import.meta.env.VITE_BASE_URL}`;
@@ -25,9 +26,11 @@ const Jadwal = () => {
         dokter: '',
         status: ''
     });
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
     const debouncedFilters = useDebounce(filters, 1500);
 
-    const fetchData = async () => {
+    const fetchData = async (page = 1) => {
         setLoading(true);
         try {
             const response = await axios.get(`${port}jadwal/filter`, {
@@ -37,13 +40,16 @@ const Jadwal = () => {
                 params: {
                     pasien: debouncedFilters.pasien,
                     dokter: debouncedFilters.dokter,
-                    status: debouncedFilters.status
+                    status: debouncedFilters.status,
+                    page, 
+                    limit: 20 
                 }
             });
-            if (response.data.status === 500) {
+            if (!response.data.data.data) {
                 setError('Tidak dapat mengambil data, coba muat ulang laman');
             } else {
                 setData(response.data.data.data);
+                setTotalPages(response.data.data.totalPages); 
             }
         } catch (error) {
             console.error('Fetch Error:', error);
@@ -55,9 +61,9 @@ const Jadwal = () => {
 
     useEffect(() => {
         if (token) {
-            fetchData();
+            fetchData(currentPage); 
         }
-    }, [debouncedFilters, token]);
+    }, [debouncedFilters, token, currentPage]);
 
     const handleEditClick = (jadwal) => {
         setSelectedJadwal({ ...jadwal });
@@ -83,7 +89,7 @@ const Jadwal = () => {
             setError('Tidak dapat menyimpan perubahan, coba lagi');
         } finally {
             setLoading(false);
-            fetchData();
+            fetchData(currentPage);
         }
     };
 
@@ -111,7 +117,7 @@ const Jadwal = () => {
             setError('Tidak dapat menambahkan jadwal, coba lagi');
         } finally {
             setLoading(false);
-            fetchData();
+            fetchData(currentPage);
         }
     };
 
@@ -139,7 +145,7 @@ const Jadwal = () => {
         } finally {
             setLoading(false);
             setShowDeleteModal(false);
-            fetchData();
+            fetchData(currentPage);
         }
     };
 
@@ -162,14 +168,14 @@ const Jadwal = () => {
             setError('Tidak dapat menyetujui jadwal, coba lagi');
         } finally {
             setLoading(false);
-            fetchData();
+            fetchData(currentPage);
         }
     };
 
     const handleReject = async (jadwal) => {
         setLoading(true);
         try {
-            await axios.put(`${port}jadwal/${jadwal._id}`, { status: 'ditolak' }, {
+            const response = await axios.put(`${port}jadwal/${jadwal._id}`, { status: 'ditolak' }, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
@@ -184,7 +190,7 @@ const Jadwal = () => {
             setError('Tidak dapat menolak jadwal, coba lagi');
         } finally {
             setLoading(false);
-            fetchData();
+            fetchData(currentPage);
         }
     };
 
@@ -231,6 +237,10 @@ const Jadwal = () => {
         setFilters({ pasien: '', dokter: '', status: '' });
     };
 
+    const onPageChange = (page) => {
+        setCurrentPage(page);
+    };
+
     return (
         <Fragment>
             <div className="container pt-4">
@@ -239,17 +249,17 @@ const Jadwal = () => {
                         <div className="p-4 bg-white rounded shadow-sm">
                             <h1 className="mb-4">Filter</h1>
                             <div className="row">
-                                <div className="col-6 col-md-3">
+                                <div className="col-12 col-sm-6 col-md-3">
                                     <div className="mb-3">
                                         <input type="text" className="form-control" placeholder="Pasien" name="pasien" value={filters.pasien} onChange={handleInputChange} />
                                     </div>
                                 </div>
-                                <div className="col-6 col-md-3">
+                                <div className="col-12 col-sm-6 col-md-3">
                                     <div className="mb-3">
                                         <input type="text" className="form-control" placeholder="Dokter" name="dokter" value={filters.dokter} onChange={handleInputChange} />
                                     </div>
                                 </div>
-                                <div className="col-6 col-md-3">
+                                <div className="col-12 col-sm-6 col-md-3">
                                     <div className="mb-3">
                                         <select
                                             className="form-control"
@@ -257,16 +267,16 @@ const Jadwal = () => {
                                             value={filters.status}
                                             onChange={handleInputChange}
                                         >
-                                            <option value="">Select Status</option> {/* Optional placeholder */}
+                                            <option value="">Select Status</option>
                                             <option value="disetujui">Disetujui</option>
                                             <option value="ditolak">Ditolak</option>
                                             <option value="diajukan">Diajukan</option>
                                         </select>
                                     </div>
                                 </div>
-                                <div className="col-6 col-md-3">
+                                <div className="col-12 col-sm-6 col-md-3">
                                     <div className="d-flex gap-3">
-                                        <button className="btn btn-success" onClick={fetchData}>Filter</button>
+                                        <button className="btn btn-success" onClick={() => fetchData(currentPage)}>Filter</button>
                                         <button className="btn btn-danger" onClick={handleClearFilters}>Clear</button>
                                     </div>
                                 </div>
@@ -295,7 +305,7 @@ const Jadwal = () => {
                                 <tbody>
                                     {error === '' && data.map((jadwal, index) => (
                                         <tr key={index}>
-                                            <td style={{ fontSize: '18px', fontWeight: '400' }}>{index + 1}</td>
+                                            <td style={{ fontSize: '18px', fontWeight: '400' }}>{index + 1 + (currentPage - 1) * 20}</td>
                                             <td style={{ fontSize: '18px', fontWeight: '400' }}>{jadwal?.pasien?.nama ? jadwal?.pasien?.nama : 'data tidak ditemukan'}</td>
                                             <td style={{ fontSize: '18px', fontWeight: '400' }}>{jadwal?.dokter?.nama ? jadwal?.dokter?.nama : 'data tidak ditemukan'}</td>
                                             <td style={{ fontSize: '18px', fontWeight: '400' }}>
@@ -328,6 +338,13 @@ const Jadwal = () => {
                         </div>
                     </div>
                 </div>
+                <div className="py-1"></div>
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={onPageChange}
+                />
+                <div className="py-3"></div>
             </div>
             {loading && <Loading />}
             {error && <Modal data={error} status={'error'} onClose={handleCloseModal} />}
