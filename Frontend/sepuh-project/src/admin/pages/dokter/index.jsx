@@ -165,7 +165,7 @@ const Dokter = () => {
         setSuccess('');
     };
 
-    const handleScheduleClick = (schedule) => {
+    const handleScheduleClick = (schedule) => {        
         setSelectedSchedule(schedule);
         setShowScheduleModal(true);
     };
@@ -186,7 +186,7 @@ const Dokter = () => {
         setCurrentPage(page);
         fetchData(page);
     };
-
+    
     return (
         <Fragment>
             <div className="container pt-4">
@@ -271,7 +271,7 @@ const Dokter = () => {
                                                 <td style={{ fontWeight: 'normal', fontSize: '18px' }}>{doctor.spesialisasi}</td>
                                                 <td style={{ fontWeight: 'normal', fontSize: '18px' }}>{doctor.alamat}</td>
                                                 <td style={{ textAlign: 'center' }}>
-                                                    <FaFileAlt style={{ cursor: 'pointer',fontWeight: 'normal', fontSize: '18px' }} onClick={() => handleScheduleClick(doctor.schedule)} />
+                                                    <FaFileAlt style={{ cursor: 'pointer',fontWeight: 'normal', fontSize: '18px' }} onClick={() => handleScheduleClick(doctor.jadwal)} />
                                                 </td>
                                                 <td style={{ textAlign: 'center',fontWeight: 'normal', fontSize: '18px' }}>
                                                     <FaEdit
@@ -300,7 +300,7 @@ const Dokter = () => {
                 <EditModal
                     show={showEditModal}
                     onClose={handleCloseModal}
-                    doctor={selectedDoctor}
+                    schedule={selectedSchedule}
                     onSaveChanges={handleSaveChanges}
                 />
             )}

@@ -62,11 +62,6 @@ const ModalAdd = ({ show, handleClose, handleSave }) => {
 
         if (name.startsWith('riwayat_')) {
             const [ , index ] = name.split('_');
-            // if (!value) {
-            //     newErrors[name] = `${riwayatFieldName} ${index + 1} is required`;
-            // } else {
-            //     delete newErrors[name];
-            // }
         } else if (name === 'email') {
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!value || !emailRegex.test(value)) {
@@ -92,10 +87,6 @@ const ModalAdd = ({ show, handleClose, handleSave }) => {
         if (!formData.username) newErrors.username = 'Username is required';
         if (!formData.email) newErrors.email = 'Email is required';
         else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) newErrors.email = 'Invalid email address';
-
-        // formData.riwayat.forEach((item, index) => {
-        //     if (!item) newErrors[`riwayat_${index}`] = `Riwayat ${index + 1} is required`;
-        // });
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;

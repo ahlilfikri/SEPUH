@@ -4,7 +4,7 @@ const ModalDetail = ({ show, handleClose, schedule }) => {
     if (!show) return null;
 
     const daysOfWeek = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
-
+    
     return (
         <Fragment>
             <div className="modal show d-block" tabIndex="-1" role="dialog">
