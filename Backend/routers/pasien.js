@@ -5,6 +5,7 @@ const {authenticateUser, authenticateAdmin} = require('../middleware/authenticat
 
 //pasien
 router.get('/',authenticateAdmin, userController.getPasien);
+router.get('/filter/',authenticateAdmin, userController.getPasienFilter);
 router.put('/:id',authenticateUser, userController.updatePasien);
 
 module.exports = router;

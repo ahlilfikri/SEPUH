@@ -1,16 +1,18 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import axios from 'axios';
-import { FaEdit, FaTrashAlt, FaFileAlt } from 'react-icons/fa';
+import { FaEdit, FaTrashAlt } from 'react-icons/fa';
 import Loading from '../../../shared/loading';
 import Modal from '../../../shared/modal';
 import EditModal from './component/modalEdit';
 import AddJadwalModal from './component/modalAdd';
 import DeleteModal from '../../../shared/modalDelete';
+import useDebounce from '../../../shared/debouncedValue';
 
 const Jadwal = () => {
     const port = `${import.meta.env.VITE_BASE_URL}`;
-    const [data, setData] = useState([]);
     const token = sessionStorage.getItem('token');
+
+    const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
@@ -18,17 +20,33 @@ const Jadwal = () => {
     const [selectedJadwal, setSelectedJadwal] = useState(null);
     const [showAddJadwalModal, setShowAddJadwalModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [filters, setFilters] = useState({
+        pasien: '',
+        dokter: '',
+        status: ''
+    });
+    const debouncedFilters = useDebounce(filters, 1500);
 
     const fetchData = async () => {
         setLoading(true);
         try {
-            const response = await axios.get(`${port}jadwal`, {
+            const response = await axios.get(`${port}jadwal/filter`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
+                },
+                params: {
+                    pasien: debouncedFilters.pasien,
+                    dokter: debouncedFilters.dokter,
+                    status: debouncedFilters.status
                 }
             });
-            setData(response.data.data);
+            if (response.data.status === 500) {
+                setError('Tidak dapat mengambil data, coba muat ulang laman');
+            } else {
+                setData(response.data.data.data);
+            }
         } catch (error) {
+            console.error('Fetch Error:', error);
             setError('Tidak dapat mengambil data, coba muat ulang laman');
         } finally {
             setLoading(false);
@@ -36,8 +54,10 @@ const Jadwal = () => {
     };
 
     useEffect(() => {
-        fetchData();
-    }, [token]);
+        if (token) {
+            fetchData();
+        }
+    }, [debouncedFilters, token]);
 
     const handleEditClick = (jadwal) => {
         setSelectedJadwal({ ...jadwal });
@@ -45,20 +65,24 @@ const Jadwal = () => {
     };
 
     const handleSaveChanges = async (updatedJadwal) => {
+        setShowEditModal(false);
         setLoading(true);
         try {
-            const response = await axios.put(`${port}jadwal/${updatedJadwal._id}`, updatedJadwal, {
+            const response = await axios.put(`${port}jadwal/${updatedJadwal.id}`, updatedJadwal, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 }
             });
-            setSuccess('Data berhasil diperbarui');
+            if (response.data.status === 500) {
+                setError('Tidak dapat menyimpan perubahan, coba lagi');
+            } else {
+                setSuccess('Data berhasil diperbarui');
+            }
         } catch (error) {
             setError('Tidak dapat menyimpan perubahan, coba lagi');
         } finally {
             setLoading(false);
-            setShowEditModal(false);
             fetchData();
         }
     };
@@ -68,6 +92,7 @@ const Jadwal = () => {
     };
 
     const handleSaveNewJadwal = async (newJadwal) => {
+        setShowAddJadwalModal(false);
         setLoading(true);
         try {
             const response = await axios.post(`${port}jadwal`, newJadwal, {
@@ -82,10 +107,10 @@ const Jadwal = () => {
                 setSuccess('Jadwal berhasil ditambahkan');
             }
         } catch (error) {
+            console.error('Add Error:', error);
             setError('Tidak dapat menambahkan jadwal, coba lagi');
         } finally {
             setLoading(false);
-            setShowAddJadwalModal(false);
             fetchData();
         }
     };
@@ -109,6 +134,7 @@ const Jadwal = () => {
                 setSuccess('Jadwal berhasil dihapus');
             }
         } catch (error) {
+            console.error('Delete Error:', error);
             setError('Tidak dapat menghapus jadwal, coba lagi');
         } finally {
             setLoading(false);
@@ -126,8 +152,13 @@ const Jadwal = () => {
                     'Content-Type': 'application/json'
                 }
             });
-            setSuccess('Jadwal berhasil disetujui');
+            if (response.data.status === 500) {
+                setError('Tidak dapat menyetujui jadwal, coba lagi');
+            } else {
+                setSuccess('Jadwal berhasil disetujui');
+            }
         } catch (error) {
+            console.error('Approve Error:', error);
             setError('Tidak dapat menyetujui jadwal, coba lagi');
         } finally {
             setLoading(false);
@@ -138,13 +169,17 @@ const Jadwal = () => {
     const handleReject = async (jadwal) => {
         setLoading(true);
         try {
-            const response = await axios.put(`${port}jadwal/${jadwal._id}`, {  status: 'ditolak' }, {
+            await axios.put(`${port}jadwal/${jadwal._id}`, { status: 'ditolak' }, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 }
             });
-            setSuccess('Jadwal berhasil ditolak');
+            if (response.data.status === 500) {
+                setError('Tidak dapat menolak jadwal, coba lagi');
+            } else {
+                setSuccess('Jadwal berhasil ditolak');
+            }
         } catch (error) {
             setError('Tidak dapat menolak jadwal, coba lagi');
         } finally {
@@ -185,6 +220,17 @@ const Jadwal = () => {
         setShowDeleteModal(false);
     };
 
+    const handleInputChange = (e) => {
+        setFilters({
+            ...filters,
+            [e.target.name]: e.target.value
+        });
+    };
+
+    const handleClearFilters = () => {
+        setFilters({ pasien: '', dokter: '', status: '' });
+    };
+
     return (
         <Fragment>
             <div className="container pt-4">
@@ -195,23 +241,33 @@ const Jadwal = () => {
                             <div className="row">
                                 <div className="col-6 col-md-3">
                                     <div className="mb-3">
-                                        <input type="text" className="form-control" placeholder="Nama" />
+                                        <input type="text" className="form-control" placeholder="Pasien" name="pasien" value={filters.pasien} onChange={handleInputChange} />
                                     </div>
                                 </div>
                                 <div className="col-6 col-md-3">
                                     <div className="mb-3">
-                                        <input type="number" className="form-control" placeholder="Usia" />
+                                        <input type="text" className="form-control" placeholder="Dokter" name="dokter" value={filters.dokter} onChange={handleInputChange} />
                                     </div>
                                 </div>
                                 <div className="col-6 col-md-3">
                                     <div className="mb-3">
-                                        <input type="text" className="form-control" placeholder="Alamat" />
+                                        <select
+                                            className="form-control"
+                                            name="status"
+                                            value={filters.status}
+                                            onChange={handleInputChange}
+                                        >
+                                            <option value="">Select Status</option> {/* Optional placeholder */}
+                                            <option value="disetujui">Disetujui</option>
+                                            <option value="ditolak">Ditolak</option>
+                                            <option value="diajukan">Diajukan</option>
+                                        </select>
                                     </div>
                                 </div>
                                 <div className="col-6 col-md-3">
                                     <div className="d-flex gap-3">
-                                        <button className="btn btn-success">Filter</button>
-                                        <button className="btn btn-danger">Clear</button>
+                                        <button className="btn btn-success" onClick={fetchData}>Filter</button>
+                                        <button className="btn btn-danger" onClick={handleClearFilters}>Clear</button>
                                     </div>
                                 </div>
                             </div>

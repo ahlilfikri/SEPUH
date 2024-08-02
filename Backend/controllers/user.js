@@ -89,7 +89,7 @@ module.exports = {
                 return response(400, null, 'Password salah', res);
             }
 
-            const token = jwt.sign({ id: user._id, username: user.username, role: user.role, nama : user.nama }, secret_key, { expiresIn: '1d' });
+            const token = jwt.sign({ id: user._id, username: user.username, role: user.role, nama: user.nama }, secret_key, { expiresIn: '1d' });
             user.token = token;
             await user.save();
             return response(200, token, 'Login berhasil', res);
@@ -158,14 +158,14 @@ module.exports = {
             var result = {};
             const resultUser = await userModel.findByIdAndUpdate(userId, updatedData, { new: true });
             if (updatedData.riwayat) {
-                const resultPasien = await pasienModel.findOneAndUpdate({user:userId},{riwayat :updatedData.riwayat});
-                result ={
-                    user : resultUser,
-                    pasien : resultPasien
+                const resultPasien = await pasienModel.findOneAndUpdate({ user: userId }, { riwayat: updatedData.riwayat });
+                result = {
+                    user: resultUser,
+                    pasien: resultPasien
                 };
-            }else{
-                result ={
-                    user : resultUser
+            } else {
+                result = {
+                    user: resultUser
                 };
             }
             return response(200, result, 'User berhasil di update', res);
@@ -232,8 +232,81 @@ module.exports = {
     },
     getPasien: async (req, res) => {
         try {
-            const pasien = await pasienModel.find().populate('user');
-            return response(200, pasien, 'Menampilkan semua pasien', res);
+
+            const content = await pasienModel.find().populate('user');
+
+            return response(200, content, 'Menampilkan Semua Pasien', res);
+        } catch (error) {
+            console.error(error.message);
+            return response(500, error, 'internal server error', res)
+        }
+    },
+    getPasienFilter: async (req, res) => {
+        try {
+            const { nama, usia, alamat, page = 1, limit = 20 } = req.query;
+            const skip = (page - 1) * limit;
+            const limitValue = parseInt(limit);
+
+            const pipeline = [
+                {
+                    $lookup: {
+                        from: 'users',
+                        localField: 'user',
+                        foreignField: '_id',
+                        as: 'userInfo'
+                    }
+                },
+                { $unwind: '$userInfo' },
+            ];
+
+            const matchCriteria = {};
+
+            if (nama) {
+                matchCriteria['userInfo.nama'] = { $regex: new RegExp(nama, 'i') };
+            }
+            if (usia) {
+                matchCriteria['userInfo.usia'] = { $regex: new RegExp(usia, 'i') };
+            }
+            if (alamat) {
+                matchCriteria['userInfo.alamat'] = { $regex: new RegExp(alamat, 'i') };
+            }
+
+            if (Object.keys(matchCriteria).length > 0) {
+                pipeline.push({ $match: matchCriteria });
+            }
+
+            pipeline.push(
+                { $skip: skip },
+                { $limit: limitValue }
+            );
+
+            // Add projection stage
+            pipeline.push({
+                $project: {
+                    'user.nama': '$userInfo.nama',
+                    'user.usia': '$userInfo.usia',
+                    'user.alamat': '$userInfo.alamat',
+                    'user.username': '$userInfo.username',
+                    'user.email': '$userInfo.email',
+                    'user.password': '$userInfo.password',
+                    'user._id': '$userInfo._id',
+                    'riwayat': 1,
+                    'createdAt': 1,
+                    'updatedAt': 1,
+                }
+            });
+
+            // Execute the aggregation
+            const content = await pasienModel.aggregate(pipeline);
+            const totalItems = await pasienModel.countDocuments(matchCriteria);
+
+            // const pasien = await pasienModel.find().populate('user');
+            return response(200, {
+                data: content,
+                totalItems,
+                currentPage: page,
+                totalPages: Math.ceil(totalItems / limitValue)
+            }, 'Menampilkan Semua Pasien', res);
         } catch (error) {
             console.error(error.message);
             return response(500, error, 'internal server error', res)

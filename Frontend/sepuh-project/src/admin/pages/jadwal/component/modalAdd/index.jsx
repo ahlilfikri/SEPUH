@@ -17,29 +17,29 @@ const ModalAdd = ({ show, handleClose, handleSave }) => {
     useEffect(() => {
         const fetchPatients = async () => {
             try {
-                const response = await axios.get(`'${port}pasien'`,
-                    {
-                        headers: {
-                            'Authorization': `Bearer ${token}`
-                        }
+                const response = await axios.get(`${port}pasien`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
                     }
-                );
-                setPatients(response.data.data);
+                });
+                if (response.data.status != 500) {
+                    setPatients(response.data.data);
+                }
             } catch (error) {
                 console.error('Error fetching patients:', error);
             }
         };
-
+        
         const fetchDoctors = async () => {
             try {
-                const response = await axios.get(`'${port}dokter'`,
-                    {
-                        headers: {
-                            'Authorization': `Bearer ${token}`
-                        }
+                const response = await axios.get(`${port}dokter`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
                     }
-                );
-                setDoctors(response.data.data);
+                });
+                if (response.data.status != 500) {
+                    setDoctors(response.data.data);
+                }
             } catch (error) {
                 console.error('Error fetching doctors:', error);
             }

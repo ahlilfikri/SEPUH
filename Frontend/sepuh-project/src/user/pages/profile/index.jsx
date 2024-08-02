@@ -34,7 +34,11 @@ const Profile = () => {
                     }
                 }
             );
-            setData(result.data.data);
+            if (response.data.status === 500) {
+                setError('Gagal mengambil data profil, silahkan muat ulang halaman');
+            } else {
+                setData(result.data.data);
+            }
         } catch (error) {
             setError('Gagal mengambil data profil, silahkan muat ulang halaman');
         } finally {
@@ -60,7 +64,6 @@ const Profile = () => {
         setSuccess('');
     };
     
-    console.log(data);
     return (
         <Fragment>
             <header>

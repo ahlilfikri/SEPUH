@@ -7,6 +7,7 @@ import EditModal from './component/modalEdit';
 import AddDoctorModal from './component/modalAdd';
 import ScheduleModal from './component/modalDetail';
 import DeleteModal from '../../../shared/modalDelete';
+import useDebounce from '../../../shared/debouncedValue';
 
 const Dokter = () => {
     const port = `${import.meta.env.VITE_BASE_URL}`;
@@ -22,15 +23,27 @@ const Dokter = () => {
     const [selectedSchedule, setSelectedSchedule] = useState([]);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
+    const [filters, setFilters] = useState({ nama: '', spesialisasi: '', alamat: '' });
+    const debouncedFilters = useDebounce(filters, 1500);
+
     const fetchData = async () => {
         setLoading(true);
         try {
-            const response = await axios.get(`${port}dokter`, {
+            const response = await axios.get(`${port}dokter/filter`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
+                },
+                params: {
+                    nama: debouncedFilters.nama,
+                    spesialisasi: debouncedFilters.spesialisasi,
+                    alamat: debouncedFilters.alamat
                 }
             });
-            setData(response.data.data);
+            if (response.data.status === 500) {
+                setError('Tidak dapat mengambil data, coba muat ulang laman');
+            } else {
+                setData(response.data.data.data);
+            }
         } catch (error) {
             setError('Tidak dapat mengambil data, coba muat ulang laman');
         } finally {
@@ -40,7 +53,14 @@ const Dokter = () => {
 
     useEffect(() => {
         fetchData();
-    }, [token]);
+    }, [debouncedFilters, token]);
+
+    const handleFilterChange = (e) => {
+        setFilters({
+            ...filters,
+            [e.target.name]: e.target.value
+        });
+    };
 
     const handleEditClick = (doctor) => {
         setSelectedDoctor({ ...doctor });
@@ -57,7 +77,11 @@ const Dokter = () => {
                     'Content-Type': 'application/json'
                 }
             });
-            setSuccess('Data berhasil diperbarui');
+            if (response.data.status === 500) {
+                setError('Tidak dapat menyimpan perubahan, coba lagi');
+            } else {
+                setSuccess('Data berhasil diperbarui');
+            }
         } catch (error) {
             setError('Tidak dapat menyimpan perubahan, coba lagi');
         } finally {
@@ -80,9 +104,9 @@ const Dokter = () => {
                     'Content-Type': 'application/json'
                 }
             });
-            if (response.data.status == 500){
+            if (response.data.status == 500) {
                 setError('Tidak dapat menambahkan dokter, coba lagi');
-            }else{
+            } else {
                 setSuccess('Dokter berhasil ditambahkan');
             }
         } catch (error) {
@@ -101,14 +125,14 @@ const Dokter = () => {
     const handleDeleteDoctor = async () => {
         setLoading(true);
         try {
-            await axios.delete(`${port}dokter/${selectedDoctor._id}`, {
+            const response = await axios.delete(`${port}dokter/${selectedDoctor._id}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
             });
-            if (response.data.status == 500){
+            if (response.data.status == 500) {
                 setError('Tidak dapat menghapus dokter, coba lagi');
-            }else{
+            } else {
                 setSuccess('Dokter berhasil dihapus');
             }
         } catch (error) {
@@ -153,23 +177,44 @@ const Dokter = () => {
                             <div className="row">
                                 <div className="col-6 col-md-3">
                                     <div className="mb-3">
-                                        <input type="text" className="form-control" placeholder="Nama" />
+                                        <input
+                                            type="text"
+                                            name="nama"
+                                            className="form-control"
+                                            placeholder="Nama"
+                                            value={filters.nama}
+                                            onChange={handleFilterChange}
+                                        />
                                     </div>
                                 </div>
                                 <div className="col-6 col-md-3">
                                     <div className="mb-3">
-                                        <input type="number" className="form-control" placeholder="Usia" />
+                                        <input
+                                            type="text"
+                                            name="spesialisasi"
+                                            className="form-control"
+                                            placeholder="Spesialisasi"
+                                            value={filters.spesialisasi}
+                                            onChange={handleFilterChange}
+                                        />
                                     </div>
                                 </div>
                                 <div className="col-6 col-md-3">
                                     <div className="mb-3">
-                                        <input type="text" className="form-control" placeholder="Alamat" />
+                                        <input
+                                            type="text"
+                                            name="alamat"
+                                            className="form-control"
+                                            placeholder="Alamat"
+                                            value={filters.alamat}
+                                            onChange={handleFilterChange}
+                                        />
                                     </div>
                                 </div>
                                 <div className="col-6 col-md-3">
                                     <div className="d-flex gap-3">
-                                        <button className="btn btn-success">Filter</button>
-                                        <button className="btn btn-danger">Clear</button>
+                                        <button className="btn btn-success" onClick={fetchData}>Filter</button>
+                                        <button className="btn btn-danger" onClick={() => setFilters({ nama: '', spesialisasi: '', alamat: '' })}>Clear</button>
                                     </div>
                                 </div>
                             </div>
@@ -189,6 +234,7 @@ const Dokter = () => {
                                         <th scope="col" style={{ fontWeight: 'normal', fontSize: '18px', textAlign: 'center', fontWeight: '600' }}>No</th>
                                         <th scope="col" style={{ fontWeight: 'normal', fontSize: '18px', textAlign: 'center', fontWeight: '600' }}>Nama</th>
                                         <th scope="col" style={{ fontWeight: 'normal', fontSize: '18px', textAlign: 'center', fontWeight: '600' }}>Spesialisasi</th>
+                                        <th scope="col" style={{ fontWeight: 'normal', fontSize: '18px', textAlign: 'center', fontWeight: '600' }}>Alamat</th>
                                         <th scope="col" style={{ fontWeight: 'normal', fontSize: '18px', textAlign: 'center', fontWeight: '600' }}>Jadwal Kerja</th>
                                         <th scope="col" style={{ fontWeight: 'normal', fontSize: '18px', textAlign: 'center', fontWeight: '600' }}>Aksi</th>
                                     </tr>
@@ -197,9 +243,10 @@ const Dokter = () => {
                                     {error === '' && data.map((dokter, index) => (
                                         <tr key={index}>
                                             <td style={{ fontSize: '18px', fontWeight: '400', maxWidth: '10%' }}>{index + 1}</td>
-                                            <td style={{ fontSize: '18px', fontWeight: '400', maxWidth: '30%' }}>{dokter.nama}</td>
-                                            <td style={{ fontSize: '18px', fontWeight: '400', maxWidth: '40%' }}>{dokter.spesialisasi}</td>
-                                            <td style={{ fontSize: '18px', fontWeight: '400', maxWidth: '5%' }} className="text-center">
+                                            <td style={{ fontSize: '18px', fontWeight: '400', maxWidth: '20%' }}>{dokter.nama}</td>
+                                            <td style={{ fontSize: '18px', fontWeight: '400', maxWidth: '30%' }}>{dokter.spesialisasi}</td>
+                                            <td style={{ fontSize: '18px', fontWeight: '400', maxWidth: '30%' }}>{dokter.alamat}</td>
+                                            <td style={{ fontSize: '18px', fontWeight: '400', maxWidth: '10%' }} className="text-center">
                                                 <div className="btn" onClick={() => handleScheduleClick(dokter.jadwal)}>
                                                     <FaFileAlt style={{ color: '#FFD700', cursor: 'pointer' }} />
                                                 </div>

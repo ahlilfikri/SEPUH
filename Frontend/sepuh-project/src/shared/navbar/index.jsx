@@ -69,7 +69,6 @@ const Navbar = ({ isLogin }) => {
                     navigate('/signin');
                 }, 3000);
             } else {
-                console.log(error);
                 setError('Gagal Logout');
             }
         } finally {

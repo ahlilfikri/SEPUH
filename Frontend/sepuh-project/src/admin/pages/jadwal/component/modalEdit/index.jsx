@@ -3,6 +3,7 @@ import axios from 'axios';
 
 const ModalEdit = ({ show, handleClose, handleSave, data }) => {
     const [formData, setFormData] = useState({
+        id: '',
         pasien: '',
         dokter: '',
         waktu: '',
@@ -25,12 +26,14 @@ const ModalEdit = ({ show, handleClose, handleSave, data }) => {
                         }
                     }
                 );
-                setPatients(response.data.data);
+                if (response.data.status != 500) {
+                    setPatients(response.data.data);
+                }
             } catch (error) {
                 console.error('Error fetching patients:', error);
             }
         };
-
+        
         const fetchDoctors = async () => {
             try {
                 const response = await axios.get(`${port}dokter`,
@@ -40,7 +43,9 @@ const ModalEdit = ({ show, handleClose, handleSave, data }) => {
                         }
                     }
                 );
-                setDoctors(response.data.data);
+                if (response.data.status != 500) {
+                    setDoctors(response.data.data);
+                }
             } catch (error) {
                 console.error('Error fetching doctors:', error);
             }

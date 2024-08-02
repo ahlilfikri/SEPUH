@@ -5,6 +5,7 @@ const Controller = require('../controllers/dokter');
 const {authenticateUser, authenticateAdmin} = require('../middleware/authentication');
 
 router.get('/', authenticateUser, Controller.get);
+router.get('/filter/', authenticateUser, Controller.getFilter);
 router.get('/:_id', authenticateUser, Controller.getOne);
 router.post('/', authenticateAdmin,Controller.post);
 router.put('/:_id', authenticateAdmin, Controller.put);

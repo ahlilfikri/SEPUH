@@ -7,6 +7,7 @@ import EditModal from './component/modalEdit';
 import AddPasienModal from './component/modalAdd';
 import RiwayatModal from './component/modalDetail';
 import DeleteModal from '../../../shared/modalDelete';
+import useDebounce from '../../../shared/debouncedValue';
 
 const Pasien = () => {
     const port = `${import.meta.env.VITE_BASE_URL}`;
@@ -21,16 +22,31 @@ const Pasien = () => {
     const [showRiwayatModal, setShowRiwayatModal] = useState(false);
     const [selectedRiwayat, setSelectedRiwayat] = useState([]);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [filters, setFilters] = useState({
+        nama: '',
+        usia: '',
+        alamat: ''
+    });
+    const debouncedFilters = useDebounce(filters, 1500);
 
     const fetchData = async () => {
         setLoading(true);
         try {
-            const response = await axios.get(`${port}pasien`, {
+            const response = await axios.get(`${port}pasien/filter`, {
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${token}`,
+                },
+                params: {
+                    nama: debouncedFilters.nama,
+                    usia: debouncedFilters.usia,
+                    alamat: debouncedFilters.alamat
                 }
             });
-            setData(response.data.data);
+            if (response.data.status === 500) {
+                setError('Tidak dapat mengambil data pasien, coba muat ulang laman');
+            } else {
+                setData(response.data.data.data);
+            }
         } catch (error) {
             setError('Tidak dapat mengambil data, coba muat ulang laman');
         } finally {
@@ -40,7 +56,7 @@ const Pasien = () => {
 
     useEffect(() => {
         fetchData();
-    }, [token]);
+    }, [token, debouncedFilters]);
 
     const handleEditClick = (pasien) => {
         setSelectedPasien({ ...pasien });
@@ -57,7 +73,11 @@ const Pasien = () => {
                     'Content-Type': 'application/json'
                 }
             });
-            setSuccess('Data berhasil diperbarui');
+            if (response.data.status === 500) {
+                setError('Tidak dapat menyimpan perubahan, coba lagi');
+            } else {
+                setSuccess('Data berhasil diperbarui');
+            }
         } catch (error) {
             setError('Tidak dapat menyimpan perubahan, coba lagi');
         } finally {
@@ -80,7 +100,7 @@ const Pasien = () => {
                     'Content-Type': 'application/json'
                 }
             });
-            if (response.data.status === 500){
+            if (response.data.status === 500) {
                 setError('Tidak dapat menambahkan pasien, coba lagi');
             } else {
                 setSuccess('Pasien berhasil ditambahkan');
@@ -107,7 +127,7 @@ const Pasien = () => {
                     'Authorization': `Bearer ${token}`
                 }
             });
-            if (response.data.status === 500){
+            if (response.data.status === 500) {
                 setError('Tidak dapat menghapus pasien, coba lagi');
             } else {
                 setSuccess('Pasien berhasil dihapus');
@@ -143,6 +163,16 @@ const Pasien = () => {
         setShowDeleteModal(false);
     };
 
+    const handleInputChange = (e) => {
+        setFilters({
+            ...filters,
+            [e.target.name]: e.target.value
+        });
+    };
+
+    const handleClearFilters = () => {
+        setFilters({ nama: '', usia: '', alamat: '' });
+    };
     return (
         <Fragment>
             <div className="container pt-4">
@@ -153,23 +183,23 @@ const Pasien = () => {
                             <div className="row">
                                 <div className="col-6 col-md-3">
                                     <div className="mb-3">
-                                        <input type="text" className="form-control" placeholder="Nama" />
+                                        <input type="text" className="form-control" placeholder="Nama" name="nama" value={filters.nama} onChange={handleInputChange} />
                                     </div>
                                 </div>
                                 <div className="col-6 col-md-3">
                                     <div className="mb-3">
-                                        <input type="number" className="form-control" placeholder="Usia" />
+                                        <input type="number" className="form-control" placeholder="Usia" name="usia" value={filters.usia} onChange={handleInputChange} />
                                     </div>
                                 </div>
                                 <div className="col-6 col-md-3">
                                     <div className="mb-3">
-                                        <input type="text" className="form-control" placeholder="Alamat" />
+                                        <input type="text" className="form-control" placeholder="Alamat" name="alamat" value={filters.alamat} onChange={handleInputChange} />
                                     </div>
                                 </div>
                                 <div className="col-6 col-md-3">
                                     <div className="d-flex gap-3">
-                                        <button className="btn btn-success">Filter</button>
-                                        <button className="btn btn-danger">Clear</button>
+                                        <button className="btn btn-success" onClick={fetchData}>Filter</button>
+                                        <button className="btn btn-danger" onClick={handleClearFilters}>Clear</button>
                                     </div>
                                 </div>
                             </div>
