@@ -9,7 +9,7 @@ router.post('/login', userController.login);
 router.post('/logout/:token', userController.logout);
 router.put('/reset/:id', userController.reset);
 
-router.get('/',authenticateAdmin, userController.getAllUser);
+router.get('/',authenticateUser, userController.getAllUser);
 router.get('/:id',authenticateUser, userController.getOne);
 router.post('/', authenticateAdmin, userController.post);
 router.put('/:id', authenticateAdmin, userController.put);
