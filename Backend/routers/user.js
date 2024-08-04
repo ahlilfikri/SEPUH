@@ -12,7 +12,7 @@ router.put('/reset/:id', userController.reset);
 router.get('/',authenticateUser, userController.getAllUser);
 router.get('/:id',authenticateUser, userController.getOne);
 router.post('/', authenticateAdmin, userController.post);
-router.put('/:id', authenticateAdmin, userController.put);
+router.put('/:id', authenticateUser, userController.put);
 router.delete('/:id', authenticateAdmin, userController.delete);
 
 //pasien
