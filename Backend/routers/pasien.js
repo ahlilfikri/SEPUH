@@ -5,6 +5,7 @@ const {authenticateUser, authenticateAdmin} = require('../middleware/authenticat
 
 //pasien
 router.get('/',authenticateUser, userController.getPasien);
+router.get('/:id',authenticateUser, userController.getPasienOne);
 router.get('/filter/',authenticateUser, userController.getPasienFilter);
 router.put('/:id',authenticateUser, userController.updatePasien);
 

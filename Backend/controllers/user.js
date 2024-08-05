@@ -241,6 +241,16 @@ module.exports = {
             return response(500, error, 'internal server error', res)
         }
     },
+    getPasienOne: async (req, res) => {
+        const id = req.params.id;
+        try {
+            const content = await pasienModel.findOne({user:id}).populate('user');
+            return response(200, content, 'Menampilkan Pasien', res);
+        } catch (error) {
+            console.error(error.message);
+            return response(500, error, 'internal server error', res)
+        }
+    },
     getPasienFilter: async (req, res) => {
         try {
             const { nama, usia, alamat, page = 1, limit = 20 } = req.query;
