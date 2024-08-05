@@ -8,7 +8,7 @@ const response = require("../response/response_valid");
 module.exports = {
     get: async (req, res) => {
         try {
-            const content = await jadwalSchema.findById(id)
+            const content = await jadwalSchema.find()
                 .populate('dokter', 'nama spesialisasi')
                 .populate('pasien', 'nama username');
 
