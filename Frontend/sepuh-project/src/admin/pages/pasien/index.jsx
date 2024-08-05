@@ -37,7 +37,7 @@ const Pasien = () => {
     const fetchData = async () => {
         setLoading(true);
         try {
-            const response = await axios.get(`${port}pasien/filter`, {
+            const response = await axios.get(`${port}pasien/get/filter`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 },
