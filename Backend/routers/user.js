@@ -28,3 +28,28 @@ router.get('/apoteker',authenticateApoteker, userController.getApoteker);
 router.get('/apoteker/filter',authenticateApoteker, userController.getApotekerFilter);
 
 module.exports = router;
+
+//authenticate
+// register: https://sepuh-api.vercel.app/user/register
+// login: https://sepuh-api.vercel.app/user/login
+// logout: https://sepuh-api.vercel.app/user/logout
+// reset: https://sepuh-api.vercel.app/user/reset
+
+//all user
+// getAllUser: https://sepuh-api.vercel.app/user/all
+// getOneUser: https://sepuh-api.vercel.app/user/all/:id
+// postUser: https://sepuh-api.vercel.app/user/all
+// updateUser: https://sepuh-api.vercel.app/user/all/:id
+// deleteUser: https://sepuh-api.vercel.app/user/all/:id
+
+//pasien
+// getPasien: https://sepuh-api.vercel.app/user/pasien
+// getPasienFilter: https://sepuh-api.vercel.app/user/pasien/filter
+
+//dokter
+// getDokter: https://sepuh-api.vercel.app/user/dokter/
+// getDokterFilter: https://sepuh-api.vercel.app/user/dokter/filter
+
+//apoteker
+// getApoteker: https://sepuh-api.vercel.app/user/apoteker
+// getApotekerFilter: https://sepuh-api.vercel.app/user/apoteker/filter

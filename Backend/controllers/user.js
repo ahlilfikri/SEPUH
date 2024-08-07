@@ -44,7 +44,7 @@ module.exports = {
                 riwayat
             });
 
-            const resultUser = await newUser.save();
+            result =  await newUser.save();
 
             dataReturn = resultUser
 
@@ -161,7 +161,6 @@ module.exports = {
                     role: 2,
                     spesialisasi
                 });
-                console.log(newUser);
                 await newUser.save();
             } else if (role === 1) {
                 newUser = new apotekerSchema({
@@ -185,8 +184,6 @@ module.exports = {
                     riwayat,
                     role: 0
                 });
-                console.log(newUser);
-
                 await newUser.save();
             }
             return response(201, newUser, 'User berhasil di daftarkan', res);
@@ -196,21 +193,21 @@ module.exports = {
         }
     },
     put: async (req, res) => {
-        userId = req.params.id;
+        id = req.params.id;
         const updatedData = req.body;
+        
         try {
-            var result = {};
-            const resultUser = await userModel.findByIdAndUpdate(userId, updatedData, { new: true });
-            if (updatedData.riwayat) {
-                const resultPasien = await pasienModel.findOneAndUpdate({ user: userId }, { riwayat: updatedData.riwayat });
-                result = {
-                    user: resultUser,
-                    pasien: resultPasien
-                };
-            } else {
-                result = {
-                    user: resultUser
-                };
+            let result;
+            resultUser = await userModel.findById(id);
+            
+            if(resultUser.role === 3){
+                result = await userModel.findByIdAndUpdate(id, updatedData, { new: true });
+            } else if (resultUser.role === 2){
+                result = await dokterSchema.findByIdAndUpdate(id, updatedData, { new: true });
+            } else if (resultUser.role === 1){
+                result = await apotekerSchema.findByIdAndUpdate(id, updatedData, { new: true });
+            }else {
+                result = await pasienSchema.findByIdAndUpdate(id, updatedData, { new: true });
             }
             return response(200, result, 'User berhasil di update', res);
         } catch (error) {
@@ -222,21 +219,7 @@ module.exports = {
         try {
             const id = req.params.id;
 
-            const searchResult = await userModel.findById(id);
-            const resultUser = await userModel.findByIdAndDelete(id);
-            var result = {};
-
-            if (searchResult.role === 0) {
-                const resultPasien = await pasienModel.findOneAndDelete({ user: id });
-                result = {
-                    user: resultUser,
-                    pasien: resultPasien
-                }
-            } else {
-                result = {
-                    user: resultUser
-                }
-            }
+            const result = await userModel.findByIdAndDelete(id);
 
             return response(200, result, 'User berhasil dihapus', res);
         } catch (error) {
@@ -275,10 +258,8 @@ module.exports = {
         }
     },
     getPasien: async (req, res) => {
-        console.log("test");
         try {
             const content = await pasienSchema.find({});
-            console.log(content);
 
             return response(200, content, 'Menampilkan Semua Pasien', res);
         } catch (error) {
