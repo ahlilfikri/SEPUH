@@ -268,24 +268,29 @@ module.exports = {
         }
     },
     getPasienFilter: async (req, res) => {
-        const { nama, usia, alamat, page = 1, limit = 20 } = req.query;
-
-        let filter = {};
-
-        if (nama) {
-            filter.nama = { $regex: nama, $options: 'i' };
+        try {
+            const { nama, usia, alamat, page = 1, limit = 20 } = req.query;
+    
+            let filter = {};
+    
+            if (nama) {
+                filter.nama = { $regex: nama, $options: 'i' };
+            }
+            if (usia) {
+                filter.usia = { $regex: usia, $options: 'i' };
+            }
+            if (alamat) {
+                filter.alamat = { $regex: alamat, $options: 'i' };
+            }
+    
+            const skip = (page - 1) * limit;
+            const content = await pasienSchema.find(filter).skip(skip).limit(parseInt(limit));
+            const totalItems = await pasienSchema.countDocuments(filter);
+            return response(200, { data: content, totalItems, currentPage: page, totalPages: Math.ceil(totalItems / limit) }, 'Menampilkan Semua Pasien', res);
+        } catch (error) {
+            console.error(error.message);
+            return response(500, error, 'internal server error', res)
         }
-        if (usia) {
-            filter.usia = { $regex: usia, $options: 'i' };
-        }
-        if (alamat) {
-            filter.alamat = { $regex: alamat, $options: 'i' };
-        }
-
-        const skip = (page - 1) * limit;
-        const content = await pasienSchema.find(filter).skip(skip).limit(parseInt(limit));
-        const totalItems = await pasienSchema.countDocuments(filter);
-        return response(200, { data: content, totalItems, currentPage: page, totalPages: Math.ceil(totalItems / limit) }, 'Menampilkan Semua Pasien', res);
     },
     getDokter: async (req, res) => {
         try {
@@ -297,24 +302,29 @@ module.exports = {
         }
     },
     getDokterFilter: async (req, res) => {
-        const { nama, spesialisasi, alamat, page = 1, limit = 20 } = req.query;
-
-        let filter = {};
-
-        if (nama) {
-            filter.nama = { $regex: nama, $options: 'i' };
+        try {
+            const { nama, spesialisasi, alamat, page = 1, limit = 20 } = req.query;
+    
+            let filter = {};
+    
+            if (nama) {
+                filter.nama = { $regex: nama, $options: 'i' };
+            }
+            if (spesialisasi) {
+                filter.spesialisasi = { $regex: spesialisasi, $options: 'i' };
+            }
+            if (alamat) {
+                filter.alamat = { $regex: alamat, $options: 'i' };
+            }
+    
+            const skip = (page - 1) * limit;
+            const content = await dokterSchema.find(filter).skip(skip).limit(parseInt(limit));
+            const totalItems = await dokterSchema.countDocuments(filter);
+            return response(200, { data: content, totalItems, currentPage: page, totalPages: Math.ceil(totalItems / limit) }, 'Menampilkan Semua Dokter', res);
+        } catch (error) {
+            console.error(error.message);
+            return response(500, error, 'internal server error', res)
         }
-        if (spesialisasi) {
-            filter.spesialisasi = { $regex: spesialisasi, $options: 'i' };
-        }
-        if (alamat) {
-            filter.alamat = { $regex: alamat, $options: 'i' };
-        }
-
-        const skip = (page - 1) * limit;
-        const content = await dokterSchema.find(filter).skip(skip).limit(parseInt(limit));
-        const totalItems = await dokterSchema.countDocuments(filter);
-        return response(200, { data: content, totalItems, currentPage: page, totalPages: Math.ceil(totalItems / limit) }, 'Menampilkan Semua Dokter', res);
     },
     getApoteker: async (req, res) => {
         try {
@@ -326,23 +336,28 @@ module.exports = {
         }
     },
     getApotekerFilter: async (req, res) => {
-        const { nama, usia, alamat, page = 1, limit = 20 } = req.query;
-
-            let filter = {};
-
-            if (nama) {
-                filter.nama = { $regex: nama, $options: 'i' };
-            }
-            if (usia) {
-                filter.usia = { $regex: usia, $options: 'i' };
-            }
-            if (alamat) {
-                filter.alamat = { $regex: alamat, $options: 'i' }; 
-            }
-
-            const skip = (page - 1) * limit;
-            const content = await apotekerSchema.find(filter).skip(skip).limit(parseInt(limit));
-            const totalItems = await apotekerSchema.countDocuments(filter);
-            return response(200, { data: content, totalItems, currentPage: page, totalPages: Math.ceil(totalItems / limit) }, 'Menampilkan Semua Apoteker', res);
+        try {
+            const { nama, usia, alamat, page = 1, limit = 20 } = req.query;
+    
+                let filter = {};
+    
+                if (nama) {
+                    filter.nama = { $regex: nama, $options: 'i' };
+                }
+                if (usia) {
+                    filter.usia = { $regex: usia, $options: 'i' };
+                }
+                if (alamat) {
+                    filter.alamat = { $regex: alamat, $options: 'i' }; 
+                }
+    
+                const skip = (page - 1) * limit;
+                const content = await apotekerSchema.find(filter).skip(skip).limit(parseInt(limit));
+                const totalItems = await apotekerSchema.countDocuments(filter);
+                return response(200, { data: content, totalItems, currentPage: page, totalPages: Math.ceil(totalItems / limit) }, 'Menampilkan Semua Apoteker', res);
+        } catch (error) {
+            console.error(error.message);
+            return response(500, error, 'internal server error', res)
+        }
     },
 }
