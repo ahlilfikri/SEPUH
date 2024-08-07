@@ -1,12 +1,12 @@
-const express = require('express');
-const router = express.Router();
-const userController = require('../controllers/user');
-const {authenticateUser, authenticateAdmin} = require('../middleware/authentication');
+// const express = require('express');
+// const router = express.Router();
+// const pasienController = require('../controllers/pasien');
+// const {authenticateUser, authenticateAdmin, authenticateApoteker, authenticateDokter, authenticatePasien } = require('../middleware/authentication');
 
-//pasien
-router.get('/',authenticateUser, userController.getPasien);
-router.get('/:id',authenticateUser, userController.getPasienOne);
-router.get('/get/filter/',authenticateUser, userController.getPasienFilter);
-router.put('/:id',authenticateUser, userController.updatePasien);
+// //pasien
+// router.get('/',authenticatePasien, pasienController.get);
+// router.get('/:id',authenticatePasien, pasienController.getOne);
+// router.get('/get/filter/',authenticatePasien, pasienController.getFilter);
+// router.put('/:id',authenticatePasien, pasienController.update);
 
-module.exports = router;
+// module.exports = router;

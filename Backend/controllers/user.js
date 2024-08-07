@@ -1,13 +1,13 @@
 const mongoose = require("mongoose");
 const userModel = require("../models/user");
-const dokterModel = require("../models/dokter");
-const pasienModel = require("../models/pasien");
+const dokterSchema = require("../models/dokter");
+const apotekerSchema = require("../models/apoteker");
+const pasienSchema = require("../models/pasien");
 const bcrypt = require("bcryptjs");
 const { validationResult } = require('express-validator');
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const response = require("../response/response_valid");
-const dokter = require("../models/dokter");
 
 module.exports = {
     register: async (req, res) => {
@@ -33,34 +33,22 @@ module.exports = {
             const salt = await bcrypt.genSalt(saltRounds);
             const passwordEncrypted = await bcrypt.hash(password, salt);
 
-            const newUser = new userModel({
+            newUser = new userModel({
                 username,
                 password: passwordEncrypted,
                 email,
                 nama,
                 alamat,
                 usia,
-                role
+                role,
+                riwayat
             });
 
             const resultUser = await newUser.save();
 
-            dataReturn = {
-                user: resultUser
-            }
-            if (resultUser.role === 0) {
-                const newPasien = new pasienModel({
-                    user: resultUser._id,
-                    riwayat
-                })
-                const resultPasien = await newPasien.save();
-                dataReturn = {
-                    user: resultUser,
-                    pasien: resultPasien
-                }
-            }
+            dataReturn = resultUser
 
-            return response(201, dataReturn, 'User berhasil didaftarkan', res);
+            return response(201, dataReturn, 'Pasien berhasil didaftarkan', res);
         } catch (error) {
             if (error.code === 11000) {
                 return response(400, null, 'Email sudah terdaftar', res);
@@ -69,6 +57,7 @@ module.exports = {
             return response(500, error, 'Internal server error', res);
         }
     },
+
     login: async (req, res) => {
         try {
             const errors = validationResult(req);
@@ -136,15 +125,70 @@ module.exports = {
         }
     },
     post: async (req, res) => {
-        const { username, password, email } = req.body;
-        const passwordEncripted = await bcrypt.hash(password, 15);
-        const newUser = new userModel({
-            username,
-            password: passwordEncripted,
-            email,
-        })
+        const { nama, usia, alamat, username, password, email, role, spesialisasi, riwayat } = req.body;
         try {
-            await newUser.save();
+            const userExist = await userModel.findOne({ $or: [{ email }, { username }] });
+
+            if (userExist) {
+                if (userExist.email === email) {
+                    return response(400, null, 'Email sudah terdaftar', res);
+                }
+                if (userExist.username === username) {
+                    return response(400, null, 'Username sudah terdaftar', res);
+                }
+            }
+            const passwordEncripted = await bcrypt.hash(password, 15);
+            let newUser
+            if (role === 3) {
+                newUser = new userModel({
+                    nama,
+                    usia,
+                    alamat,
+                    username,
+                    password: passwordEncripted,
+                    email,
+                    role: 3
+                });
+                await newUser.save();
+            } else if (role === 2) {
+                newUser = new dokterSchema({
+                    nama,
+                    usia,
+                    alamat,
+                    username,
+                    password: passwordEncripted,
+                    email,
+                    role: 2,
+                    spesialisasi
+                });
+                console.log(newUser);
+                await newUser.save();
+            } else if (role === 1) {
+                newUser = new apotekerSchema({
+                    nama,
+                    usia,
+                    alamat,
+                    username,
+                    password: passwordEncripted,
+                    email,
+                    role: 1
+                });
+                await newUser.save();
+            } else {
+                newUser = new pasienSchema({
+                    nama,
+                    usia,
+                    alamat,
+                    username,
+                    password: passwordEncripted,
+                    email,
+                    riwayat,
+                    role: 0
+                });
+                console.log(newUser);
+
+                await newUser.save();
+            }
             return response(201, newUser, 'User berhasil di daftarkan', res);
         } catch (error) {
             console.error(error.message);
@@ -231,9 +275,10 @@ module.exports = {
         }
     },
     getPasien: async (req, res) => {
+        console.log("test");
         try {
-
-            const content = await pasienModel.find().populate('user');
+            const content = await pasienSchema.find({});
+            console.log(content);
 
             return response(200, content, 'Menampilkan Semua Pasien', res);
         } catch (error) {
@@ -241,98 +286,82 @@ module.exports = {
             return response(500, error, 'internal server error', res)
         }
     },
-    getPasienOne: async (req, res) => {
-        const id = req.params.id;
+    getPasienFilter: async (req, res) => {
+        const { nama, usia, alamat, page = 1, limit = 20 } = req.query;
+
+        let filter = {};
+
+        if (nama) {
+            filter.nama = { $regex: nama, $options: 'i' };
+        }
+        if (usia) {
+            filter.usia = { $regex: usia, $options: 'i' };
+        }
+        if (alamat) {
+            filter.alamat = { $regex: alamat, $options: 'i' };
+        }
+
+        const skip = (page - 1) * limit;
+        const content = await pasienSchema.find(filter).skip(skip).limit(parseInt(limit));
+        const totalItems = await pasienSchema.countDocuments(filter);
+        return response(200, { data: content, totalItems, currentPage: page, totalPages: Math.ceil(totalItems / limit) }, 'Menampilkan Semua Pasien', res);
+    },
+    getDokter: async (req, res) => {
         try {
-            const content = await pasienModel.findOne({user:id}).populate('user');
-            return response(200, content, 'Menampilkan Pasien', res);
+            const content = await dokterSchema.find();
+            return response(200, content, 'Menampilkan Semua Dokter', res);
         } catch (error) {
             console.error(error.message);
             return response(500, error, 'internal server error', res)
         }
     },
-    getPasienFilter: async (req, res) => {
+    getDokterFilter: async (req, res) => {
+        const { nama, spesialisasi, alamat, page = 1, limit = 20 } = req.query;
+
+        let filter = {};
+
+        if (nama) {
+            filter.nama = { $regex: nama, $options: 'i' };
+        }
+        if (spesialisasi) {
+            filter.spesialisasi = { $regex: spesialisasi, $options: 'i' };
+        }
+        if (alamat) {
+            filter.alamat = { $regex: alamat, $options: 'i' };
+        }
+
+        const skip = (page - 1) * limit;
+        const content = await dokterSchema.find(filter).skip(skip).limit(parseInt(limit));
+        const totalItems = await dokterSchema.countDocuments(filter);
+        return response(200, { data: content, totalItems, currentPage: page, totalPages: Math.ceil(totalItems / limit) }, 'Menampilkan Semua Dokter', res);
+    },
+    getApoteker: async (req, res) => {
         try {
-            const { nama, usia, alamat, page = 1, limit = 20 } = req.query;
-            const skip = (page - 1) * limit;
-            const limitValue = parseInt(limit);
+            const content = await apotekerSchema.find();
+            return response(200, content, 'Menampilkan Semua Pasien', res);
+        } catch (error) {
+            console.error(error.message);
+            return response(500, error, 'internal server error', res)
+        }
+    },
+    getApotekerFilter: async (req, res) => {
+        const { nama, usia, alamat, page = 1, limit = 20 } = req.query;
 
-            const pipeline = [
-                {
-                    $lookup: {
-                        from: 'users',
-                        localField: 'user',
-                        foreignField: '_id',
-                        as: 'userInfo'
-                    }
-                },
-                { $unwind: '$userInfo' },
-            ];
-
-            const matchCriteria = {};
+            let filter = {};
 
             if (nama) {
-                matchCriteria['userInfo.nama'] = { $regex: new RegExp(nama, 'i') };
+                filter.nama = { $regex: nama, $options: 'i' };
             }
             if (usia) {
-                matchCriteria['userInfo.usia'] = { $regex: new RegExp(usia, 'i') };
+                filter.usia = { $regex: usia, $options: 'i' };
             }
             if (alamat) {
-                matchCriteria['userInfo.alamat'] = { $regex: new RegExp(alamat, 'i') };
+                filter.alamat = { $regex: alamat, $options: 'i' }; 
             }
 
-            if (Object.keys(matchCriteria).length > 0) {
-                pipeline.push({ $match: matchCriteria });
-            }
-
-            pipeline.push(
-                { $skip: skip },
-                { $limit: limitValue }
-            );
-
-            // Add projection stage
-            pipeline.push({
-                $project: {
-                    'user.nama': '$userInfo.nama',
-                    'user.usia': '$userInfo.usia',
-                    'user.alamat': '$userInfo.alamat',
-                    'user.username': '$userInfo.username',
-                    'user.email': '$userInfo.email',
-                    'user.password': '$userInfo.password',
-                    'user._id': '$userInfo._id',
-                    'riwayat': 1,
-                    'createdAt': 1,
-                    'updatedAt': 1,
-                }
-            });
-
-            // Execute the aggregation
-            const content = await pasienModel.aggregate(pipeline);
-            const totalItems = await pasienModel.countDocuments(matchCriteria);
-
-            // const pasien = await pasienModel.find().populate('user');
-            return response(200, {
-                data: content,
-                totalItems,
-                currentPage: page,
-                totalPages: Math.ceil(totalItems / limitValue)
-            }, 'Menampilkan Semua Pasien', res);
-        } catch (error) {
-            console.error(error.message);
-            return response(500, error, 'internal server error', res)
-        }
+            const skip = (page - 1) * limit;
+            const content = await apotekerSchema.find(filter).skip(skip).limit(parseInt(limit));
+            const totalItems = await apotekerSchema.countDocuments(filter);
+            return response(200, { data: content, totalItems, currentPage: page, totalPages: Math.ceil(totalItems / limit) }, 'Menampilkan Semua Apoteker', res);
     },
-    updatePasien: async (req, res) => {
-        const id = req.params._id;
-        try {
-            const { riwayat } = req.body;
-            const updatePasien = { riwayat };
-
-            const result = await pasienModel.findByIdAndUpdate(id, updatePasien, { new: true });
-            return response(200, result, 'Pasien Berhasil Diupdate', res);
-        } catch (error) {
-            console.error(error.message);
-            return response(500, error, 'Internal server error', res);
-        }
-    }
 }

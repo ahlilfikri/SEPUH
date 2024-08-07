@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
+const User = require('./user');
 
 const jadwalDokterSchema = new Schema({
   hari: { type: String, required: true },
@@ -8,13 +9,11 @@ const jadwalDokterSchema = new Schema({
 }, { _id: false });
 
 const dokterSchema = new Schema({
-  nama: { type: String, required: true },
   spesialisasi: { type: String, required: true },
-  alamat: { type: String, required: false },
   jadwal: { type: [jadwalDokterSchema], required: false },
   img: { type: String, required: false },
-}, { timestamps: true });
+}, { _id: false });
 
-const Dokter = mongoose.model('dokter', dokterSchema);
+const Dokter = User.discriminator(2, dokterSchema);
 
 module.exports = Dokter;

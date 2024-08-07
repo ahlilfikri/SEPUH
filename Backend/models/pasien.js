@@ -1,11 +1,11 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
+const User = require('./user');
 
 const pasienSchema = new Schema({
-    user: { type: mongoose.Schema.Types.ObjectId, ref: "user" },
     riwayat: { type: [String], required: true },
-}, { timestamps: true })
+}, { _id: false });
 
-const pasien = mongoose.model('pasien', pasienSchema);
+const Pasien = User.discriminator(0, pasienSchema);
 
-module.exports = pasien;
+module.exports = Pasien;

@@ -1,22 +1,30 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/user');
-const {authenticateUser, authenticateAdmin} = require('../middleware/authentication');
+const {authenticateUser, authenticateAdmin, authenticateApoteker, authenticateDokter, authenticatePasien } = require('../middleware/authentication');
 
-//user
+//user general
 router.post('/register', userController.register);
 router.post('/login', userController.login);
 router.post('/logout/:token', userController.logout);
 router.put('/reset/:id', userController.reset);
 
-router.get('/',authenticateUser, userController.getAllUser);
-router.get('/:id',authenticateUser, userController.getOne);
-router.post('/', authenticateAdmin, userController.post);
-router.put('/:id', authenticateUser, userController.put);
-router.delete('/:id', authenticateAdmin, userController.delete);
+router.get('/all',authenticateAdmin, userController.getAllUser);
+router.get('/all/:id',authenticateAdmin, userController.getOne);
+router.post('/all', authenticateAdmin, userController.post);
+router.put('/all/:id', authenticateAdmin, userController.put);
+router.delete('/all/:id', authenticateAdmin, userController.delete);
 
 //pasien
-router.get('/pasien',authenticateAdmin, userController.getPasien);
-router.put('/pasien/:id',authenticateAdmin, userController.updatePasien);
+router.get('/pasien',authenticatePasien, userController.getPasien);
+router.get('/pasien/filter',authenticatePasien, userController.getPasienFilter);
+
+//dokter
+router.get('/dokter',authenticateDokter, userController.getDokter);
+router.get('/dokter/filter',authenticateDokter, userController.getDokterFilter);
+
+//apoteker
+router.get('/apoteker',authenticateApoteker, userController.getApoteker);
+router.get('/apoteker/filter',authenticateApoteker, userController.getApotekerFilter);
 
 module.exports = router;
