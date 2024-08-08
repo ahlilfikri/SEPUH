@@ -40,6 +40,8 @@ const Dashboard = () => {
         return setContent(<Pasien />);
       case 'Dokter':
         return setContent(<Dokter />);
+      case 'Apoteker':
+        return setContent(<Apoteker />);
       case 'Jadwal':
         return setContent(<Jadwal />);
       case 'Profile':
@@ -137,7 +139,7 @@ const Dashboard = () => {
               <i className="fa fa-user" style={{ fontSize: '24px', color: '#225374' }}></i>
             </div>
             <ul className="menu-list">
-              {['Home', 'Pasien', 'Dokter', 'Jadwal', 'Profile', 'Logout'].map((item) => (
+              {['Home', 'Pasien', 'Apoteker', 'Dokter', 'Jadwal', 'Profile', 'Logout'].map((item) => (
                 <li
                   key={item}
                   className={`mx-auto my-3 p-2 menu-item ${activeItem === item ? 'text-white' : ''}`}

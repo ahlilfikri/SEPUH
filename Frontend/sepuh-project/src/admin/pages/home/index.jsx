@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState, useRef } from 'react';
-import Gambar from '/logo.svg';
 import Dokter from '/doksuster.png';
+import Gambar from '/logo.png';
 import Navbar from '../../../shared/navbar';
 
 const Home = () => {
@@ -23,15 +23,14 @@ const Home = () => {
 
     return (
         <Fragment>
-
-                <Navbar isLogin={isLogin} />  
-            <main className="position-relative" style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #225374, #28A09E)' }}>
+            <Navbar isLogin={isLogin} />
+            <main className="position-relative" style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #225374, #28A09E)', paddingBottom: '100px' }}>
                 <div className="container text-white" style={{ minHeight: '50vh' }}>
                     <div className="row align-items-center h-100">
                         <div className="col-md-6 text-start pt-5 pt-md-0">
                             <h1>SEPUH!</h1>
                             <h2>Sehat Bersama, Sembuh Bersama.</h2>
-                            <p style={{textAlign:'justify'}}>SEPUH membantu Sistem Penjadwalan untuk Hospital yang berguna untuk memanajemen informasi pasien, manajemen informasi dan jadwal dokter dan jadwal periksa.</p>
+                            <p style={{ textAlign: 'justify' }}>SEPUH Adalah Sistem Penjadwalan untuk Hospital yang berguna untuk membantu manajemen informasi pasien, manajemen informasi dokter,jadwal dokter dan jadwal periksa pasien.</p>
                             <button className="btn btn-read-more bg-success text-white" onClick={handleScroll}>Baca Selengkapnya</button>
                         </div>
                         <div className="col-md-6 text-center pt-5">
@@ -41,16 +40,15 @@ const Home = () => {
                 </div>
 
                 <div className="container text-white ">
-                    <h1 style={{ textAlign: 'center', marginTop:'60px', marginBottom:'30px' }} ref={sectionRef}>TENTANG KAMI</h1>
+                    <h1 id="tentangkami" style={{ textAlign: 'center', marginTop: '90px', marginBottom: '30px' }} ref={sectionRef}>TENTANG KAMI</h1>
                 </div>
-                
+
                 <div className="circle-background position-absolute"></div>
                 <div className="container text-white h-100">
                     <div className="row align-items-start h-100">
                         <div className="col-md-6 text-start pt-5 pt-md-0">
                             <h2>APA ITU SEPUH?</h2>
-                            <h3>Sehat Bersama, Sembuh Bersama.</h3>
-                            <p style={{ textAlign: 'justify' }}>SEPUH adalah sistem penjadwalan untuk rumah sakit yang dirancang untuk memanajemen informasi pasien, manajemen informasi dan jadwal dokter, serta jadwal periksa. Sistem ini membantu rumah sakit dalam mengatur dan mengelola berbagai aspek administrasi dan operasional yang berkaitan dengan pelayanan kesehatan.</p>
+                            <p style={{ textAlign: 'justify' }}>SEPUH adalah sistem penjadwalan untuk rumah sakit yang dirancang untuk manajemen informasi pasien, manajemen informasi dokter, jadwal dokter, dan jadwal periksa pasien. Sistem ini membantu rumah sakit dalam mengatur dan mengelola berbagai aspek administrasi dan operasional yang berkaitan dengan pelayanan kesehatan.</p>
                         </div>
                         <div className="col-md-6 text-start pt-5 pt-md-0">
                             <h3>Manfaat SEPUH</h3>
@@ -91,14 +89,14 @@ const Home = () => {
                             <h5>Tautan Cepat</h5>
                             <ul className="list-unstyled">
                                 <li><a href="#" className="text-white">Home</a></li>
-                                <li><a href="#" className="text-white">Tentang</a></li>
+                                <li><a href="#tentangkami" className="text-white">Tentang</a></li>
                             </ul>
                         </div>
                         <div className="col-md-4">
                             <h5>Ikuti Kami</h5>
-                            <a href="#" className="text-white me-3"><i className="fab fa-facebook-f"></i></a>
-                            <a href="#" className="text-white me-3"><i className="fab fa-twitter"></i></a>
-                            <a href="#" className="text-white"><i className="fab fa-instagram"></i></a>
+                            <a href="" className="text-white me-3"><i className="fab fa-facebook-f"></i></a>
+                            <a href="" className="text-white me-3"><i className="fab fa-whatsapp"></i></a>
+                            <a href="" className="text-white"><i className="fab fa-instagram"></i></a>
                         </div>
                     </div>
                     <div className="text-center py-3">
