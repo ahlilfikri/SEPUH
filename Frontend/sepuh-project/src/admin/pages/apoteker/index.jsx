@@ -4,13 +4,12 @@ import { FaEdit, FaTrashAlt, FaFileAlt } from 'react-icons/fa';
 import Loading from '../../../shared/loading';
 import Modal from '../../../shared/modal';
 import EditModal from './component/modalEdit';
-import AddPasienModal from './component/modalAdd';
-import RiwayatModal from './component/modalDetail';
+import AddApotekerModal from './component/modalAdd';
 import DeleteModal from '../../../shared/modalDelete';
 import useDebounce from '../../../shared/debouncedValue';
 import Pagination from '../../../shared/pagination'; 
 
-const Pasien = () => {
+const Apoteker = () => {
     const port = `${import.meta.env.VITE_BASE_URL}`;
     const [data, setData] = useState([]);
     const token = sessionStorage.getItem('token');
@@ -18,10 +17,8 @@ const Pasien = () => {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const [showEditModal, setShowEditModal] = useState(false);
-    const [selectedPasien, setSelectedPasien] = useState(null);
-    const [showAddPasienModal, setShowAddPasienModal] = useState(false);
-    const [showRiwayatModal, setShowRiwayatModal] = useState(false);
-    const [selectedRiwayat, setSelectedRiwayat] = useState([]);
+    const [selectedApoteker, setSelectedApoteker] = useState(null);
+    const [showAddApotekerModal, setShowAddApotekerModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [filters, setFilters] = useState({
         nama: '',
@@ -37,7 +34,7 @@ const Pasien = () => {
     const fetchData = async () => {
         setLoading(true);
         try {
-            const response = await axios.get(`${port}user/pasien/filter`, {
+            const response = await axios.get(`${port}user/apoteker/filter`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 },
@@ -51,7 +48,7 @@ const Pasien = () => {
             });
             
             if (response.data.status === 500) {
-                setError('Tidak dapat mengambil data pasien, coba muat ulang laman');
+                setError('Tidak dapat mengambil data apoteker, coba muat ulang laman');
             } else {
                 setData(response.data.data.data);
                 setTotalPages(response.data.data.totalPages); 
@@ -67,16 +64,16 @@ const Pasien = () => {
         fetchData();
     }, [token, debouncedFilters, currentPage]); 
 
-    const handleEditClick = (pasien) => {
-        setSelectedPasien({ ...pasien });
+    const handleEditClick = (apoteker) => {
+        setSelectedApoteker({ ...apoteker });
         setShowEditModal(true);
     };
 
-    const handleSaveChanges = async (updatedPasien) => {
+    const handleSaveChanges = async (updatedApoteker) => {
         setShowEditModal(false);
         setLoading(true);
         try {
-            const response = await axios.put(`${port}user/all/${updatedPasien.id}`, updatedPasien, {
+            const response = await axios.put(`${port}user/all/${updatedApoteker.id}`, updatedApoteker, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
@@ -95,16 +92,16 @@ const Pasien = () => {
         }
     };
 
-    const handleAddPasienClick = () => {
-        setShowAddPasienModal(true);
+    const handleAddApotekerClick = () => {
+        setShowAddApotekerModal(true);
     };
 
-    const handleSaveNewPasien = async (newPasien) => {
-        setShowAddPasienModal(false);
+    const handleSaveNewApoteker = async (newApoteker) => {
+        setShowAddApotekerModal(false);
         setLoading(true);
         
         try {
-            const response = await axios.post(`${port}user/all`, newPasien, {
+            const response = await axios.post(`${port}user/all`, newApoteker, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
@@ -112,39 +109,39 @@ const Pasien = () => {
             });
             
             if (response.data.status === 500) {
-                setError('Tidak dapat menambahkan pasien, coba lagi');
+                setError('Tidak dapat menambahkan apoteker, coba lagi');
             } else {
-                setSuccess('Pasien berhasil ditambahkan');
+                setSuccess('Apoteker berhasil ditambahkan');
             }
         } catch (error) {
-            setError('Tidak dapat menambahkan pasien, coba lagi');
+            setError('Tidak dapat menambahkan apoteker, coba lagi');
         } finally {
             setLoading(false);
             fetchData();
         }
     };
 
-    const handleDeleteClick = (pasien) => {
-        setSelectedPasien(pasien);
+    const handleDeleteClick = (apoteker) => {
+        setSelectedApoteker(apoteker);
         setShowDeleteModal(true);
     };
 
-    const handleDeletePasien = async () => {
+    const handleDeleteApoteker = async () => {
         setShowDeleteModal(false);
         setLoading(true);
         try {
-            const response = await axios.delete(`${port}user/all/${selectedPasien._id}`, {
+            const response = await axios.delete(`${port}user/all/${selectedApoteker._id}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
             });            
             if (response.data.status === 500) {
-                setError('Tidak dapat menghapus pasien, coba lagi');
+                setError('Tidak dapat menghapus apoteker, coba lagi');
             } else {
-                setSuccess('Pasien berhasil dihapus');
+                setSuccess('Apoteker berhasil dihapus');
             }
         } catch (error) {
-            setError('Tidak dapat menghapus pasien, coba lagi');
+            setError('Tidak dapat menghapus apoteker, coba lagi');
         } finally {
             setLoading(false);
             fetchData();
@@ -157,17 +154,8 @@ const Pasien = () => {
         setSuccess('');
     };
 
-    const handleCloseAddPasienModal = () => {
-        setShowAddPasienModal(false);
-    };
-
-    const handleRiwayatClick = (riwayat) => {
-        setSelectedRiwayat(riwayat);
-        setShowRiwayatModal(true);
-    };
-
-    const handleCloseRiwayatModal = () => {
-        setShowRiwayatModal(false);
+    const handleCloseAddApotekerModal = () => {
+        setShowAddApotekerModal(false);
     };
 
     const handleCloseDeleteModal = () => {
@@ -224,7 +212,7 @@ const Pasien = () => {
                 </div>
                 <div className="d-flex justify-content-between align-items-center p-3 mt-5">
                     <p className="mb-0 text-light" style={{ fontWeight: 'bold' }}>Daftar Apoteker</p>
-                    <button className="btn btn-success" onClick={handleAddPasienClick}>Tambah Pasien</button>
+                    <button className="btn btn-success" onClick={handleAddApotekerClick}>Tambah Apoteker</button>
                 </div>
                 <div className="row">
                     <div className="col-12">
@@ -238,29 +226,23 @@ const Pasien = () => {
                                         <th scope="col" style={{ fontWeight: 'normal', fontSize: '18px', textAlign: 'center', fontWeight: '600' }}>Alamat</th>
                                         <th scope="col" style={{ fontWeight: 'normal', fontSize: '18px', textAlign: 'center', fontWeight: '600' }}>Username</th>
                                         <th scope="col" style={{ fontWeight: 'normal', fontSize: '18px', textAlign: 'center', fontWeight: '600' }}>Email</th>
-                                        <th scope="col" style={{ fontWeight: 'normal', fontSize: '18px', textAlign: 'center', fontWeight: '600' }}>Riwayat</th>
                                         <th scope="col" style={{ fontWeight: 'normal', fontSize: '18px', textAlign: 'center', fontWeight: '600' }}>Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {error === '' && data.map((pasien, index) => (
+                                    {error === '' && data.map((apoteker, index) => (
                                         <tr key={index}>
                                             <td style={{ fontSize: '18px', fontWeight: '400' }}>{index + 1}</td>
-                                            <td style={{ fontSize: '18px', fontWeight: '400' }}>{pasien.nama}</td>
-                                            <td style={{ fontSize: '18px', fontWeight: '400' }}>{pasien.usia}</td>
-                                            <td style={{ fontSize: '18px', fontWeight: '400' }}>{pasien.alamat}</td>
-                                            <td style={{ fontSize: '18px', fontWeight: '400' }}>{pasien.username}</td>
-                                            <td style={{ fontSize: '18px', fontWeight: '400' }}>{pasien.email}</td>
-                                            <td style={{ fontSize: '18px', fontWeight: '400' }} className="text-center">
-                                                <div className="btn" onClick={() => handleRiwayatClick(pasien.riwayat)}>
-                                                    <FaFileAlt style={{ color: '#FFD700', cursor: 'pointer' }} />
-                                                </div>
-                                            </td>
+                                            <td style={{ fontSize: '18px', fontWeight: '400' }}>{apoteker.nama}</td>
+                                            <td style={{ fontSize: '18px', fontWeight: '400' }}>{apoteker.usia}</td>
+                                            <td style={{ fontSize: '18px', fontWeight: '400' }}>{apoteker.alamat}</td>
+                                            <td style={{ fontSize: '18px', fontWeight: '400' }}>{apoteker.username}</td>
+                                            <td style={{ fontSize: '18px', fontWeight: '400' }}>{apoteker.email}</td>
                                             <td style={{ fontSize: '18px' }} className="text-center">
-                                                <div className="btn m-1" onClick={() => handleEditClick(pasien)}>
+                                                <div className="btn m-1" onClick={() => handleEditClick(apoteker)}>
                                                     <FaEdit style={{ cursor: 'pointer', marginRight: '10px', color: '#000' }} />
                                                 </div>
-                                                <FaTrashAlt className="m-1" style={{ cursor: 'pointer', color: '#B22222' }} onClick={() => handleDeleteClick(pasien)} />
+                                                <FaTrashAlt className="m-1" style={{ cursor: 'pointer', color: '#B22222' }} onClick={() => handleDeleteClick(apoteker)} />
                                             </td>
                                         </tr>
                                     ))}
@@ -285,27 +267,22 @@ const Pasien = () => {
             <EditModal
                 show={showEditModal}
                 handleClose={handleCloseModal}
-                data={selectedPasien}
+                data={selectedApoteker}
                 handleSave={handleSaveChanges}
             />
-            <AddPasienModal
-                show={showAddPasienModal}
-                handleClose={handleCloseAddPasienModal}
-                handleSave={handleSaveNewPasien}
-            />
-            <RiwayatModal
-                show={showRiwayatModal}
-                handleClose={handleCloseRiwayatModal}
-                riwayat={selectedRiwayat}
+            <AddApotekerModal
+                show={showAddApotekerModal}
+                handleClose={handleCloseAddApotekerModal}
+                handleSave={handleSaveNewApoteker}
             />
             <DeleteModal
                 show={showDeleteModal}
                 handleClose={handleCloseDeleteModal}
-                handleDelete={handleDeletePasien}
-                data={selectedPasien?.nama}
+                handleDelete={handleDeleteApoteker}
+                data={selectedApoteker?.nama}
             />
         </Fragment>
     );
 };
 
-export default Pasien;
+export default Apoteker;

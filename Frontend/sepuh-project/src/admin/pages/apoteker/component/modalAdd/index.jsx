@@ -1,27 +1,17 @@
-import React, { useState, useEffect, Fragment } from 'react';
+import React, { Fragment, useState } from 'react';
 
-const ModalEdit = ({ show, handleClose, handleSave, data }) => {
+const ModalAdd = ({ show, handleClose, handleSave }) => {
     const [formData, setFormData] = useState({
-        id: '',
         nama: '',
         usia: '',
         alamat: '',
-        riwayat: [''] // Initialize with one empty string
+        username: '',
+        email: '',
+        password: '',
+        role: 1,
     });
 
     const [errors, setErrors] = useState({});
-
-    useEffect(() => {
-        if (data) {
-            setFormData({
-                id: data?._id || '',
-                nama: data?.nama || '',
-                usia: data?.usia || '',
-                alamat: data?.alamat || '',
-                riwayat: data?.riwayat || [''] // Ensure riwayat is initialized correctly
-            });
-        }
-    }, [data]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -32,31 +22,6 @@ const ModalEdit = ({ show, handleClose, handleSave, data }) => {
         validateField(name, value);
     };
 
-    const handleRiwayatChange = (index, value) => {
-        const updatedRiwayat = [...formData.riwayat];
-        updatedRiwayat[index] = value;
-        setFormData({
-            ...formData,
-            riwayat: updatedRiwayat,
-        });
-        validateField(`riwayat_${index}`, value);
-    };
-
-    const handleAddRiwayat = () => {
-        setFormData({
-            ...formData,
-            riwayat: [...formData.riwayat, ''],
-        });
-    };
-
-    const handleRemoveRiwayat = (index) => {
-        const updatedRiwayat = formData.riwayat.filter((_, i) => i !== index);
-        setFormData({
-            ...formData,
-            riwayat: updatedRiwayat,
-        });
-    };
-
     const validateField = (name, value) => {
         const newErrors = { ...errors };
 
@@ -65,19 +30,12 @@ const ModalEdit = ({ show, handleClose, handleSave, data }) => {
             usia: 'Usia',
             alamat: 'Alamat',
             username: 'Username',
-            email: 'Email'
+            email: 'Email',
+            password : 'Password'
         };
 
-        const riwayatFieldName = 'Riwayat';
 
-        if (name.startsWith('riwayat_')) {
-            const [ , index ] = name.split('_');
-            // if (!value) {
-            //     newErrors[name] = `${riwayatFieldName} ${index + 1} is required`;
-            // } else {
-            //     delete newErrors[name];
-            // }
-        } else if (name === 'email') {
+         if (name === 'email') {
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!value || !emailRegex.test(value)) {
                 newErrors[name] = 'Invalid email address';
@@ -99,10 +57,10 @@ const ModalEdit = ({ show, handleClose, handleSave, data }) => {
         if (!formData.nama) newErrors.nama = 'Nama is required';
         if (!formData.usia) newErrors.usia = 'Usia is required';
         if (!formData.alamat) newErrors.alamat = 'Alamat is required';
-
-        // formData.riwayat.forEach((item, index) => {
-        //     if (!item) newErrors[`riwayat_${index}`] = 'Riwayat item is required';
-        // });
+        if (!formData.username) newErrors.username = 'Username is required';
+        if (!formData.email) newErrors.email = 'Email is required';
+        if (!formData.password) newErrors.password = 'Password is required';
+        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) newErrors.email = 'Invalid email address';
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -111,6 +69,15 @@ const ModalEdit = ({ show, handleClose, handleSave, data }) => {
     const handleSubmit = () => {
         if (validateForm()) {
             handleSave(formData);
+            setFormData({
+                nama: '',
+                usia: '',
+                alamat: '',
+                username: '',
+                email: '',
+                password: ''
+            });
+            setErrors({});
         }
     };
 
@@ -122,7 +89,7 @@ const ModalEdit = ({ show, handleClose, handleSave, data }) => {
                 <div className="modal-dialog" role="document">
                     <div className="modal-content">
                         <div className="modal-header">
-                            <h5 className="modal-title">Edit Pasien</h5>
+                            <h5 className="modal-title">Tambah Apoteker</h5>
                             <button type="button" className="close" onClick={handleClose}>
                                 <span>&times;</span>
                             </button>
@@ -166,31 +133,40 @@ const ModalEdit = ({ show, handleClose, handleSave, data }) => {
                                     {errors.alamat && <div className="text-danger mt-2" style={{ fontSize: '12px' }}>{errors.alamat}</div>}
                                 </div>
                                 <div className="form-group">
-                                    <label>Riwayat</label>
-                                    {formData.riwayat.map((item, index) => (
-                                        <div key={index} className="d-flex mb-2">
-                                            <input
-                                                type="text"
-                                                className="form-control"
-                                                value={item}
-                                                onChange={(e) => handleRiwayatChange(index, e.target.value)}
-                                                required
-                                            />
-                                            <button
-                                                type="button"
-                                                className="btn btn-danger ml-2"
-                                                onClick={() => handleRemoveRiwayat(index)}
-                                            >
-                                                Remove
-                                            </button>
-                                        </div>
-                                    ))}
-                                    <button type="button" className="btn btn-secondary" onClick={handleAddRiwayat}>
-                                        Add Riwayat
-                                    </button>
-                                    <div>
-                                        {/* {formData.riwayat.length === 0 && <div className="text-danger mt-2" style={{ fontSize: '12px' }}>Riwayat is required</div>} */}
-                                    </div>
+                                    <label>Username</label>
+                                    <input
+                                        type="text"
+                                        name="username"
+                                        className="form-control"
+                                        value={formData.username}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                    {errors.username && <div className="text-danger mt-2" style={{ fontSize: '12px' }}>{errors.username}</div>}
+                                </div>
+                                <div className="form-group">
+                                    <label>Email</label>
+                                    <input
+                                        type="email"
+                                        name="email"
+                                        className="form-control"
+                                        value={formData.email}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                    {errors.email && <div className="text-danger mt-2" style={{ fontSize: '12px' }}>{errors.email}</div>}
+                                </div>
+                                <div className="form-group">
+                                    <label>Password</label>
+                                    <input
+                                        type="password"
+                                        name="password"
+                                        className="form-control"
+                                        value={formData.password}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                    {errors.password && <div className="text-danger mt-2" style={{ fontSize: '12px' }}>{errors.password}</div>}
                                 </div>
                             </form>
                         </div>
@@ -210,4 +186,4 @@ const ModalEdit = ({ show, handleClose, handleSave, data }) => {
     );
 };
 
-export default ModalEdit;
+export default ModalAdd;

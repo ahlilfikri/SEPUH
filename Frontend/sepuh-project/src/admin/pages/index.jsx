@@ -7,6 +7,7 @@ import Gambar from '/logo.svg';
 import Pasien from './pasien';
 import Dokter from './dokter';
 import Jadwal from './jadwal';
+import Apoteker from './apoteker';
 import Profile from '../../user/pages/profile';
 import './index.css';
 
@@ -38,10 +39,10 @@ const Dashboard = () => {
         return navigate('/');
       case 'Pasien':
         return setContent(<Pasien />);
-      case 'Dokter':
-        return setContent(<Dokter />);
       case 'Apoteker':
         return setContent(<Apoteker />);
+      case 'Dokter':
+        return setContent(<Dokter />);
       case 'Jadwal':
         return setContent(<Jadwal />);
       case 'Profile':
