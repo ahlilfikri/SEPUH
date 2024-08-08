@@ -10,14 +10,9 @@ const jadwalDokterSchema = new Schema({
   kuota: { type: Number, required: true, default: 50 },
 }, { timestamps: true });
 
-const JadwalDokter = mongoose.model('jadwalDokter', jadwalDokterSchema);
+const jadwalDokter = mongoose.model('jadwalDokter', jadwalDokterSchema);
 
-module.exports = JadwalDokter;
-
-const mongoose = require('mongoose');
-const cron = require('node-cron');
-const Dokter = require('./dokter');
-const JadwalDokter = require('./jadwalDokter');
+module.exports = jadwalDokter;
 
 const dayMapping = {
   'senin': 1,

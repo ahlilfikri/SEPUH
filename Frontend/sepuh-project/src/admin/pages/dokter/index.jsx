@@ -169,7 +169,10 @@ const Dokter = () => {
         setSuccess('');
     };
 
-    const handleScheduleClick = (schedule) => {        
+    const handleScheduleClick = (schedule) => {     
+        
+        console.log(schedule);
+           
         setSelectedSchedule(schedule);
         setShowScheduleModal(true);
     };
@@ -303,9 +306,10 @@ const Dokter = () => {
             {showEditModal && (
                 <EditModal
                     show={showEditModal}
-                    onClose={handleCloseModal}
+                    handleClose={handleCloseModal}
                     schedule={selectedSchedule}
-                    onSaveChanges={handleSaveChanges}
+                    handleSave={handleSaveChanges}
+                    data = {selectedDoctor}
                 />
             )}
             {showAddDoctorModal && (

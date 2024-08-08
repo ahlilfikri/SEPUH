@@ -10,6 +10,11 @@ const ModalAdd = ({ show, handleClose, handleSave }) => {
         nama: '',
         spesialisasi: '',
         alamat: '',
+        usia: '',
+        username: '',
+        password: '',
+        email: '',
+        role: 2, // Fixed role value
         jadwal: [{ hari: '', jamMulai: '', jamSelesai: '' }]
     });
 
@@ -51,19 +56,23 @@ const ModalAdd = ({ show, handleClose, handleSave }) => {
 
     const validateField = (name, value) => {
         const newErrors = { ...errors };
-    
+
         const fieldNames = {
             nama: 'Nama',
             spesialisasi: 'Spesialisasi',
-            alamat: 'Alamat'
+            alamat: 'Alamat',
+            usia: 'Usia',
+            username: 'Username',
+            password: 'Password',
+            email: 'Email'
         };
-    
+
         const scheduleFieldNames = {
             hari: 'Hari',
             jamMulai: 'Jam Mulai',
             jamSelesai: 'Jam Selesai'
         };
-    
+
         if (name.startsWith('jadwal_')) {
             const [ , index, field ] = name.split('_');
             const fieldName = scheduleFieldNames[field];
@@ -80,16 +89,19 @@ const ModalAdd = ({ show, handleClose, handleSave }) => {
                 delete newErrors[name];
             }
         }
-    
+
         setErrors(newErrors);
     };
-    
 
     const validateForm = () => {
         const newErrors = {};
 
         if (!formData.nama) newErrors.nama = 'Nama is required';
         if (!formData.spesialisasi) newErrors.spesialisasi = 'Spesialisasi is required';
+        if (!formData.usia) newErrors.usia = 'Usia is required';
+        if (!formData.username) newErrors.username = 'Username is required';
+        if (!formData.password) newErrors.password = 'Password is required';
+        if (!formData.email) newErrors.email = 'Email is required';
 
         formData.jadwal.forEach((schedule, index) => {
             if (!schedule.hari) newErrors[`jadwal_${index}_hari`] = 'Hari is required';
@@ -104,7 +116,17 @@ const ModalAdd = ({ show, handleClose, handleSave }) => {
     const handleSubmit = () => {
         if (validateForm()) {
             handleSave(formData);
-            setFormData({ nama: '', spesialisasi: '', alamat: '', jadwal: [{ hari: '', jamMulai: '', jamSelesai: '' }] });
+            setFormData({
+                nama: '',
+                spesialisasi: '',
+                alamat: '',
+                usia: '',
+                username: '',
+                password: '',
+                email: '',
+                role: 2, // Reset fixed role value
+                jadwal: [{ hari: '', jamMulai: '', jamSelesai: '' }]
+            });
             setErrors({});
         }
     };
@@ -158,6 +180,54 @@ const ModalAdd = ({ show, handleClose, handleSave }) => {
                                         onChange={handleChange}
                                     />
                                     {errors.alamat && <div className="text-danger mt-2" style={{ fontSize: '12px' }}>{errors.alamat}</div>}
+                                </div>
+                                <div className="form-group">
+                                    <label>Usia</label>
+                                    <input
+                                        type="number"
+                                        name="usia"
+                                        className="form-control"
+                                        value={formData.usia}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                    {errors.usia && <div className="text-danger mt-2" style={{ fontSize: '12px' }}>{errors.usia}</div>}
+                                </div>
+                                <div className="form-group">
+                                    <label>Username</label>
+                                    <input
+                                        type="text"
+                                        name="username"
+                                        className="form-control"
+                                        value={formData.username}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                    {errors.username && <div className="text-danger mt-2" style={{ fontSize: '12px' }}>{errors.username}</div>}
+                                </div>
+                                <div className="form-group">
+                                    <label>Password</label>
+                                    <input
+                                        type="password"
+                                        name="password"
+                                        className="form-control"
+                                        value={formData.password}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                    {errors.password && <div className="text-danger mt-2" style={{ fontSize: '12px' }}>{errors.password}</div>}
+                                </div>
+                                <div className="form-group">
+                                    <label>Email</label>
+                                    <input
+                                        type="email"
+                                        name="email"
+                                        className="form-control"
+                                        value={formData.email}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                    {errors.email && <div className="text-danger mt-2" style={{ fontSize: '12px' }}>{errors.email}</div>}
                                 </div>
                                 <div className="form-group">
                                     <label>Jadwal Kerja</label>

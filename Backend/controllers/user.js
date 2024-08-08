@@ -3,6 +3,7 @@ const userModel = require("../models/user");
 const dokterSchema = require("../models/dokter");
 const apotekerSchema = require("../models/apoteker");
 const pasienSchema = require("../models/pasien");
+const jadwalDokterSchema = require("../models/jadwalDokter");
 const bcrypt = require("bcryptjs");
 const { validationResult } = require('express-validator');
 const jwt = require("jsonwebtoken");
@@ -125,10 +126,10 @@ module.exports = {
         }
     },
     post: async (req, res) => {
-        const { nama, usia, alamat, username, password, email, role, spesialisasi, riwayat } = req.body;
+        const { nama, usia, alamat, username, password, email, role, spesialisasi, riwayat, jadwal } = req.body;
         try {
             const userExist = await userModel.findOne({ $or: [{ email }, { username }] });
-
+    
             if (userExist) {
                 if (userExist.email === email) {
                     return response(400, null, 'Email sudah terdaftar', res);
@@ -137,29 +138,43 @@ module.exports = {
                     return response(400, null, 'Username sudah terdaftar', res);
                 }
             }
-            const passwordEncripted = await bcrypt.hash(password, 15);
-            let newUser
+    
+            const passwordEncrypted = await bcrypt.hash(password, 15);
+            let newUser;
+    
             if (role === 3) {
                 newUser = new userModel({
                     nama,
                     usia,
                     alamat,
                     username,
-                    password: passwordEncripted,
+                    password: passwordEncrypted,
                     email,
                     role: 3
                 });
                 await newUser.save();
             } else if (role === 2) {
+                // Save schedule entries and gather their IDs
+                const savedJadwal = await Promise.all(jadwal.map(async (item) => {
+                    const newJadwalDokter = new jadwalDokterSchema({
+                        hari: item.hari,
+                        jamMulai: item.jamMulai,
+                        jamSelesai: item.jamSelesai,
+                    });
+                    const savedJadwalDokter = await newJadwalDokter.save();
+                    return savedJadwalDokter._id; // Collect the saved schedule IDs
+                }));
+    
                 newUser = new dokterSchema({
                     nama,
                     usia,
                     alamat,
                     username,
-                    password: passwordEncripted,
+                    password: passwordEncrypted,
                     email,
                     role: 2,
-                    spesialisasi
+                    spesialisasi,
+                    jadwal: savedJadwal // Save the array of schedule IDs
                 });
                 await newUser.save();
             } else if (role === 1) {
@@ -168,7 +183,7 @@ module.exports = {
                     usia,
                     alamat,
                     username,
-                    password: passwordEncripted,
+                    password: passwordEncrypted,
                     email,
                     role: 1
                 });
@@ -179,7 +194,7 @@ module.exports = {
                     usia,
                     alamat,
                     username,
-                    password: passwordEncripted,
+                    password: passwordEncrypted,
                     email,
                     riwayat,
                     role: 0
@@ -189,9 +204,9 @@ module.exports = {
             return response(201, newUser, 'User berhasil di daftarkan', res);
         } catch (error) {
             console.error(error.message);
-            return response(500, error, 'internal server error', res)
+            return response(500, error, 'internal server error', res);
         }
-    },
+    },    
     put: async (req, res) => {
         id = req.params.id;
         const updatedData = req.body;
@@ -293,12 +308,17 @@ module.exports = {
         }
     },
     getDokter: async (req, res) => {
-        try {
-            const content = await dokterSchema.find();
+        try {            
+            const content = await dokterSchema.find().populate([
+                {
+                    path :"jadwal",
+                    select : "hari jamMulai jamSelesai kuota"
+                }
+            ]);
             return response(200, content, 'Menampilkan Semua Dokter', res);
         } catch (error) {
             console.error(error.message);
-            return response(500, error, 'internal server error', res)
+            return response(500, error, 'internal server error', res);
         }
     },
     getDokterFilter: async (req, res) => {
@@ -318,7 +338,12 @@ module.exports = {
             }
     
             const skip = (page - 1) * limit;
-            const content = await dokterSchema.find(filter).skip(skip).limit(parseInt(limit));
+            const content = await dokterSchema.find(filter).skip(skip).limit(parseInt(limit)).populate([
+                {
+                    path :"jadwal",
+                    select : "hari jamMulai jamSelesai kuota"
+                }
+            ]);;
             const totalItems = await dokterSchema.countDocuments(filter);
             return response(200, { data: content, totalItems, currentPage: page, totalPages: Math.ceil(totalItems / limit) }, 'Menampilkan Semua Dokter', res);
         } catch (error) {

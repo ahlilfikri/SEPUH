@@ -6,6 +6,10 @@ const ModalEdit = ({ show, handleClose, handleSave, data }) => {
         nama: '',
         spesialisasi: '',
         alamat: '',
+        usia: '',
+        username: '',
+        email: '',
+        role: 2, // Fixed role value
         jadwal: [{ hari: '', jamMulai: '', jamSelesai: '' }]
     });
 
@@ -14,11 +18,15 @@ const ModalEdit = ({ show, handleClose, handleSave, data }) => {
     useEffect(() => {
         if (data) {
             setFormData({
-                id: data?._id || '',
-                nama: data?.nama || '',
-                spesialisasi: data?.spesialisasi || '',
-                alamat: data?.alamat || '',
-                jadwal: data?.jadwal || [{ hari: '', jamMulai: '', jamSelesai: '' }]
+                id: data._id || '',
+                nama: data.nama || '',
+                spesialisasi: data.spesialisasi || '',
+                alamat: data.alamat || '',
+                usia: data.usia || '',
+                username: data.username || '',
+                email: data.email || '',
+                role: data.role || 2, // Keep the role value
+                jadwal: data.jadwal || [{ hari: '', jamMulai: '', jamSelesai: '' }]
             });
         }
     }, [data]);
@@ -59,21 +67,24 @@ const ModalEdit = ({ show, handleClose, handleSave, data }) => {
 
     const validateField = (name, value) => {
         const newErrors = { ...errors };
-    
+
         const fieldNames = {
             nama: 'Nama',
             spesialisasi: 'Spesialisasi',
-            alamat: 'Alamat'
+            alamat: 'Alamat',
+            usia: 'Usia',
+            username: 'Username',
+            email: 'Email'
         };
-    
+
         const scheduleFieldNames = {
             hari: 'Hari',
             jamMulai: 'Jam Mulai',
             jamSelesai: 'Jam Selesai'
         };
-    
+
         if (name.startsWith('jadwal_')) {
-            const [ , index, field ] = name.split('_');
+            const [, index, field] = name.split('_');
             const fieldName = scheduleFieldNames[field];
             if (!value) {
                 newErrors[name] = `${fieldName} is required`;
@@ -88,16 +99,18 @@ const ModalEdit = ({ show, handleClose, handleSave, data }) => {
                 delete newErrors[name];
             }
         }
-    
+
         setErrors(newErrors);
     };
-    
 
     const validateForm = () => {
         const newErrors = {};
 
         if (!formData.nama) newErrors.nama = 'Nama is required';
         if (!formData.spesialisasi) newErrors.spesialisasi = 'Spesialisasi is required';
+        if (!formData.usia) newErrors.usia = 'Usia is required';
+        if (!formData.username) newErrors.username = 'Username is required';
+        if (!formData.email) newErrors.email = 'Email is required';
 
         formData.jadwal.forEach((schedule, index) => {
             if (!schedule.hari) newErrors[`jadwal_${index}_hari`] = 'Hari is required';
@@ -155,7 +168,7 @@ const ModalEdit = ({ show, handleClose, handleSave, data }) => {
                                         onChange={handleChange}
                                         required
                                     />
-                                    {errors.nama && <div className="text-danger mt-2" style={{fontSize:'12px'}}>{errors.nama}</div>}
+                                    {errors.nama && <div className="text-danger mt-2" style={{ fontSize: '12px' }}>{errors.nama}</div>}
                                 </div>
                                 <div className="form-group">
                                     <label>Spesialisasi</label>
@@ -167,7 +180,7 @@ const ModalEdit = ({ show, handleClose, handleSave, data }) => {
                                         onChange={handleChange}
                                         required
                                     />
-                                    {errors.spesialisasi && <div className="text-danger mt-2" style={{fontSize:'12px'}}>{errors.spesialisasi}</div>}
+                                    {errors.spesialisasi && <div className="text-danger mt-2" style={{ fontSize: '12px' }}>{errors.spesialisasi}</div>}
                                 </div>
                                 <div className="form-group">
                                     <label>Alamat</label>
@@ -179,62 +192,117 @@ const ModalEdit = ({ show, handleClose, handleSave, data }) => {
                                         onChange={handleChange}
                                         required
                                     />
+                                    {errors.alamat && <div className="text-danger mt-2" style={{ fontSize: '12px' }}>{errors.alamat}</div>}
                                 </div>
                                 <div className="form-group">
-                                    <label>Jadwal Kerja</label>
+                                    <label>Usia</label>
+                                    <input
+                                        type="number"
+                                        name="usia"
+                                        className="form-control"
+                                        value={formData.usia}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                    {errors.usia && <div className="text-danger mt-2" style={{ fontSize: '12px' }}>{errors.usia}</div>}
+                                </div>
+                                <div className="form-group">
+                                    <label>Username</label>
+                                    <input
+                                        type="text"
+                                        name="username"
+                                        className="form-control"
+                                        value={formData.username}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                    {errors.username && <div className="text-danger mt-2" style={{ fontSize: '12px' }}>{errors.username}</div>}
+                                </div>
+                                <div className="form-group">
+                                    <label>Email</label>
+                                    <input
+                                        type="email"
+                                        name="email"
+                                        className="form-control"
+                                        value={formData.email}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                    {errors.email && <div className="text-danger mt-2" style={{ fontSize: '12px' }}>{errors.email}</div>}
+                                </div>
+                                <div className="form-group">
+                                    <label>Jadwal</label>
                                     {formData.jadwal.map((schedule, index) => (
-                                        <div key={index}>
-
-                                            <div className="d-flex mb-2">
-                                                <select
-                                                    className="form-control"
-                                                    value={schedule.hari}
-                                                    onChange={(e) => handleScheduleChange(index, 'hari', e.target.value)}
-                                                    required
-                                                >
-                                                    <option value="">Pilih Hari</option>
-                                                    {daysOfWeek.map((day, i) => (
-                                                        <option key={i} value={day}>{day}</option>
-                                                    ))}
-                                                </select>
-                                                <select
-                                                    className="form-control"
-                                                    value={schedule.jamMulai}
-                                                    onChange={(e) => handleScheduleChange(index, 'jamMulai', e.target.value)}
-                                                    required
-                                                >
-                                                    <option value="">Jam Mulai</option>
-                                                    {timeOptions.map((time, i) => (
-                                                        <option key={i} value={time}>{time}</option>
-                                                    ))}
-                                                </select>
-                                                <select
-                                                    className="form-control"
-                                                    value={schedule.jamSelesai}
-                                                    onChange={(e) => handleScheduleChange(index, 'jamSelesai', e.target.value)}
-                                                    required
-                                                >
-                                                    <option value="">Jam Selesai</option>
-                                                    {timeOptions.map((time, i) => (
-                                                        <option key={i} value={time}>{time}</option>
-                                                    ))}
-                                                </select>
-                                                <button
-                                                    type="button"
-                                                    className="btn btn-danger ml-2"
-                                                    onClick={() => handleRemoveSchedule(index)}
-                                                >
-                                                    Remove
-                                                </button>
-                                            </div>
-                                            <div className=" mb-2">
-                                                {errors[`jadwal_${index}_hari`] && <div className="text-danger mt-2" style={{fontSize:'12px'}}>{errors[`jadwal_${index}_hari`]}</div>}
-                                                {errors[`jadwal_${index}_jamMulai`] && <div className="text-danger mt-2" style={{fontSize:'12px'}}>{errors[`jadwal_${index}_jamMulai`]}</div>}
-                                                {errors[`jadwal_${index}_jamSelesai`] && <div className="text-danger mt-2" style={{fontSize:'12px'}}>{errors[`jadwal_${index}_jamSelesai`]}</div>}
+                                        <div key={index} className="mb-3">
+                                            <select
+                                                className="form-control mb-2"
+                                                value={schedule.hari}
+                                                onChange={(e) => handleScheduleChange(index, 'hari', e.target.value)}
+                                            >
+                                                <option value="">Pilih Hari</option>
+                                                {daysOfWeek.map((day) => (
+                                                    <option key={day} value={day}>
+                                                        {day}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                            {errors[`jadwal_${index}_hari`] && (
+                                                <div className="text-danger mt-2" style={{ fontSize: '12px' }}>
+                                                    {errors[`jadwal_${index}_hari`]}
+                                                </div>
+                                            )}
+                                            <div className="row">
+                                                <div className="col">
+                                                    <select
+                                                        className="form-control mb-2"
+                                                        value={schedule.jamMulai}
+                                                        onChange={(e) => handleScheduleChange(index, 'jamMulai', e.target.value)}
+                                                    >
+                                                        <option value="">Jam Mulai</option>
+                                                        {timeOptions.map((time) => (
+                                                            <option key={time} value={time}>
+                                                                {time}
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                    {errors[`jadwal_${index}_jamMulai`] && (
+                                                        <div className="text-danger mt-2" style={{ fontSize: '12px' }}>
+                                                            {errors[`jadwal_${index}_jamMulai`]}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                <div className="col">
+                                                    <select
+                                                        className="form-control"
+                                                        value={schedule.jamSelesai}
+                                                        onChange={(e) => handleScheduleChange(index, 'jamSelesai', e.target.value)}
+                                                    >
+                                                        <option value="">Jam Selesai</option>
+                                                        {timeOptions.map((time) => (
+                                                            <option key={time} value={time}>
+                                                                {time}
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                    {errors[`jadwal_${index}_jamSelesai`] && (
+                                                        <div className="text-danger mt-2" style={{ fontSize: '12px' }}>
+                                                            {errors[`jadwal_${index}_jamSelesai`]}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                <div className="col-2 d-flex align-items-center">
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn-danger btn-sm"
+                                                        onClick={() => handleRemoveSchedule(index)}
+                                                    >
+                                                        &times;
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
                                     ))}
-                                    <button type="button" className="btn btn-secondary" onClick={handleAddSchedule}>
+                                    <button type="button" className="btn btn-secondary btn-sm" onClick={handleAddSchedule}>
                                         Add Schedule
                                     </button>
                                 </div>
@@ -245,7 +313,7 @@ const ModalEdit = ({ show, handleClose, handleSave, data }) => {
                                 Close
                             </button>
                             <button type="button" className="btn btn-primary" onClick={handleSubmit}>
-                                Save
+                                Save changes
                             </button>
                         </div>
                     </div>
