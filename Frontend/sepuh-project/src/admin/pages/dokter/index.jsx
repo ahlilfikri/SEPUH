@@ -105,7 +105,6 @@ const Dokter = () => {
     const handleSaveNewDoctor = async (newDoctor) => {
         setShowAddDoctorModal(false);
         setLoading(true);
-        console.log(newDoctor);
         
         try {
             const response = await axios.post(`${port}user/all`, newDoctor, {
@@ -114,7 +113,6 @@ const Dokter = () => {
                     'Content-Type': 'application/json'
                 }
             });
-            console.log(response);
             
             if (response.data.status === 500) {
                 setError('Tidak dapat menambahkan dokter, coba lagi');
@@ -169,10 +167,7 @@ const Dokter = () => {
         setSuccess('');
     };
 
-    const handleScheduleClick = (schedule) => {     
-        
-        console.log(schedule);
-           
+    const handleScheduleClick = (schedule) => {                
         setSelectedSchedule(schedule);
         setShowScheduleModal(true);
     };

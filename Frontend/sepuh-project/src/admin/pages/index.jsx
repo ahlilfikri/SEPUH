@@ -8,6 +8,7 @@ import Pasien from './pasien';
 import Dokter from './dokter';
 import Jadwal from './jadwal';
 import Apoteker from './apoteker';
+import Obat from './obat';
 import Profile from '../../user/pages/profile';
 import './index.css';
 
@@ -43,6 +44,8 @@ const Dashboard = () => {
         return setContent(<Apoteker />);
       case 'Dokter':
         return setContent(<Dokter />);
+      case 'Obat':
+        return setContent(<Obat />);
       case 'Jadwal':
         return setContent(<Jadwal />);
       case 'Profile':
@@ -140,7 +143,7 @@ const Dashboard = () => {
               <i className="fa fa-user" style={{ fontSize: '24px', color: '#225374' }}></i>
             </div>
             <ul className="menu-list">
-              {['Home', 'Pasien', 'Apoteker', 'Dokter', 'Jadwal', 'Profile', 'Logout'].map((item) => (
+              {['Home', 'Pasien', 'Apoteker', 'Dokter', 'Obat', 'Jadwal', 'Profile', 'Logout'].map((item) => (
                 <li
                   key={item}
                   className={`mx-auto my-3 p-2 menu-item ${activeItem === item ? 'text-white' : ''}`}

@@ -42,7 +42,7 @@ const Signin = ({ toggleSigninPopup }) => {
                 const decodedToken = jwtDecode(token);
                 setSuccess('Berhasil Masuk');
                 setTimeout(() => {
-                    if (decodedToken.role === 1) {
+                    if (decodedToken.role === 3 || decodedToken.role === 1) {
                         navigate('/dashboard');
                     } else {
                         navigate('/profile');

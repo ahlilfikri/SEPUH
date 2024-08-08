@@ -284,7 +284,7 @@ module.exports = {
     },
     getPasienFilter: async (req, res) => {
         try {
-            const { nama, usia, alamat, page = 1, limit = 20 } = req.query;
+            const { nama, usia, alamat, page = 1, limit = 10 } = req.query;
     
             let filter = {};
     
@@ -323,7 +323,7 @@ module.exports = {
     },
     getDokterFilter: async (req, res) => {
         try {
-            const { nama, spesialisasi, alamat, page = 1, limit = 20 } = req.query;
+            const { nama, spesialisasi, alamat, page = 1, limit = 10 } = req.query;
     
             let filter = {};
     
@@ -362,7 +362,7 @@ module.exports = {
     },
     getApotekerFilter: async (req, res) => {
         try {
-            const { nama, usia, alamat, page = 1, limit = 20 } = req.query;
+            const { nama, usia, alamat, page = 1, limit = 10 } = req.query;
     
                 let filter = {};
     

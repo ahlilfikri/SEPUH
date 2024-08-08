@@ -16,7 +16,7 @@ module.exports = {
 
     getFilter: async (req, res) => {
         try {
-            const { nama, page = 1, limit = 20 } = req.query;
+            const { nama, page = 1, limit = 10 } = req.query;
 
             let filter = {};
 
@@ -52,7 +52,7 @@ module.exports = {
 
     post: async (req, res) => {
         try {
-            const { nama, stok } = req.body;
+            const { nama, stok, harga } = req.body;
             obatExists = await obatModel.findOne({ nama: nama})
             if(obatExists){
                 return response(400, null, 'Nama obat sudah terdaftar', res);
@@ -74,8 +74,8 @@ module.exports = {
     put: async (req, res) => {
         const id = req.params._id;
         try {
-            const { nama, stok } = req.body;
-            let dataUpdates = { nama, stok };
+            const { nama, stok, harga } = req.body;
+            let dataUpdates = { nama, stok, harga };
             if(nama){
                 dataObat = await obatModel.findById(id)
                 obatExists = await obatModel.findOne({ nama: nama})
