@@ -108,7 +108,6 @@ const ResetPassword = () => {
                         </div>
                     </div>
                     <div style={{ marginBottom: '1rem' }}>
-<<<<<<< Updated upstream
                         <label style={{ fontWeight: 'bold', color: '#98A3AA' }}>New Password</label>
                         <div style={{ position: 'relative' }}>
                             <input
@@ -161,15 +160,6 @@ const ResetPassword = () => {
                                 {showConfirmPassword ? 'Hide' : 'Show'}
                             </button>
                         </div>
-=======
-                        <label style={{ fontWeight: 'bold', color:'#98A3AAg' }}>Confirm Password</label>
-                        <input
-                            type="password"
-                            value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
-                            style={{ width: '100%', padding: '0.5rem', margin: '0.5rem 0', backgroundColor: '#f0f0f0', border: '1px solid #ccc', borderRadius: '4px' }}
-                        />
->>>>>>> Stashed changes
                     </div>
                     <button type="submit" style={{ width: '100%', padding: '0.75rem', background: '#007BFF', color: 'white', border: 'none', borderRadius: '4px' }}>
                         Reset Password
