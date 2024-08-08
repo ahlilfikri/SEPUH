@@ -32,7 +32,7 @@ const Dokter = () => {
     const fetchData = async (page = currentPage) => {
         setLoading(true);
         try {
-            const response = await axios.get(`${port}dokter/filter`, {
+            const response = await axios.get(`${port}user/dokter/filter`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 },
@@ -79,7 +79,7 @@ const Dokter = () => {
         setShowEditModal(false);
         setLoading(true);
         try {
-            const response = await axios.put(`${port}dokter/${updatedDoctor.id}`, updatedDoctor, {
+            const response = await axios.put(`${port}user/all/${updatedDoctor.id}`, updatedDoctor, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
@@ -105,13 +105,17 @@ const Dokter = () => {
     const handleSaveNewDoctor = async (newDoctor) => {
         setShowAddDoctorModal(false);
         setLoading(true);
+        console.log(newDoctor);
+        
         try {
-            const response = await axios.post(`${port}dokter`, newDoctor, {
+            const response = await axios.post(`${port}user/all`, newDoctor, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 }
             });
+            console.log(response);
+            
             if (response.data.status === 500) {
                 setError('Tidak dapat menambahkan dokter, coba lagi');
             } else {
@@ -133,7 +137,7 @@ const Dokter = () => {
     const handleDeleteDoctor = async () => {
         setLoading(true);
         try {
-            const response = await axios.delete(`${port}dokter/${selectedDoctor._id}`, {
+            const response = await axios.delete(`${port}user/all/${selectedDoctor._id}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -323,6 +327,7 @@ const Dokter = () => {
                     show={showDeleteModal}
                     handleClose={handleCloseDeleteModal}
                     handleDelete={handleDeleteDoctor}
+                    data={selectedDoctor?.nama}
                 />
             )}
         </Fragment>

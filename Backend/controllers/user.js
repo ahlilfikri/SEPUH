@@ -329,7 +329,7 @@ module.exports = {
     getApoteker: async (req, res) => {
         try {
             const content = await apotekerSchema.find();
-            return response(200, content, 'Menampilkan Semua Pasien', res);
+            return response(200, content, 'Menampilkan Semua Apopteker', res);
         } catch (error) {
             console.error(error.message);
             return response(500, error, 'internal server error', res)

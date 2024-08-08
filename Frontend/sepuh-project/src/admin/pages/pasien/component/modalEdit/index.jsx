@@ -14,10 +14,10 @@ const ModalEdit = ({ show, handleClose, handleSave, data }) => {
     useEffect(() => {
         if (data) {
             setFormData({
-                id: data?.user?._id || '',
-                nama: data?.user?.nama || '',
-                usia: data?.user?.usia || '',
-                alamat: data?.user?.alamat || '',
+                id: data?._id || '',
+                nama: data?.nama || '',
+                usia: data?.usia || '',
+                alamat: data?.alamat || '',
                 riwayat: data?.riwayat || [''] // Ensure riwayat is initialized correctly
             });
         }

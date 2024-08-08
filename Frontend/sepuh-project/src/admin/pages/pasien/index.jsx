@@ -37,7 +37,7 @@ const Pasien = () => {
     const fetchData = async () => {
         setLoading(true);
         try {
-            const response = await axios.get(`${port}pasien/get/filter`, {
+            const response = await axios.get(`${port}user/pasien/filter`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 },
@@ -49,6 +49,7 @@ const Pasien = () => {
                     limit: itemsPerPage
                 }
             });
+            
             if (response.data.status === 500) {
                 setError('Tidak dapat mengambil data pasien, coba muat ulang laman');
             } else {
@@ -75,7 +76,7 @@ const Pasien = () => {
         setShowEditModal(false);
         setLoading(true);
         try {
-            const response = await axios.put(`${port}user/${updatedPasien.id}`, updatedPasien, {
+            const response = await axios.put(`${port}user/all/${updatedPasien.id}`, updatedPasien, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
@@ -101,13 +102,15 @@ const Pasien = () => {
     const handleSaveNewPasien = async (newPasien) => {
         setShowAddPasienModal(false);
         setLoading(true);
+        
         try {
-            const response = await axios.post(`${port}user/register`, newPasien, {
+            const response = await axios.post(`${port}user/all`, newPasien, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 }
             });
+            
             if (response.data.status === 500) {
                 setError('Tidak dapat menambahkan pasien, coba lagi');
             } else {
@@ -130,11 +133,11 @@ const Pasien = () => {
         setShowDeleteModal(false);
         setLoading(true);
         try {
-            const response = await axios.delete(`${port}user/${selectedPasien.user._id}`, {
+            const response = await axios.delete(`${port}user/all/${selectedPasien._id}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
-            });
+            });            
             if (response.data.status === 500) {
                 setError('Tidak dapat menghapus pasien, coba lagi');
             } else {
@@ -243,11 +246,11 @@ const Pasien = () => {
                                     {error === '' && data.map((pasien, index) => (
                                         <tr key={index}>
                                             <td style={{ fontSize: '18px', fontWeight: '400' }}>{index + 1}</td>
-                                            <td style={{ fontSize: '18px', fontWeight: '400' }}>{pasien.user.nama}</td>
-                                            <td style={{ fontSize: '18px', fontWeight: '400' }}>{pasien.user.usia}</td>
-                                            <td style={{ fontSize: '18px', fontWeight: '400' }}>{pasien.user.alamat}</td>
-                                            <td style={{ fontSize: '18px', fontWeight: '400' }}>{pasien.user.username}</td>
-                                            <td style={{ fontSize: '18px', fontWeight: '400' }}>{pasien.user.email}</td>
+                                            <td style={{ fontSize: '18px', fontWeight: '400' }}>{pasien.nama}</td>
+                                            <td style={{ fontSize: '18px', fontWeight: '400' }}>{pasien.usia}</td>
+                                            <td style={{ fontSize: '18px', fontWeight: '400' }}>{pasien.alamat}</td>
+                                            <td style={{ fontSize: '18px', fontWeight: '400' }}>{pasien.username}</td>
+                                            <td style={{ fontSize: '18px', fontWeight: '400' }}>{pasien.email}</td>
                                             <td style={{ fontSize: '18px', fontWeight: '400' }} className="text-center">
                                                 <div className="btn" onClick={() => handleRiwayatClick(pasien.riwayat)}>
                                                     <FaFileAlt style={{ color: '#FFD700', cursor: 'pointer' }} />
@@ -299,7 +302,7 @@ const Pasien = () => {
                 show={showDeleteModal}
                 handleClose={handleCloseDeleteModal}
                 handleDelete={handleDeletePasien}
-                data={selectedPasien?.user?.nama}
+                data={selectedPasien?.nama}
             />
         </Fragment>
     );

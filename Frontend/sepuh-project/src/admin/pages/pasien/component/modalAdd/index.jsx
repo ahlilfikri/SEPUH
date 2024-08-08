@@ -8,7 +8,7 @@ const ModalAdd = ({ show, handleClose, handleSave }) => {
         username: '',
         email: '',
         password: 'pasien123',
-        riwayat: [] // Array of strings
+        riwayat: []
     });
 
     const [errors, setErrors] = useState({});

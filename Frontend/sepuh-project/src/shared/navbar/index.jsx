@@ -100,7 +100,7 @@ const Navbar = ({ isLogin }) => {
                                     </div>
                                 </li>
                             )}
-                            {isLogin && isSignin === 1 && (
+                            {isLogin && (isSignin != 0 && isSignin != 2) && (
                                 <>
                                     <li className="nav-item mx-0 mx-md-1 mt-md-3 ">
                                         <p className="nav-link" style={{ fontWeight: 'bold', cursor: 'pointer' }} onClick={handleDashboard}>Dashboard</p>
@@ -113,7 +113,7 @@ const Navbar = ({ isLogin }) => {
                                     </li>
                                 </>
                             )}
-                            {isLogin && isSignin === 0 && (
+                            {isLogin && (isSignin != 1 && isSignin != 3) && (
                                 <>
                                     <li className="nav-item">
                                         <p className="nav-link" style={{ fontWeight: 'bold', cursor: 'pointer' }} onClick={handleLogout}>Logout</p>
