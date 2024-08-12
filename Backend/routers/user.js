@@ -6,6 +6,8 @@ const {authenticateUser, authenticateAdmin, authenticateApoteker, authenticateDo
 //user general
 router.post('/register', userController.register);
 router.post('/login', userController.login);
+router.post('/login/dokter', userController.loginDokter);
+router.post('/login/pasien', userController.loginPasien);
 router.post('/logout/:token', userController.logout);
 router.put('/reset/:id', userController.reset);
 

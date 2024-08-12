@@ -88,6 +88,72 @@ module.exports = {
             return response(500, error, 'Internal server error', res);
         }
     },
+    loginDokter: async (req, res) => {
+        try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
+
+            const { username, password } = req.body;
+            const secret_key = process.env.secret_key;
+
+            const user = await userModel.findOne({ username }).select('-token');
+            if (!user) {
+                return response(400, null, 'User tidak ditemukan', res);
+            }
+
+            const validPassword = await bcrypt.compare(password, user.password);
+            if (!validPassword) {
+                return response(400, null, 'Password salah', res);
+            }
+            
+            if(user.role != 2 ){
+                return response(400, null, 'Dokter tidak ditemukan atau anda tidak terdaftar sebagi dokter', res);
+            }
+
+            const token = jwt.sign({ id: user._id, username: user.username, role: user.role, nama: user.nama }, secret_key, { expiresIn: '1d' });
+            user.token = token;
+            await user.save();
+            return response(200, token, 'Login berhasil', res);
+        } catch (error) {
+            console.error(error.message);
+            return response(500, error, 'Internal server error', res);
+        }
+    },
+    loginPasien: async (req, res) => {
+        try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
+
+            const { username, password } = req.body;
+            const secret_key = process.env.secret_key;
+
+            const user = await userModel.findOne({ username }).select('-token');
+            if (!user) {
+                return response(400, null, 'User tidak ditemukan', res);
+            }
+
+            const validPassword = await bcrypt.compare(password, user.password);
+            if (!validPassword) {
+                return response(400, null, 'Password salah', res);
+            }
+
+            if(user.role != 0 ){
+                return response(400, null, 'Dokter tidak ditemukan atau anda tidak terdaftar sebagi dokter', res);
+            }
+
+            const token = jwt.sign({ id: user._id, username: user.username, role: user.role, nama: user.nama }, secret_key, { expiresIn: '1d' });
+            user.token = token;
+            await user.save();
+            return response(200, token, 'Login berhasil', res);
+        } catch (error) {
+            console.error(error.message);
+            return response(500, error, 'Internal server error', res);
+        }
+    },
     logout: async (req, res) => {
         try {
             const token = req.params.token;
