@@ -255,6 +255,9 @@ const Dokter = () => {
                                     <tr>
                                         <th scope="col" style={{ fontWeight: 'normal', fontSize: '18px', textAlign: 'center', fontWeight: '600' }}>No</th>
                                         <th scope="col" style={{ fontWeight: 'normal', fontSize: '18px', textAlign: 'center', fontWeight: '600' }}>Nama</th>
+                                        <th scope="col" style={{ fontWeight: 'normal', fontSize: '18px', textAlign: 'center', fontWeight: '600' }}>Usia</th>
+                                        <th scope="col" style={{ fontWeight: 'normal', fontSize: '18px', textAlign: 'center', fontWeight: '600' }}>Username</th>
+                                        <th scope="col" style={{ fontWeight: 'normal', fontSize: '18px', textAlign: 'center', fontWeight: '600' }}>Email</th>
                                         <th scope="col" style={{ fontWeight: 'normal', fontSize: '18px', textAlign: 'center', fontWeight: '600' }}>Spesialisasi</th>
                                         <th scope="col" style={{ fontWeight: 'normal', fontSize: '18px', textAlign: 'center', fontWeight: '600' }}>Alamat</th>
                                         <th scope="col" style={{ fontWeight: 'normal', fontSize: '18px', textAlign: 'center', fontWeight: '600' }}>Jadwal Kerja</th>
@@ -270,6 +273,9 @@ const Dokter = () => {
                                             <tr key={doctor._id}>
                                                 <td style={{ textAlign: 'center', fontWeight: 'normal', fontSize: '18px'}}>{index + 1 + (currentPage - 1) * 20}</td>
                                                 <td style={{ fontWeight: 'normal', fontSize: '18px' }}>{doctor.nama}</td>
+                                                <td style={{ fontWeight: 'normal', fontSize: '18px' }}>{doctor.usia}</td>
+                                                <td style={{ fontWeight: 'normal', fontSize: '18px' }}>{doctor.username}</td>
+                                                <td style={{ fontWeight: 'normal', fontSize: '18px' }}>{doctor.email}</td>
                                                 <td style={{ fontWeight: 'normal', fontSize: '18px' }}>{doctor.spesialisasi}</td>
                                                 <td style={{ fontWeight: 'normal', fontSize: '18px' }}>{doctor.alamat}</td>
                                                 <td style={{ textAlign: 'center' }}>
