@@ -10,6 +10,7 @@ import Jadwal from './jadwal';
 import Apoteker from './apoteker';
 import Obat from './obat';
 import Profile from '../../user/pages/profile';
+import {jwtDecode} from 'jwt-decode';
 import './index.css';
 
 const Dashboard = () => {
@@ -21,6 +22,7 @@ const Dashboard = () => {
   const [success, setSuccess] = useState('');
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const navigate = useNavigate();
+  const [dataRole, setDataRole] = useState(0);
 
   useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
@@ -99,6 +101,29 @@ const Dashboard = () => {
     setSuccess('');
   };
 
+  useEffect(() => {
+    const token = sessionStorage.getItem('token');
+    if (token) {
+      const decodedToken = jwtDecode(token);
+      setDataRole(decodedToken.role);
+    }
+  }, []);
+
+  // Define the menu items based on the role
+  const menuItems = [
+    { name: 'Home', roles: [3, 1] },
+    { name: 'Pasien', roles: [3] },
+    { name: 'Apoteker', roles: [3] },
+    { name: 'Dokter', roles: [3] },
+    { name: 'Obat', roles: [3, 1] },
+    { name: 'Jadwal', roles: [3] },
+    { name: 'Profile', roles: [3, 1] },
+    { name: 'Logout', roles: [3, 1] },
+  ];
+
+  // Filter the items based on the user's role
+  const accessibleMenuItems = menuItems.filter((item) => item.roles.includes(dataRole));
+
   return (
     <Fragment>
       <div className="container-fluid p-0">
@@ -121,7 +146,7 @@ const Dashboard = () => {
             color: clickedMenu ? '#225374' : 'white'
           }}
         >
-          {clickedMenu ? 'x' : <i class="fa-solid fa-bars"></i>}
+          {clickedMenu ? 'x' : <i className="fa-solid fa-bars"></i>}
         </div>
         <div className="row p-0 m-0">
           <div className={`sidebar text-center p-0 m-0 ${clickedMenu ? 'open' : ''}`}>
@@ -143,22 +168,22 @@ const Dashboard = () => {
               <i className="fa fa-user" style={{ fontSize: '24px', color: '#225374' }}></i>
             </div>
             <ul className="menu-list">
-              {['Home', 'Pasien', 'Apoteker', 'Dokter', 'Obat', 'Jadwal', 'Profile', 'Logout'].map((item) => (
+              {accessibleMenuItems.map((item) => (
                 <li
-                  key={item}
-                  className={`mx-auto my-3 p-2 menu-item ${activeItem === item ? 'text-white' : ''}`}
+                  key={item.name}
+                  className={`mx-auto my-3 p-2 menu-item ${activeItem === item.name ? 'text-white' : ''}`}
                   style={{
                     width: '80%',
                     listStyle: 'none',
                     cursor: 'pointer',
-                    background: `${activeItem === item ? '#18496A' : 'none'}`,
+                    background: `${activeItem === item.name ? '#18496A' : 'none'}`,
                     fontSize: '20px',
                     fontWeight: 'bold',
                     color: '#225374',
                   }}
-                  onClick={() => handleItemClick(item)}
+                  onClick={() => handleItemClick(item.name)}
                 >
-                  {item}
+                  {item.name}
                 </li>
               ))}
             </ul>
