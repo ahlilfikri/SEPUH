@@ -14,7 +14,7 @@ router.put('/reset/:id', userController.reset);
 router.get('/all',authenticateAdmin, userController.getAllUser);
 router.get('/all/:id',authenticateUser, userController.getOne);
 router.post('/all', authenticateAdmin, userController.post);
-router.put('/all/:id', authenticateAdmin, userController.put);
+router.put('/all/:id', authenticateUser, userController.put);
 router.delete('/all/:id', authenticateAdmin, userController.delete);
 
 //pasien
