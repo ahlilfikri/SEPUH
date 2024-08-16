@@ -18,8 +18,8 @@ router.put('/all/:id', authenticateUser, userController.put);
 router.delete('/all/:id', authenticateAdmin, userController.delete);
 
 //pasien
-router.get('/pasien',authenticateAdmin, userController.getPasien);
-router.get('/pasien/filter',authenticateAdmin, userController.getPasienFilter);
+router.get('/pasien',authenticateUser, userController.getPasien);
+router.get('/pasien/filter',authenticateUser, userController.getPasienFilter);
 
 //dokter
 router.get('/dokter',authenticateUser, userController.getDokter);

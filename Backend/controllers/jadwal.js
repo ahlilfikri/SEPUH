@@ -10,7 +10,8 @@ module.exports = {
         try {
             const content = await jadwalSchema.find()
                 .populate('dokter', 'nama spesialisasi')
-                .populate('pasien', 'nama username');
+                .populate('pasien', 'nama username')
+                .populate('jadwal', 'jamMulai jamSelesai hari kuota antrianAktif');
 
             return response(200, content, 'Menampilkan Semua Jadwal', res);
         } catch (err) {
@@ -29,7 +30,7 @@ module.exports = {
             const pipeline = [
                 {
                     $lookup: {
-                        from: 'dokters',
+                        from: 'users',
                         localField: 'dokter',
                         foreignField: '_id',
                         as: 'dokterInfo'
@@ -43,8 +44,17 @@ module.exports = {
                         as: 'pasienInfo'
                     }
                 },
+                {
+                    $lookup: {
+                        from: 'jadwals', 
+                        localField: 'jadwal',
+                        foreignField: '_id',
+                        as: 'jadwalInfo'
+                    }
+                },
                 { $unwind: '$dokterInfo' },
                 { $unwind: '$pasienInfo' },
+                { $unwind: '$jadwalInfo' },
             ];
     
             const matchCriteria = {};
@@ -75,9 +85,13 @@ module.exports = {
                     'dokter.spesialisasi': '$dokterInfo.spesialisasi',
                     'pasien.nama': '$pasienInfo.nama',
                     'pasien.username': '$pasienInfo.username',
-                    'status': 1,
-                    'waktu': 1,
-                    'ruang': 1,
+                    'waktu.hari': '$jadwalInfo.hari',
+                    'waktu.jamMulai': '$jadwalInfo.jamMulai',
+                    'waktu.jamSelesai': '$jadwalInfo.hari.jamSelesai',
+                    'waktu.jamMulai': '$jadwalInfo.hari.jamMulai',
+                    'waktu.kuota': '$jadwalInfo.hari.kuota',
+                    'waktu.antrianAktif': '$jadwalInfo.hari.antrianAktif',
+                    'antrian': 1,
                     'createdAt': 1,
                     'updatedAt': 1
                 }
@@ -107,7 +121,9 @@ module.exports = {
         try {
             const content = await jadwalSchema.findById(id)
                 .populate('dokter', 'nama spesialisasi')
-                .populate('pasien', 'nama username');
+                .populate('pasien', 'nama username')
+                .populate('jadwal', 'jamMulai jamSelesai hari kuota antrianAktif');
+
             if (!content) {
                 return response(404, null, 'Jadwal Tidak Ditemukan', res);
             }
