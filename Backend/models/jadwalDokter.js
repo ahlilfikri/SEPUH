@@ -8,6 +8,7 @@ const jadwalDokterSchema = new Schema({
   jamMulai: { type: String, required: true },
   jamSelesai: { type: String, required: true },
   kuota: { type: Number, required: true, default: 50 },
+  antrianAktif: { type: Number, required: true, default: 1 },
 }, { timestamps: true });
 
 const jadwalDokter = mongoose.model('jadwalDokter', jadwalDokterSchema);

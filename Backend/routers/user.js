@@ -18,12 +18,12 @@ router.put('/all/:id', authenticateUser, userController.put);
 router.delete('/all/:id', authenticateAdmin, userController.delete);
 
 //pasien
-router.get('/pasien',authenticatePasien, userController.getPasien);
-router.get('/pasien/filter',authenticatePasien, userController.getPasienFilter);
+router.get('/pasien',authenticateAdmin, userController.getPasien);
+router.get('/pasien/filter',authenticateAdmin, userController.getPasienFilter);
 
 //dokter
-router.get('/dokter',authenticateDokter, userController.getDokter);
-router.get('/dokter/filter',authenticateDokter, userController.getDokterFilter);
+router.get('/dokter',authenticateUser, userController.getDokter);
+router.get('/dokter/filter',authenticateUser, userController.getDokterFilter);
 
 //apoteker
 router.get('/apoteker',authenticateApoteker, userController.getApoteker);

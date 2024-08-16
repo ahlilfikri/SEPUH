@@ -45,7 +45,7 @@ module.exports = {
                 riwayat
             });
 
-            result =  await newUser.save();
+            result = await newUser.save();
 
             dataReturn = resultUser
 
@@ -107,8 +107,8 @@ module.exports = {
             if (!validPassword) {
                 return response(400, null, 'Password salah', res);
             }
-            
-            if(user.role != 2 ){
+
+            if (user.role != 2) {
                 return response(400, null, 'Dokter tidak ditemukan atau anda tidak terdaftar sebagi dokter', res);
             }
 
@@ -141,7 +141,7 @@ module.exports = {
                 return response(400, null, 'Password salah', res);
             }
 
-            if(user.role != 0 ){
+            if (user.role != 0) {
                 return response(400, null, 'Dokter tidak ditemukan atau anda tidak terdaftar sebagi dokter', res);
             }
 
@@ -195,7 +195,7 @@ module.exports = {
         const { nama, usia, alamat, username, password, email, role, spesialisasi, riwayat, jadwal } = req.body;
         try {
             const userExist = await userModel.findOne({ $or: [{ email }, { username }] });
-    
+
             if (userExist) {
                 if (userExist.email === email) {
                     return response(400, null, 'Email sudah terdaftar', res);
@@ -204,10 +204,10 @@ module.exports = {
                     return response(400, null, 'Username sudah terdaftar', res);
                 }
             }
-    
+
             const passwordEncrypted = await bcrypt.hash(password, 15);
             let newUser;
-    
+
             if (role === 3) {
                 newUser = new userModel({
                     nama,
@@ -228,9 +228,9 @@ module.exports = {
                         jamSelesai: item.jamSelesai,
                     });
                     const savedJadwalDokter = await newJadwalDokter.save();
-                    return savedJadwalDokter._id; // Collect the saved schedule IDs
+                    return savedJadwalDokter._id;
                 }));
-    
+
                 newUser = new dokterSchema({
                     nama,
                     usia,
@@ -272,22 +272,49 @@ module.exports = {
             console.error(error.message);
             return response(500, error, 'internal server error', res);
         }
-    },    
+    },
     put: async (req, res) => {
         id = req.params.id;
         const updatedData = req.body;
-        
+
         try {
             let result;
             resultUser = await userModel.findById(id);
-            
-            if(resultUser.role === 3){
+
+            if (resultUser.role === 3) {
                 result = await userModel.findByIdAndUpdate(id, updatedData, { new: true });
-            } else if (resultUser.role === 2){
-                result = await dokterSchema.findByIdAndUpdate(id, updatedData, { new: true });
-            } else if (resultUser.role === 1){
+            } else if (resultUser.role === 2) {
+                
+                if (updatedData.jadwal) {
+                    const dataFinalJadwal = await Promise.all(
+                        updatedData.jadwal.map(async (jadwalItem) => {
+                            if (jadwalItem._id) {
+                                // Update existing jadwalDokter document
+                                const updateJadwalDokter = await jadwalDokterSchema.findByIdAndUpdate(jadwalItem._id, jadwalItem, { new: true });
+                                return updateJadwalDokter._id;
+                            } else {
+                                // Create a new jadwalDokter document
+                                const newJadwalDokter = new jadwalDokterSchema({
+                                    hari: jadwalItem.hari,
+                                    jamMulai: jadwalItem.jamMulai,
+                                    jamSelesai: jadwalItem.jamSelesai,
+                                });
+                                const savedJadwal = await newJadwalDokter.save();
+                                return savedJadwal._id;
+                            }
+                        })
+                    );
+                
+                    // Update the jadwal field with the resulting array of IDs
+                    updatedData.jadwal = dataFinalJadwal;
+                    
+                    // Update the dokter schema with the modified updatedData
+                    result = await dokterSchema.findByIdAndUpdate(id, updatedData, { new: true });
+                }
+                
+            } else if (resultUser.role === 1) {
                 result = await apotekerSchema.findByIdAndUpdate(id, updatedData, { new: true });
-            }else {
+            } else {
                 result = await pasienSchema.findByIdAndUpdate(id, updatedData, { new: true });
             }
             return response(200, result, 'User berhasil di update', res);
@@ -351,9 +378,9 @@ module.exports = {
     getPasienFilter: async (req, res) => {
         try {
             const { nama, usia, alamat, page = 1, limit = 10 } = req.query;
-    
+
             let filter = {};
-    
+
             if (nama) {
                 filter.nama = { $regex: nama, $options: 'i' };
             }
@@ -363,7 +390,7 @@ module.exports = {
             if (alamat) {
                 filter.alamat = { $regex: alamat, $options: 'i' };
             }
-    
+
             const skip = (page - 1) * limit;
             const content = await pasienSchema.find(filter).skip(skip).limit(parseInt(limit));
             const totalItems = await pasienSchema.countDocuments(filter);
@@ -374,11 +401,11 @@ module.exports = {
         }
     },
     getDokter: async (req, res) => {
-        try {            
+        try {
             const content = await dokterSchema.find().populate([
                 {
-                    path :"jadwal",
-                    select : "hari jamMulai jamSelesai kuota"
+                    path: "jadwal",
+                    select: "hari jamMulai jamSelesai kuota"
                 }
             ]);
             return response(200, content, 'Menampilkan Semua Dokter', res);
@@ -390,9 +417,9 @@ module.exports = {
     getDokterFilter: async (req, res) => {
         try {
             const { nama, spesialisasi, alamat, page = 1, limit = 10 } = req.query;
-    
+
             let filter = {};
-    
+
             if (nama) {
                 filter.nama = { $regex: nama, $options: 'i' };
             }
@@ -402,12 +429,12 @@ module.exports = {
             if (alamat) {
                 filter.alamat = { $regex: alamat, $options: 'i' };
             }
-    
+
             const skip = (page - 1) * limit;
             const content = await dokterSchema.find(filter).skip(skip).limit(parseInt(limit)).populate([
                 {
-                    path :"jadwal",
-                    select : "hari jamMulai jamSelesai kuota"
+                    path: "jadwal",
+                    select: "hari jamMulai jamSelesai kuota"
                 }
             ]);;
             const totalItems = await dokterSchema.countDocuments(filter);
@@ -429,23 +456,23 @@ module.exports = {
     getApotekerFilter: async (req, res) => {
         try {
             const { nama, usia, alamat, page = 1, limit = 10 } = req.query;
-    
-                let filter = {};
-    
-                if (nama) {
-                    filter.nama = { $regex: nama, $options: 'i' };
-                }
-                if (usia) {
-                    filter.usia = { $regex: usia, $options: 'i' };
-                }
-                if (alamat) {
-                    filter.alamat = { $regex: alamat, $options: 'i' }; 
-                }
-    
-                const skip = (page - 1) * limit;
-                const content = await apotekerSchema.find(filter).skip(skip).limit(parseInt(limit));
-                const totalItems = await apotekerSchema.countDocuments(filter);
-                return response(200, { data: content, totalItems, currentPage: page, totalPages: Math.ceil(totalItems / limit) }, 'Menampilkan Semua Apoteker', res);
+
+            let filter = {};
+
+            if (nama) {
+                filter.nama = { $regex: nama, $options: 'i' };
+            }
+            if (usia) {
+                filter.usia = { $regex: usia, $options: 'i' };
+            }
+            if (alamat) {
+                filter.alamat = { $regex: alamat, $options: 'i' };
+            }
+
+            const skip = (page - 1) * limit;
+            const content = await apotekerSchema.find(filter).skip(skip).limit(parseInt(limit));
+            const totalItems = await apotekerSchema.countDocuments(filter);
+            return response(200, { data: content, totalItems, currentPage: page, totalPages: Math.ceil(totalItems / limit) }, 'Menampilkan Semua Apoteker', res);
         } catch (error) {
             console.error(error.message);
             return response(500, error, 'internal server error', res)

@@ -72,7 +72,6 @@ const Obat = () => {
     const handleSaveChanges = async (updatedObat) => {
         setShowEditModal(false);
         setLoading(true);
-        console.log(updatedObat);
         
         try {
             const response = await axios.put(`${port}user/all/${updatedObat.id}`, updatedObat, {
@@ -81,7 +80,6 @@ const Obat = () => {
                     'Content-Type': 'application/json'
                 }
             });
-            console.log(response);
             
             if (response.data.status === 500) {
                 setError('Tidak dapat menyimpan perubahan, coba lagi');
