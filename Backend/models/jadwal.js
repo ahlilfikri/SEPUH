@@ -3,7 +3,7 @@ const { Schema } = mongoose;
 
 const jadwalSchema = new Schema({
     waktu: { type: mongoose.Schema.Types.ObjectId, ref: "jadwalDokter", required: true },
-    dokter: { type: mongoose.Schema.Types.ObjectId, ref: "dokter" },
+    dokter: { type: mongoose.Schema.Types.ObjectId, ref: "user" },
     pasien: { type: mongoose.Schema.Types.ObjectId, ref: "user" },
     antrian : { type: Number, required: false },
 }, { timestamps: true })

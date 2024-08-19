@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const jadwalDokterSchema = require("../models/jadwalDokter");
 const jadwalSchema = require("../models/jadwal");
 const dokterSchema = require("../models/dokter");
 const pasienSchema = require("../models/pasien");
@@ -137,19 +138,38 @@ module.exports = {
     post: async (req, res) => {
         try {
             const { waktu, dokter, pasien } = req.body;
-            const searchDokter = await dokterSchema.findOne({ nama: dokter })
-            const searchPasien = await pasienSchema.findOne({ nama: pasien })
+    
+            // Cari dokter, pasien, dan jadwal berdasarkan input
+            const searchDokter = await dokterSchema.findOne({ nama: dokter });
+            const searchPasien = await pasienSchema.findOne({ nama: pasien });
+            const searchWaktu = await jadwalDokterSchema.findById(waktu);
+    
+            // Cek apakah dokter, pasien, atau jadwal tidak ditemukan
             if (searchDokter === null || searchPasien === null) {
                 return response(400, null, 'Dokter atau Pasien tidak ditemukan', res);
             }
+            if (!searchWaktu) {
+                return response(400, null, 'Jadwal dokter tidak ditemukan', res);
+            }
+    
+            // Hitung nomor antrian dan update kuota
+            const resultAntrian = 51 - searchWaktu.kuota;
+            await jadwalDokterSchema.findByIdAndUpdate(
+                waktu, // Menggunakan waktu sebagai id
+                { kuota: searchWaktu.kuota - 1 }, // Kurangi kuota dengan 1
+                { new: true }
+            );
+    
+            // Buat jadwal baru
             const newJadwal = new jadwalSchema({
                 waktu,
                 dokter: searchDokter._id,
                 pasien: searchPasien._id,
-                ruang,
-                status: 'diajukan'
+                status: 'diajukan',
+                antrian: resultAntrian
             });
-
+    
+            // Simpan jadwal baru
             await newJadwal.save();
             return response(200, newJadwal, 'Jadwal Berhasil Ditambahkan', res);
         } catch (error) {
@@ -157,6 +177,7 @@ module.exports = {
             return response(500, error, 'Internal server error', res);
         }
     },
+    
 
     put: async (req, res) => {
         const id = req.params._id;

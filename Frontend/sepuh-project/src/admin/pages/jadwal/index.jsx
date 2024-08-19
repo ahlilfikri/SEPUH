@@ -33,23 +33,18 @@ const Jadwal = () => {
     const fetchData = async (page = 1) => {
         setLoading(true);
         try {
-            const response = await axios.get(`${port}jadwal/filter`, {
+            const response = await axios.get(`${port}jadwal`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
-                },
-                params: {
-                    pasien: debouncedFilters.pasien,
-                    dokter: debouncedFilters.dokter,
-                    status: debouncedFilters.status,
-                    page, 
-                    limit: 20 
                 }
             });
-            if (!response.data.data.data) {
+            console.log(response);
+
+            if (!response.data.data) {
                 setError('Tidak dapat mengambil data, coba muat ulang laman');
             } else {
-                setData(response.data.data.data);
-                setTotalPages(response.data.data.totalPages); 
+                setData(response.data.data);
+                // setTotalPages(response.data.data.totalPages); 
             }
         } catch (error) {
             console.error('Fetch Error:', error);
@@ -61,7 +56,7 @@ const Jadwal = () => {
 
     useEffect(() => {
         if (token) {
-            fetchData(currentPage); 
+            fetchData(currentPage);
         }
     }, [debouncedFilters, token, currentPage]);
 
@@ -260,21 +255,6 @@ const Jadwal = () => {
                                     </div>
                                 </div>
                                 <div className="col-12 col-sm-6 col-md-3">
-                                    <div className="mb-3">
-                                        <select
-                                            className="form-control"
-                                            name="status"
-                                            value={filters.status}
-                                            onChange={handleInputChange}
-                                        >
-                                            <option value="">Select Status</option>
-                                            <option value="disetujui">Disetujui</option>
-                                            <option value="ditolak">Ditolak</option>
-                                            <option value="diajukan">Diajukan</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div className="col-12 col-sm-6 col-md-3">
                                     <div className="d-flex gap-3">
                                         <button className="btn btn-success" onClick={() => fetchData(currentPage)}>Filter</button>
                                         <button className="btn btn-danger" onClick={handleClearFilters}>Clear</button>
@@ -298,7 +278,7 @@ const Jadwal = () => {
                                         <th scope="col" style={{ fontWeight: 'normal', fontSize: '18px', textAlign: 'center', fontWeight: '600' }}>Pasien</th>
                                         <th scope="col" style={{ fontWeight: 'normal', fontSize: '18px', textAlign: 'center', fontWeight: '600' }}>Dokter</th>
                                         <th scope="col" style={{ fontWeight: 'normal', fontSize: '18px', textAlign: 'center', fontWeight: '600' }}>Waktu</th>
-                                        <th scope="col" style={{ fontWeight: 'normal', fontSize: '18px', textAlign: 'center', fontWeight: '600' }}>Status</th>
+                                        <th scope="col" style={{ fontWeight: 'normal', fontSize: '18px', textAlign: 'center', fontWeight: '600' }}>Antrian  </th>
                                         <th scope="col" style={{ fontWeight: 'normal', fontSize: '18px', textAlign: 'center', fontWeight: '600' }}>Aksi</th>
                                     </tr>
                                 </thead>
@@ -308,9 +288,7 @@ const Jadwal = () => {
                                             <td style={{ fontSize: '18px', fontWeight: '400' }}>{index + 1 + (currentPage - 1) * 20}</td>
                                             <td style={{ fontSize: '18px', fontWeight: '400' }}>{jadwal?.pasien?.nama ? jadwal?.pasien?.nama : 'data tidak ditemukan'}</td>
                                             <td style={{ fontSize: '18px', fontWeight: '400' }}>{jadwal?.dokter?.nama ? jadwal?.dokter?.nama : 'data tidak ditemukan'}</td>
-                                            <td style={{ fontSize: '18px', fontWeight: '400' }}>
-                                                {new Date(jadwal.waktu).toLocaleString('id-ID', { timeZone: 'Asia/Jakarta', dateStyle: 'full', timeStyle: 'short' })}
-                                            </td>
+                                            <td style={{ fontSize: '18px', fontWeight: '400' }}>{jadwal?.dokter?.waktu?.hari}{jadwal?.dokter?.waktu?.jamMulai}{jadwal?.dokter?.waktu?.jamSelesai}</td>
                                             <td style={{ fontSize: '18px', fontWeight: '400' }}>{determineStatus(jadwal)}</td>
                                             <td style={{ fontSize: '18px' }} className="text-center">
                                                 {jadwal.status === 'diajukan' ? (
