@@ -60,7 +60,8 @@ module.exports = {
 
             const newObat = new obatModel({
                 nama, 
-                stok
+                stok,
+                harga
             });
 
             await newObat.save();

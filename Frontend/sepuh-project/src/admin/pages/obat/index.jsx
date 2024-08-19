@@ -70,11 +70,12 @@ const Obat = () => {
     };
 
     const handleSaveChanges = async (updatedObat) => {
+        
         setShowEditModal(false);
         setLoading(true);
         
         try {
-            const response = await axios.put(`${port}user/all/${updatedObat.id}`, updatedObat, {
+            const response = await axios.put(`${port}obat/${updatedObat.id}`, updatedObat, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
@@ -103,7 +104,7 @@ const Obat = () => {
         setLoading(true);
         
         try {
-            const response = await axios.post(`${port}user/all`, newObat, {
+            const response = await axios.post(`${port}obat`, newObat, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
@@ -132,7 +133,7 @@ const Obat = () => {
         setShowDeleteModal(false);
         setLoading(true);
         try {
-            const response = await axios.delete(`${port}user/all/${selectedObat._id}`, {
+            const response = await axios.delete(`${port}obat/${selectedObat._id}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }

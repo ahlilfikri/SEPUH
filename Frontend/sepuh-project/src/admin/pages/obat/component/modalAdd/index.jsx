@@ -27,15 +27,7 @@ const ModalAdd = ({ show, handleClose, handleSave }) => {
             harga: 'Harga',
         };
 
-
-         if (name === 'email') {
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!value || !emailRegex.test(value)) {
-                newErrors[name] = 'Invalid email address';
-            } else {
-                delete newErrors[name];
-            }
-        } else if (!value) {
+        if (!value) {
             newErrors[name] = `${fieldNames[name]} is required`;
         } else {
             delete newErrors[name];
@@ -50,7 +42,6 @@ const ModalAdd = ({ show, handleClose, handleSave }) => {
         if (!formData.nama) newErrors.nama = 'Nama is required';
         if (!formData.stok) newErrors.stok = 'Stok is required';
         if (!formData.harga) newErrors.harga = 'Harga is required';
-        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) newErrors.email = 'Invalid email address';
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -76,7 +67,7 @@ const ModalAdd = ({ show, handleClose, handleSave }) => {
                 <div className="modal-dialog" role="document">
                     <div className="modal-content">
                         <div className="modal-header">
-                            <h5 className="modal-title">Tambah Apoteker</h5>
+                            <h5 className="modal-title">Tambah Obat</h5>
                             <button type="button" className="close" onClick={handleClose}>
                                 <span>&times;</span>
                             </button>
