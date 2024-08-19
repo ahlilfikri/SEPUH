@@ -44,7 +44,6 @@ const Jadwal = () => {
                 setError('Tidak dapat mengambil data, coba muat ulang laman');
             } else {
                 setData(response.data.data);
-                // setTotalPages(response.data.data.totalPages); 
             }
         } catch (error) {
             console.error('Fetch Error:', error);
@@ -144,69 +143,6 @@ const Jadwal = () => {
         }
     };
 
-    const handleApprove = async (jadwal) => {
-        setLoading(true);
-        try {
-            const response = await axios.put(`${port}jadwal/${jadwal._id}`, { status: 'disetujui' }, {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            });
-            if (response.data.status === 500) {
-                setError('Tidak dapat menyetujui jadwal, coba lagi');
-            } else {
-                setSuccess('Jadwal berhasil disetujui');
-            }
-        } catch (error) {
-            console.error('Approve Error:', error);
-            setError('Tidak dapat menyetujui jadwal, coba lagi');
-        } finally {
-            setLoading(false);
-            fetchData(currentPage);
-        }
-    };
-
-    const handleReject = async (jadwal) => {
-        setLoading(true);
-        try {
-            const response = await axios.put(`${port}jadwal/${jadwal._id}`, { status: 'ditolak' }, {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            });
-            if (response.data.status === 500) {
-                setError('Tidak dapat menolak jadwal, coba lagi');
-            } else {
-                setSuccess('Jadwal berhasil ditolak');
-            }
-        } catch (error) {
-            setError('Tidak dapat menolak jadwal, coba lagi');
-        } finally {
-            setLoading(false);
-            fetchData(currentPage);
-        }
-    };
-
-    const determineStatus = (jadwal) => {
-        if (jadwal.status === 'disetujui') {
-            const waktuMulai = new Date(jadwal.waktu);
-            const sekarang = new Date();
-            const satuJamKemudian = new Date(waktuMulai.getTime() + 60 * 60 * 1000);
-
-            if (sekarang < waktuMulai) {
-                return 'akan datang';
-            } else if (sekarang >= waktuMulai && sekarang <= satuJamKemudian) {
-                return 'sedang berlangsung';
-            } else {
-                return 'selesai';
-            }
-        }
-
-        return jadwal.status;
-    };
-
     const handleCloseModal = () => {
         setShowEditModal(false);
         setError('');
@@ -278,7 +214,7 @@ const Jadwal = () => {
                                         <th scope="col" style={{ fontWeight: 'normal', fontSize: '18px', textAlign: 'center', fontWeight: '600' }}>Pasien</th>
                                         <th scope="col" style={{ fontWeight: 'normal', fontSize: '18px', textAlign: 'center', fontWeight: '600' }}>Dokter</th>
                                         <th scope="col" style={{ fontWeight: 'normal', fontSize: '18px', textAlign: 'center', fontWeight: '600' }}>Waktu</th>
-                                        <th scope="col" style={{ fontWeight: 'normal', fontSize: '18px', textAlign: 'center', fontWeight: '600' }}>Antrian  </th>
+                                        <th scope="col" style={{ fontWeight: 'normal', fontSize: '18px', textAlign: 'center', fontWeight: '600' }}>Antrian</th>
                                         <th scope="col" style={{ fontWeight: 'normal', fontSize: '18px', textAlign: 'center', fontWeight: '600' }}>Aksi</th>
                                     </tr>
                                 </thead>
@@ -288,8 +224,9 @@ const Jadwal = () => {
                                             <td style={{ fontSize: '18px', fontWeight: '400' }}>{index + 1 + (currentPage - 1) * 20}</td>
                                             <td style={{ fontSize: '18px', fontWeight: '400' }}>{jadwal?.pasien?.nama ? jadwal?.pasien?.nama : 'data tidak ditemukan'}</td>
                                             <td style={{ fontSize: '18px', fontWeight: '400' }}>{jadwal?.dokter?.nama ? jadwal?.dokter?.nama : 'data tidak ditemukan'}</td>
-                                            <td style={{ fontSize: '18px', fontWeight: '400' }}>{jadwal?.dokter?.waktu?.hari}{jadwal?.dokter?.waktu?.jamMulai}{jadwal?.dokter?.waktu?.jamSelesai}</td>
-                                            <td style={{ fontSize: '18px', fontWeight: '400' }}>{determineStatus(jadwal)}</td>
+                                            <td style={{ fontSize: '18px', fontWeight: '400' }}>
+                                                {jadwal?.waktu?.hari}, {jadwal?.waktu?.jamMulai} - {jadwal?.waktu?.jamSelesai}
+                                            </td>                                            <td className="text-center" style={{ fontSize: '18px', fontWeight: '400' }}>{jadwal?.antrian}</td>
                                             <td style={{ fontSize: '18px' }} className="text-center">
                                                 {jadwal.status === 'diajukan' ? (
                                                     <>
@@ -327,7 +264,7 @@ const Jadwal = () => {
             {loading && <Loading />}
             {error && <Modal data={error} status={'error'} onClose={handleCloseModal} />}
             {success && <Modal data={success} status={'success'} onClose={handleCloseModal} />}
-            <EditModal
+            {/* <EditModal
                 show={showEditModal}
                 handleClose={handleCloseModal}
                 data={selectedJadwal}
@@ -343,7 +280,7 @@ const Jadwal = () => {
                 handleClose={handleCloseDeleteModal}
                 handleDelete={handleDeleteJadwal}
                 data={`Nama pasien: ${selectedJadwal?.pasien?.nama} pada ${new Date(selectedJadwal?.waktu).toLocaleString('id-ID', { timeZone: 'Asia/Jakarta', dateStyle: 'full', timeStyle: 'short' })}`}
-            />
+            /> */}
         </Fragment>
     );
 };
