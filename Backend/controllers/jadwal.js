@@ -11,7 +11,7 @@ module.exports = {
             const content = await jadwalSchema.find()
                 .populate('dokter', 'nama spesialisasi')
                 .populate('pasien', 'nama username')
-                .populate('jadwal', 'jamMulai jamSelesai hari kuota antrianAktif');
+                .populate('waktu', 'jamMulai jamSelesai hari kuota antrianAktif');
 
             return response(200, content, 'Menampilkan Semua Jadwal', res);
         } catch (err) {
@@ -136,9 +136,9 @@ module.exports = {
 
     post: async (req, res) => {
         try {
-            const { waktu, dokter, pasien, ruang } = req.body;
+            const { waktu, dokter, pasien } = req.body;
             const searchDokter = await dokterSchema.findOne({ nama: dokter })
-            const searchPasien = await userSchema.findOne({ nama: pasien })
+            const searchPasien = await pasienSchema.findOne({ nama: pasien })
             if (searchDokter === null || searchPasien === null) {
                 return response(400, null, 'Dokter atau Pasien tidak ditemukan', res);
             }

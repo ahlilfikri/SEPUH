@@ -59,7 +59,6 @@ module.exports = {
     post: async (req, res) => {
         try {
             const { pasien, dokter, tanggal, rujukan, obat } = req.body;
-
             const newResep = new resepModel({
                 pasien,
                 dokter,
@@ -67,7 +66,32 @@ module.exports = {
                 rujukan,
                 obat
             });
-
+    
+            if (pasien) {
+                const resultPasien = await pasienSchema.findOne({ nama: pasien });
+                if(!resultPasien){
+                    return response(404, null, 'Nama Pasien Tidak Ditemukan', res);
+                }
+                newResep.pasien = resultPasien._id;
+            }
+            if (dokter) {
+                const resultDokter = await dokterSchema.findOne({ nama: dokter });
+                if(!resultDokter){
+                    return response(404, null, 'Nama Dokter Tidak Ditemukan', res);
+                }
+                newResep.dokter = resultDokter._id;
+            }
+            if (obat) {
+                const obatIds = [];
+                for (const namaObat of obat) {
+                    const resultObat = await obatModel.findOne({ nama: namaObat });
+                    if (!resultObat) {
+                        return response(404, null, `Nama Obat ${namaObat} Tidak Ditemukan`, res);
+                    }
+                    obatIds.push(resultObat._id);
+                }
+                newResep.obat = obatIds;
+            }
             await newResep.save();
             return response(200, newResep, 'Resep Berhasil Ditambahkan', res);
         } catch (error) {
@@ -75,7 +99,7 @@ module.exports = {
             return response(500, error, 'Internal server error', res);
         }
     },
-
+    
     put: async (req, res) => {
         const id = req.params._id;
         try {
@@ -83,15 +107,28 @@ module.exports = {
             let dataUpdates = { pasien, dokter, tanggal, rujukan, obat };
             if (pasien) {
                 const resultPasien = await pasienSchema.findOne({ nama: pasien });
+                if(!resultPasien){
+                    return response(404, null, 'Nama Pasien Tidak Ditemukan', res);
+                }
                 dataUpdates.pasien = resultPasien._id;
             }
             if (dokter) {
                 const resultDokter = await dokterSchema.findOne({ nama: dokter });
+                if(!resultDokter){
+                    return response(404, null, 'Nama Dokter Tidak Ditemukan', res);
+                }
                 dataUpdates.dokter = resultDokter._id;
             }
             if (obat) {
-                const resultObat = await obatSchema.findOne({ nama: nama });
-                dataUpdates.obat = resultObat._id;
+                const obatIds = [];
+                for (const namaObat of obat) {
+                    const resultObat = await obatModel.findOne({ nama: namaObat });
+                    if (!resultObat) {
+                        return response(404, null, `Nama Obat ${namaObat} Tidak Ditemukan`, res);
+                    }
+                    obatIds.push(resultObat._id);
+                }
+                dataUpdates.obat = obatIds;
             }
             const result = await resepModel.findByIdAndUpdate(id, dataUpdates, { new: true });
             return response(200, result, 'Resep Berhasil Diupdate', res);

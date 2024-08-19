@@ -34,6 +34,7 @@ cron.schedule('0 0 * * *', async () => {
       for (const jadwal of dokter.jadwal) {
         if (dayMapping[jadwal.hari.toLowerCase()] === today) {
           jadwal.kuota = 50;
+          jadwal.antrianAktif = 1;
           await jadwal.save();
         }
       }
