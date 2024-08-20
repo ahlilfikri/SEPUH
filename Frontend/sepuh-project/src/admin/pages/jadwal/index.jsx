@@ -7,6 +7,7 @@ import EditModal from './component/modalEdit';
 import AddJadwalModal from './component/modalAdd';
 import DeleteModal from '../../../shared/modalDelete';
 import useDebounce from '../../../shared/debouncedValue';
+import Pagination from '../../../shared/pagination'; 
 
 const Jadwal = () => {
     const port = `${import.meta.env.VITE_BASE_URL}`;
@@ -27,6 +28,10 @@ const Jadwal = () => {
     });
     const debouncedFilters = useDebounce(filters, 1500);
 
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1); 
+    const itemsPerPage = 10; 
+
     const fetchData = async () => {
         setLoading(true);
         try {            
@@ -38,6 +43,8 @@ const Jadwal = () => {
                     pasien: debouncedFilters.pasien,
                     dokter: debouncedFilters.dokter,
                     status: debouncedFilters.status,
+                    page: currentPage,
+                    limit: itemsPerPage
                 }
             });
 
@@ -45,6 +52,7 @@ const Jadwal = () => {
                 setError('Tidak dapat mengambil data, coba muat ulang laman');
             } else {
                 setData(response.data.data.data);
+                setTotalPages(response.data.data.totalPages); 
             }
         } catch (error) {
             console.error('Fetch Error:', error);
@@ -58,7 +66,7 @@ const Jadwal = () => {
         if (token) {
             fetchData();
         }
-    }, [debouncedFilters, token]);
+    }, [debouncedFilters, token, currentPage]);
 
     const handleEditClick = (jadwal) => {
         setSelectedJadwal({ ...jadwal });
@@ -170,6 +178,10 @@ const Jadwal = () => {
         setFilters({ pasien: '', dokter: '', status: '' });
     };
 
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+    };
+    
     return (
         <Fragment>
             <div className="container pt-4">
@@ -262,6 +274,13 @@ const Jadwal = () => {
                         </div>
                     </div>
                 </div>
+                <div className="py-1"></div>
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                />
+                <div className="py-3"></div>
             </div>
             {loading && <Loading />}
             {error && <Modal data={error} status={'error'} onClose={handleCloseModal} />}
