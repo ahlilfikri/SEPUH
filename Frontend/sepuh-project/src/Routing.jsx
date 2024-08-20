@@ -29,13 +29,13 @@ const router = createBrowserRouter([
       {
         path: '/profile',
         element: (
-          <ProtectedRoute component={Profile} role={0} />
+          <ProtectedRoute component={Profile} role={4} />
         ),
       },
       {
         path: '/reset',
         element: (
-          <ProtectedRoute component={Reset} role={0} />
+          <ProtectedRoute component={Reset} role={4} />
         ),
       },
       {

@@ -47,7 +47,7 @@ const Signin = ({ toggleSigninPopup }) => {
                     } else {
                         navigate('/profile');
                     }
-                }, 3000);
+                }, 1500);
             } else {
                 setError(response.data.message);
             }
@@ -73,7 +73,7 @@ const Signin = ({ toggleSigninPopup }) => {
             setIsLogin(true);
             setTimeout(() => {
                 navigate('/');
-            }, 3000);
+            }, 1500);
         }
     };
 

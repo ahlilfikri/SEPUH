@@ -37,7 +37,7 @@ const ResetPassword = () => {
                 setSuccess('Reset password berhasil');
                 setTimeout(() => {
                     navigate('/profile')
-                }, 3000);
+                }, 1500);
             } else {
                 setError('Reset password gagal, silahkan coba lagi.');
             }

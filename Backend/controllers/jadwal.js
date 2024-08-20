@@ -227,21 +227,36 @@ module.exports = {
         }
     },
 
+    nextAntrian: async (req, res) => {
+        const id = req.params._id;
+        try {
+            const resultJadwalDokter = await jadwalDokterSchema.findById(id);
+            const antrianAktif = resultJadwalDokter.antrianAktif;
+            await jadwalSchema.findOneAndUpdate({ waktu: id, status: 0, antrian: antrianAktif }, { status: 1 }, { new: true })
+            const nextAntrianAktif = resultJadwalDokter.antrianAktif + 1
+            const changeAntrianAktif = await jadwalDokterSchema.findByIdAndUpdate(id, { antrianAktif: nextAntrianAktif }, { new: true });
+            response(200, changeAntrianAktif, 'Status jadwal berhasil diperbarui', res);
+        } catch (error) {
+            console.error(error.message);
+            return response(500, error, 'Internal server error', res);
+        }
+    },
+
     jadwalDokter: async (req, res) => {
         try {
             const { dokter } = req.query;
-            
+
             let filter = {};
-    
+
             if (dokter) {
                 filter.nama = { $regex: dokter, $options: 'i' };
             }
-            
+
             const data = await dokterSchema.find(filter)
                 .populate('jadwal', 'jamMulai jamSelesai hari kuota antrianAktif');
-    
+
             const jadwal = data.map(item => item.jadwal).flat();
-            
+
             response(200, jadwal, 'Jadwal dokter berhasil ditampilkan', res);
         } catch (error) {
             console.error(error.message);
@@ -251,11 +266,9 @@ module.exports = {
 
     antrian: async (req, res) => {
         try {
-            const { jadwal } = req.query; 
+            const { jadwal } = req.query;
             const antrianAktif = await jadwalDokterSchema.findById(jadwal);
-            console.log(antrianAktif);
-            
-            const data = await jadwalSchema.findOne({ waktu: jadwal, status: 0, antrian : antrianAktif.antrianAktif })
+            const data = await jadwalSchema.findOne({ waktu: jadwal, status: 0, antrian: antrianAktif.antrianAktif })
                 .populate('waktu', 'hari jamMulai jamSelesai')
                 .populate('pasien', 'nama usia alamat riwayat')
                 .populate('dokter', 'nama usia spesialisasi');
@@ -265,5 +278,6 @@ module.exports = {
             return response(500, error, 'Internal server error', res);
         }
     }
-    
+
+
 };

@@ -11,8 +11,9 @@ router.post('/', authenticateUser,Controller.post);
 router.put('/:_id', authenticateUser, Controller.put);
 router.delete('/:_id', authenticateUser, Controller.delete);
 
-router.put('/:_id', authenticateUser, Controller.finish);
-router.get('/dokter/jadwaldokter', authenticateUser, Controller.jadwalDokter);
-router.get('/antrian/filter', authenticateUser, Controller.antrian);
+router.put('/status/jadwal/:_id', authenticateUser, Controller.finish);
+router.put('/status/next/:_id', authenticateUser, Controller.nextAntrian);
+router.get('/dokter/jadwaldokter', authenticateAdmin, Controller.jadwalDokter);
+router.get('/antrian/filter', authenticateAdmin, Controller.antrian);
 
 module.exports = router;

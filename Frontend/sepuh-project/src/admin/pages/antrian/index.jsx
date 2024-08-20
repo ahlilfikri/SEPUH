@@ -19,7 +19,7 @@ const Antrian = () => {
         try {
             const response = await axios.get(`${port}user/dokter`, {
                 headers: {
-                    'Authorization': `Bearer ${token}`,
+                    Authorization: `Bearer ${token}`,
                 },
             });
             if (response.data.status === 500) {
@@ -36,7 +36,7 @@ const Antrian = () => {
         try {
             const response = await axios.get(`${port}jadwal/dokter/jadwaldokter`, {
                 headers: {
-                    'Authorization': `Bearer ${token}`,
+                    Authorization: `Bearer ${token}`,
                 },
                 params: { dokter: doctorId },
             });
@@ -56,7 +56,7 @@ const Antrian = () => {
         try {
             const response = await axios.get(`${port}jadwal/antrian/filter`, {
                 headers: {
-                    'Authorization': `Bearer ${token}`,
+                    Authorization: `Bearer ${token}`,
                 },
                 params: {
                     jadwal: jadwalId
@@ -68,7 +68,6 @@ const Antrian = () => {
                 setData(response.data.data);
             }
         } catch (error) {
-            console.log(error);
             setError('Tidak dapat mengambil data, coba muat ulang laman');
         } finally {
             setLoading(false);
@@ -94,6 +93,48 @@ const Antrian = () => {
         setSelectedJadwal(jadwalId);
         if (jadwalId) {
             fetchAntrian(jadwalId);
+        }
+    };
+
+    const handleFinishAll = async () => {
+        setLoading(true);
+        try {
+            const response = await axios.put(`${port}jadwal/status/jadwal/${selectedJadwal}`, {}, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                }
+            });
+            if (response.data.status === 500) {
+                setError('Tidak dapat menyelesaikan, coba muat ulang laman');
+            } else {
+                setData(response.data.data);
+                setData('');
+            }
+        } catch (error) {
+            setError('Tidak dapat menyelesaikan, coba muat ulang laman');
+        } finally {
+            setLoading(false);
+        }
+    };
+    
+    const handleNextAntrian = async () => {
+        setLoading(true);
+        try {
+            const response = await axios.put(`${port}jadwal/status/next/${selectedJadwal}`, {}, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                }
+            });
+            if (response.data.status === 500) {
+                setError('Tidak dapat menyelesaikan, coba muat ulang laman');
+            } else {
+                setData(response.data.data);
+                fetchAntrian(response.data.data._id);
+            }
+        } catch (error) {
+            setError('Tidak dapat menyelesaikan, coba muat ulang laman');
+        } finally {
+            setLoading(false);
         }
     };
     
@@ -164,6 +205,10 @@ const Antrian = () => {
                                             ) : (
                                                 <p>Riwayat tidak tersedia</p>
                                             )}
+                                        </div>
+                                        <div className="mb-3 d-flex justify-content-around">
+                                            <button className='btn btn-primary' onClick={handleNextAntrian}>Selanjutnya</button>
+                                            <button className='btn btn-danger' onClick={handleFinishAll}>Selesaikan Semua</button>
                                         </div>
                                     </Fragment>
                                     

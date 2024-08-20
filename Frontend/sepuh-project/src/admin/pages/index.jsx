@@ -70,7 +70,7 @@ const Dashboard = () => {
         setSuccess('Berhasil Logout');
         setTimeout(() => {
           navigate('/signin');
-        }, 3000);
+        }, 1500);
       }
       await axios.post(
         `${port}user/logout/${token}`,
@@ -85,14 +85,14 @@ const Dashboard = () => {
       setSuccess('Berhasil Logout');
       setTimeout(() => {
         navigate('/signin');
-      }, 3000);
+      }, 1500);
     } catch (error) {
       if (error.response?.status === 400) {
         sessionStorage.removeItem('token');
         setSuccess('Berhasil Logout');
         setTimeout(() => {
           navigate('/signin');
-        }, 3000);
+        }, 1500);
       }
     } finally {
       setLoading(false);
@@ -121,7 +121,7 @@ const Dashboard = () => {
     { name: 'Obat', roles: [3, 1] },
     { name: 'Jadwal', roles: [3] },
     { name: 'Antrian', roles: [3] },
-    { name: 'Profile', roles: [3, 1] },
+    { name: 'Profile', roles: [0,1,2,3] },
     { name: 'Logout', roles: [3, 1] },
   ];
 

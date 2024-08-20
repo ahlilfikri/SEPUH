@@ -22,17 +22,17 @@ const ProtectedRoute = ({ component: Component,role, ...rest }) => {
   const [showModal, setShowModal] = useState(true);
 
   useEffect(() => {
-    if (isAuthenticated() != role && role != 3) {
+    if (isAuthenticated() != role && role != 3 && role != 4) {
       setShowModal(true);
       const timer = setTimeout(() => {
         setShowModal(false);
-      }, 3000);
+      }, 1500);
       
       return () => clearTimeout(timer);
     }
   }, []);
   
-  if (isAuthenticated() === role || isAuthenticated() === 3) {
+  if (isAuthenticated() === role || isAuthenticated() === 3 || role === 4) {
     return <Component {...rest} />;
   } else {
     return showModal ? (

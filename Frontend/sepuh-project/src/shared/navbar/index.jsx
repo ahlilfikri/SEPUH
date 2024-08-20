@@ -54,12 +54,12 @@ const Navbar = ({ isLogin }) => {
                 setSuccess('Berhasil Logout');
                 setTimeout(() => {
                     navigate('/signin');
-                }, 3000);
+                }, 1500);
             } else {
                 setSuccess('Berhasil Logout');
                 setTimeout(() => {
                     navigate('/signin');
-                }, 3000);
+                }, 1500);
             }
         } catch (error) {
             if (error.response?.status === 400) {
@@ -67,7 +67,7 @@ const Navbar = ({ isLogin }) => {
                 setSuccess('Berhasil Logout');
                 setTimeout(() => {
                     navigate('/signin');
-                }, 3000);
+                }, 1500);
             } else {
                 setError('Gagal Logout');
             }
@@ -90,7 +90,7 @@ const Navbar = ({ isLogin }) => {
                     <div className="collapse navbar-collapse" id="navbarNav">
                         <ul className="navbar-nav ms-auto align-items-center">
                             <li className="nav-item">
-                                <p className="nav-link mt-3 mx-0 mx-md-1" style={{ fontWeight: 'bold', cursor: 'pointer' }} onClick={() => navigate('/')}>Home</p>
+                                <p className="nav-link my-0 mx-0 mx-md-1" style={{ fontWeight: 'bold', cursor: 'pointer' }} onClick={() => navigate('/')}>Home</p>
                             </li>
                             {!isLogin && (
                                 <li className="nav-item">
@@ -115,7 +115,7 @@ const Navbar = ({ isLogin }) => {
                             )}
                             {isLogin && (isSignin != 1 && isSignin != 3) && (
                                 <>
-                                    <li className="nav-item">
+                                    <li className="nav-item my-0 mt-md-3">
                                         <p className="nav-link" style={{ fontWeight: 'bold', cursor: 'pointer' }} onClick={handleLogout}>Logout</p>
                                     </li>
                                     <li className="nav-item">

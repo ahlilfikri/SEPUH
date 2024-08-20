@@ -47,7 +47,7 @@ const SignUp = () => {
                 setSuccess('Berhasil Membuat Akun');
                 setTimeout(() => {
                     navigate('/signin');
-                }, 3000);
+                }, 1500);
             } else {
                 setError(response.data.message);
             }
