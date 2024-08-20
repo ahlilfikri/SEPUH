@@ -247,6 +247,23 @@ module.exports = {
             console.error(error.message);
             return response(500, error, 'Internal server error', res);
         }
+    },
+
+    antrian: async (req, res) => {
+        try {
+            const { jadwal } = req.query; 
+            const antrianAktif = await jadwalDokterSchema.findById(jadwal);
+            console.log(antrianAktif);
+            
+            const data = await jadwalSchema.findOne({ waktu: jadwal, status: 0, antrian : antrianAktif.antrianAktif })
+                .populate('waktu', 'hari jamMulai jamSelesai')
+                .populate('pasien', 'nama usia alamat riwayat')
+                .populate('dokter', 'nama usia spesialisasi');
+            response(200, data, 'Menampilkan antrian aktif', res);
+        } catch (error) {
+            console.error(error.message);
+            return response(500, error, 'Internal server error', res);
+        }
     }
     
 };

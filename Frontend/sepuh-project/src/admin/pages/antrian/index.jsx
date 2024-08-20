@@ -23,7 +23,7 @@ const Antrian = () => {
                 },
             });
             if (response.data.status === 500) {
-                setError('Tidak dapat mengambil jadwal dokter, coba muat ulang laman');
+                setError('Tidak dapat mengambil data dokter, coba muat ulang laman');
             } else {
                 setDoctors(response.data.data);
             }
@@ -33,8 +33,6 @@ const Antrian = () => {
     };
 
     const fetchJadwal = async (doctorId) => {
-        console.log(doctorId);
-        
         try {
             const response = await axios.get(`${port}jadwal/dokter/jadwaldokter`, {
                 headers: {
@@ -52,25 +50,25 @@ const Antrian = () => {
         }
     };
 
-    const fetchAntrian = async () => {
+    const fetchAntrian = async (jadwalId) => {
         setLoading(true);
+        
         try {
-            const response = await axios.get(`${port}Antrian/filter`, {
+            const response = await axios.get(`${port}jadwal/antrian/filter`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 },
                 params: {
-                    dokter: selectedDoctor,
-                    jadwal: selectedJadwal,
+                    jadwal: jadwalId
                 }
             });
-
             if (response.data.status === 500) {
                 setError('Tidak dapat mengambil data Antrian, coba muat ulang laman');
             } else {
-                setData(response.data.data.filter(item => item.antrian === item.antrianAktif));
+                setData(response.data.data);
             }
         } catch (error) {
+            console.log(error);
             setError('Tidak dapat mengambil data, coba muat ulang laman');
         } finally {
             setLoading(false);
@@ -95,30 +93,30 @@ const Antrian = () => {
         const jadwalId = e.target.value;
         setSelectedJadwal(jadwalId);
         if (jadwalId) {
-            fetchAntrian();
+            fetchAntrian(jadwalId);
         }
     };
-
+    
     return (
         <Fragment>
             <div className="container pt-4">
                 <div className="row">
                     <div className="col-12">
                         <div className="p-4 bg-white rounded shadow-sm">
-                            <h1 className="mb-4">Filter</h1>
+                            <p className="mb-4" style={{ fontSize:'24px' }}>Silahkan pilih dokter dan jadwal</p>
                             <div className="row">
-                                <div className="col-12 col-sm-6 col-md-3">
+                                <div className="col-12 col-sm-6">
                                     <div className="mb-3">
                                         <select className="form-control" value={selectedDoctor} onChange={handleDoctorChange}>
                                             <option value="">Pilih Dokter</option>
                                             {doctors.map((doctor) => (
-                                                <option key={doctor._id} value={doctor._id}>{doctor.nama}</option>
+                                                <option key={doctor._id} value={doctor.nama}>{doctor.nama}</option>
                                             ))}
                                         </select>
                                     </div>
                                 </div>
                                 {selectedDoctor && (
-                                    <div className="col-12 col-sm-6 col-md-3">
+                                    <div className="col-12 col-sm-6">
                                         <div className="mb-3">
                                             <select className="form-control" value={selectedJadwal} onChange={handleJadwalChange}>
                                                 <option value="">Pilih Jadwal</option>
@@ -139,31 +137,39 @@ const Antrian = () => {
                 {selectedJadwal && (
                     <div>
                         <div className="d-flex justify-content-between align-items-center p-3 mt-5">
-                            <p className="mb-0 text-light" style={{ fontWeight: 'bold' }}>Daftar Antrian</p>
+                            {/* <p className="mb-0 text-light" style={{ fontWeight: 'bold' }}>Antrian Saat Ini</p> */}
                         </div>
                         <div className="row">
                             <div className="col-12">
-                                <div className="table-responsive">
-                                    <table className="table table-striped table-bordered bg-white rounded shadow-sm">
-                                        <thead>
-                                            <tr>
-                                                <th scope="col" style={{ fontWeight: 'normal', fontSize: '18px', textAlign: 'center', fontWeight: '600' }}>No</th>
-                                                <th scope="col" style={{ fontWeight: 'normal', fontSize: '18px', textAlign: 'center', fontWeight: '600' }}>Nama</th>
-                                                <th scope="col" style={{ fontWeight: 'normal', fontSize: '18px', textAlign: 'center', fontWeight: '600' }}>Stok</th>
-                                                <th scope="col" style={{ fontWeight: 'normal', fontSize: '18px', textAlign: 'center', fontWeight: '600' }}>Harga</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {error === '' && data.map((antrian, index) => (
-                                                <tr key={index}>
-                                                    <td style={{ fontSize: '18px', fontWeight: '400' }}>{index + 1}</td>
-                                                    <td style={{ fontSize: '18px', fontWeight: '400' }}>{antrian.nama}</td>
-                                                    <td style={{ fontSize: '18px', fontWeight: '400' }}>{antrian.stok}</td>
-                                                    <td style={{ fontSize: '18px', fontWeight: '400' }}>{antrian.harga}</td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
+                                <div className="text-dark p-5 bg-white rounded">
+                                    {data ? (
+                                        <Fragment>
+                                        <div className="mb-3">
+                                            <p style={{ fontSize:'24px' }}><strong>Nomor Antrian:</strong> {data.antrian}</p>
+                                        </div>
+                                        <div className="mb-3">
+                                            <p style={{ fontSize:'24px' }}><strong>Nama Dokter:</strong> {data.dokter?.nama}</p>
+                                        </div>
+                                        <div className="mb-3">
+                                            <p style={{ fontSize:'24px' }}><strong>Nama Pasien:</strong> {data.pasien?.nama}</p>
+                                        </div>
+                                        <div className="mb-3">
+                                            <p style={{ fontSize:'24px' }}><strong>Riwayat Pasien:</strong></p>
+                                            {data.pasien?.riwayat?.length > 0 ? (
+                                                <ul className="list-unstyled">
+                                                    {data.pasien.riwayat.map((item, index) => (
+                                                        <li key={index} style={{ fontSize:'24px' }}>- {item}</li>
+                                                    ))}
+                                                </ul>
+                                            ) : (
+                                                <p>Riwayat tidak tersedia</p>
+                                            )}
+                                        </div>
+                                    </Fragment>
+                                    
+                                    ) : (
+                                        <p>tidak ada antrian aktif</p>
+                                    )}
                                 </div>
                             </div>
                         </div>

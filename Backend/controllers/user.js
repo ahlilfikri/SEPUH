@@ -289,11 +289,9 @@ module.exports = {
                     const dataFinalJadwal = await Promise.all(
                         updatedData.jadwal.map(async (jadwalItem) => {
                             if (jadwalItem._id) {
-                                // Update existing jadwalDokter document
                                 const updateJadwalDokter = await jadwalDokterSchema.findByIdAndUpdate(jadwalItem._id, jadwalItem, { new: true });
                                 return updateJadwalDokter._id;
                             } else {
-                                // Create a new jadwalDokter document
                                 const newJadwalDokter = new jadwalDokterSchema({
                                     hari: jadwalItem.hari,
                                     jamMulai: jadwalItem.jamMulai,
@@ -305,10 +303,8 @@ module.exports = {
                         })
                     );
                 
-                    // Update the jadwal field with the resulting array of IDs
                     updatedData.jadwal = dataFinalJadwal;
                     
-                    // Update the dokter schema with the modified updatedData
                     result = await dokterSchema.findByIdAndUpdate(id, updatedData, { new: true });
                 }
                 

@@ -10,5 +10,6 @@ router.get('/:_id', authenticateUser, Controller.getOne);
 router.post('/', authenticateDokter,Controller.post);
 router.put('/:_id', authenticateDokter, Controller.put);
 router.delete('/:_id', authenticateDokter, Controller.delete);
+router.delete('/:_id', authenticateDokter, Controller.delete);
 
 module.exports = router;

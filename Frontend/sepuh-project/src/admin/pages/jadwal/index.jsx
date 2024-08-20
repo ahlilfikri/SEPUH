@@ -92,9 +92,7 @@ const Jadwal = () => {
         setShowAddJadwalModal(true);
     };
 
-    const handleSaveNewJadwal = async (newJadwal) => {
-        console.log(newJadwal);
-        
+    const handleSaveNewJadwal = async (newJadwal) => {        
         setShowAddJadwalModal(false);
         setLoading(true);
         try {
@@ -104,7 +102,6 @@ const Jadwal = () => {
                     'Content-Type': 'application/json'
                 }
             });
-            console.log(response);
             
             if (response.data.status === 500) {
                 setError('Tidak dapat menambahkan jadwal, coba lagi');

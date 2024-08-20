@@ -59,7 +59,6 @@ const ModalAdd = ({ show, handleClose, handleSave }) => {
                             'Authorization': `Bearer ${token}`
                         }
                     });
-                    console.log(formData.dokter, response);
                     if (response.data.status !== 500) {
                         setTimes(response.data.data);
                     }

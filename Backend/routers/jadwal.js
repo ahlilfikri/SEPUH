@@ -13,5 +13,6 @@ router.delete('/:_id', authenticateUser, Controller.delete);
 
 router.put('/:_id', authenticateUser, Controller.finish);
 router.get('/dokter/jadwaldokter', authenticateUser, Controller.jadwalDokter);
+router.get('/antrian/filter', authenticateUser, Controller.antrian);
 
 module.exports = router;
