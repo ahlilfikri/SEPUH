@@ -287,7 +287,7 @@ const Dokter = () => {
                                                         onClick={() => handleEditClick(doctor)}
                                                     />
                                                     <FaTrashAlt
-                                                        style={{ cursor: 'pointer', color: 'red' }}
+                                                        style={{ cursor: 'pointer', color: '#B22222' }}
                                                         onClick={() => handleDeleteClick(doctor)}
                                                     />
                                                 </td>

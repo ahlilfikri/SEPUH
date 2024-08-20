@@ -77,7 +77,7 @@ const ResetPassword = () => {
             <div style={{ background: 'white', padding: '2rem', borderRadius: '8px', boxShadow: '0 0 10px rgba(0,0,0,0.1)', width: '800px' }}>
                 <h2 style={{ fontWeight: 'bold' }}>Create New Password</h2>
                 <p>Masukkan password baru Anda di bawah ini. Password harus terdiri dari minimal 8 karakter</p>
-                {error && <p style={{ color: 'red' }}>{error}</p>}
+                {error && <p style={{ color: '#B22222' }}>{error}</p>}
                 {success && <p style={{ color: 'green' }}>{success}</p>}
                 <form onSubmit={handleSubmit}>
                     <div style={{ marginBottom: '1rem' }}>

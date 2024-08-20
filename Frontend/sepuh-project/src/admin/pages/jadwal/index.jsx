@@ -245,11 +245,11 @@ const Jadwal = () => {
                                                     <td style={{ fontSize: '16px', fontWeight: 'normal', textAlign: 'center' }}>{jadwal?.waktu?.hari}, {jadwal?.waktu?.jamMulai}-{jadwal?.waktu?.jamSelesai}</td>
                                                     <td style={{ fontSize: '16px', fontWeight: 'normal', textAlign: 'center' }}>{jadwal?.status ? 'Finished' : 'Active'}</td>
                                                     <td style={{ fontSize: '16px', fontWeight: 'normal', textAlign: 'center' }}>
-                                                        <button className="btn btn-sm btn-warning me-2" onClick={() => handleEditClick(jadwal)}>
+                                                        {/* <button className="btn btn-sm me-2" onClick={() => handleEditClick(jadwal)}>
                                                             <FaEdit />
-                                                        </button>
-                                                        <button className="btn btn-sm btn-danger" onClick={() => handleDeleteClick(jadwal)}>
-                                                            <FaTrashAlt />
+                                                        </button> */}
+                                                        <button className="btn btn-sm" onClick={() => handleDeleteClick(jadwal)}>
+                                                            <FaTrashAlt style={{ color:'#B22222' }} />
                                                         </button>
                                                     </td>
                                                 </tr>

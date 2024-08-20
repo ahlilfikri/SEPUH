@@ -160,7 +160,7 @@ module.exports = {
                 waktu,
                 dokter: searchDokter._id,
                 pasien: searchPasien._id,
-                status: 1,
+                status: 0,
                 antrian: resultAntrian
             });
 

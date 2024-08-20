@@ -22,13 +22,19 @@ const Antrian = () => {
                     'Authorization': `Bearer ${token}`,
                 },
             });
-            setDoctors(response.data.data);
+            if (response.data.status === 500) {
+                setError('Tidak dapat mengambil jadwal dokter, coba muat ulang laman');
+            } else {
+                setDoctors(response.data.data);
+            }
         } catch (error) {
             setError('Tidak dapat mengambil data dokter, coba muat ulang laman');
         }
     };
 
     const fetchJadwal = async (doctorId) => {
+        console.log(doctorId);
+        
         try {
             const response = await axios.get(`${port}jadwal/dokter/jadwaldokter`, {
                 headers: {
@@ -36,19 +42,13 @@ const Antrian = () => {
                 },
                 params: { dokter: doctorId },
             });
-    
-            const jadwal = response.data.data.map(dokter => ({
-                _id: dokter._id,
-                hari: dokter.waktu.hari,
-                jamMulai: dokter.waktu.jamMulai,
-                jamSelesai: dokter.waktu.jamSelesai,
-                kuota: dokter.waktu.kuota,
-                antrianAktif: dokter.waktu.antrianAktif
-            }));
-            
-            setJadwalDokter(jadwal);
+            if (response.data.status === 500) {
+                setError('Tidak dapat mengambil jadwal dokter, coba muat ulang laman');
+            } else {
+                setJadwalDokter(response.data.data);
+            }
         } catch (error) {
-            setError('Tidak dapat mengambil jadwal, coba muat ulang laman');
+            setError('Tidak dapat mengambil jadwal dokter, coba muat ulang laman');
         }
     };
 
