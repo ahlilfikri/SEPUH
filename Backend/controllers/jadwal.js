@@ -160,7 +160,7 @@ module.exports = {
                 waktu,
                 dokter: searchDokter._id,
                 pasien: searchPasien._id,
-                status: 'diajukan',
+                status: 1,
                 antrian: resultAntrian
             });
 
@@ -241,7 +241,6 @@ module.exports = {
                 .populate('jadwal', 'jamMulai jamSelesai hari kuota antrianAktif');
     
             const jadwal = data.map(item => item.jadwal).flat();
-            console.log(jadwal);
             
             response(200, jadwal, 'Jadwal dokter berhasil ditampilkan', res);
         } catch (error) {

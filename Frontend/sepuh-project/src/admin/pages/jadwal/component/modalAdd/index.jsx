@@ -59,9 +59,9 @@ const ModalAdd = ({ show, handleClose, handleSave }) => {
                             'Authorization': `Bearer ${token}`
                         }
                     });
-
+                    console.log(formData.dokter, response);
                     if (response.data.status !== 500) {
-                        setTimes(response.data.data[0].jadwal);
+                        setTimes(response.data.data);
                     }
                 } catch (error) {
                     console.error('Error fetching times:', error);
@@ -77,10 +77,10 @@ const ModalAdd = ({ show, handleClose, handleSave }) => {
         const { name, value } = e.target;
 
         if (name === 'waktu') {
-            const selectedTime = times.find(time => time.id === value);
+            const selectedTime = times.find(time => time._id === value);
             setFormData({
                 ...formData,
-                [name]: selectedTime.id,
+                [name]: selectedTime ? selectedTime._id : value,
             });
         } else {
             setFormData({
@@ -90,7 +90,6 @@ const ModalAdd = ({ show, handleClose, handleSave }) => {
         }
         validateField(name, value);
     };
-
 
     const validateField = (name, value) => {
         const newErrors = { ...errors };
@@ -187,7 +186,7 @@ const ModalAdd = ({ show, handleClose, handleSave }) => {
                                         >
                                             <option value="">Pilih Waktu</option>
                                             {times?.map((time, index) => (
-                                                <option key={index} value={time.id}>
+                                                <option key={index} value={time._id}>
                                                     {time.hari}, {time.jamMulai}-{time.jamSelesai}
                                                 </option>
                                             ))}

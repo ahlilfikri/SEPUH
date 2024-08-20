@@ -104,6 +104,8 @@ const Jadwal = () => {
                     'Content-Type': 'application/json'
                 }
             });
+            console.log(response);
+            
             if (response.data.status === 500) {
                 setError('Tidak dapat menambahkan jadwal, coba lagi');
             } else {
