@@ -12,32 +12,33 @@ const ModalAdd = ({ show, handleClose, handleSave }) => {
     const [errors, setErrors] = useState({});
     const [patients, setPatients] = useState([]);
     const [doctors, setDoctors] = useState([]);
+    const [times, setTimes] = useState([]);
     const token = sessionStorage.getItem('token');
 
     useEffect(() => {
         const fetchPatients = async () => {
             try {
-                const response = await axios.get(`${port}pasien`, {
+                const response = await axios.get(`${port}user/pasien`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
                 });
-                if (response.data.status != 500) {
+                if (response.data.status !== 500) {
                     setPatients(response.data.data);
                 }
             } catch (error) {
                 console.error('Error fetching patients:', error);
             }
         };
-        
+
         const fetchDoctors = async () => {
             try {
-                const response = await axios.get(`${port}dokter`, {
+                const response = await axios.get(`${port}user/dokter`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
                 });
-                if (response.data.status != 500) {
+                if (response.data.status !== 500) {
                     setDoctors(response.data.data);
                 }
             } catch (error) {
@@ -49,14 +50,47 @@ const ModalAdd = ({ show, handleClose, handleSave }) => {
         fetchDoctors();
     }, []);
 
+    useEffect(() => {
+        if (formData.dokter) {
+            const fetchTimes = async () => {
+                try {
+                    const response = await axios.get(`${port}jadwal/dokter/jadwaldokter?dokter=${formData.dokter}`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+
+                    if (response.data.status !== 500) {
+                        setTimes(response.data.data[0].jadwal);
+                    }
+                } catch (error) {
+                    console.error('Error fetching times:', error);
+                }
+            };
+            fetchTimes();
+        } else {
+            setTimes([]);
+        }
+    }, [formData.dokter]);
+
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData({
-            ...formData,
-            [name]: value,
-        });
+
+        if (name === 'waktu') {
+            const selectedTime = times.find(time => time.id === value);
+            setFormData({
+                ...formData,
+                [name]: selectedTime.id,
+            });
+        } else {
+            setFormData({
+                ...formData,
+                [name]: value,
+            });
+        }
         validateField(name, value);
     };
+
 
     const validateField = (name, value) => {
         const newErrors = { ...errors };
@@ -117,9 +151,9 @@ const ModalAdd = ({ show, handleClose, handleSave }) => {
                                         onChange={handleChange}
                                     >
                                         <option value="">Pilih Pasien</option>
-                                        {patients?.map((patient, value) => (
-                                            <option key={value} value={patient.user.nama}>
-                                                {patient.user.nama}
+                                        {patients?.map((patient, index) => (
+                                            <option key={index} value={patient.nama}>
+                                                {patient.nama}
                                             </option>
                                         ))}
                                     </select>
@@ -134,25 +168,33 @@ const ModalAdd = ({ show, handleClose, handleSave }) => {
                                         onChange={handleChange}
                                     >
                                         <option value="">Pilih Dokter</option>
-                                        {doctors?.map((doctor,value) => (
-                                            <option key={value} value={doctor.nama}>
+                                        {doctors?.map((doctor, index) => (
+                                            <option key={index} value={doctor.nama}>
                                                 {doctor.nama}
                                             </option>
                                         ))}
                                     </select>
                                     {errors.dokter && <div className="text-danger mt-2" style={{ fontSize: '12px' }}>{errors.dokter}</div>}
                                 </div>
-                                <div className="form-group">
-                                    <label>Waktu</label>
-                                    <input
-                                        type="datetime-local"
-                                        name="waktu"
-                                        className="form-control"
-                                        value={formData.waktu}
-                                        onChange={handleChange}
-                                    />
-                                    {errors.waktu && <div className="text-danger mt-2" style={{ fontSize: '12px' }}>{errors.waktu}</div>}
-                                </div>
+                                {formData.dokter && (
+                                    <div className="form-group">
+                                        <label>Waktu</label>
+                                        <select
+                                            name="waktu"
+                                            className="form-control"
+                                            value={formData.waktu}
+                                            onChange={handleChange}
+                                        >
+                                            <option value="">Pilih Waktu</option>
+                                            {times?.map((time, index) => (
+                                                <option key={index} value={time.id}>
+                                                    {time.hari}, {time.jamMulai}-{time.jamSelesai}
+                                                </option>
+                                            ))}
+                                        </select>
+                                        {errors.waktu && <div className="text-danger mt-2" style={{ fontSize: '12px' }}>{errors.waktu}</div>}
+                                    </div>
+                                )}
                             </form>
                         </div>
                         <div className="modal-footer">

@@ -7,6 +7,7 @@ import Gambar from '/logo.svg';
 import Pasien from './pasien';
 import Dokter from './dokter';
 import Jadwal from './jadwal';
+import Antrian from './antrian';
 import Apoteker from './apoteker';
 import Obat from './obat';
 import Profile from '../../user/pages/profile';
@@ -50,6 +51,8 @@ const Dashboard = () => {
         return setContent(<Obat />);
       case 'Jadwal':
         return setContent(<Jadwal />);
+      case 'Antrian':
+        return setContent(<Antrian />);
       case 'Profile':
         return navigate('/profile');
       case 'Logout':
@@ -117,6 +120,7 @@ const Dashboard = () => {
     { name: 'Dokter', roles: [3] },
     { name: 'Obat', roles: [3, 1] },
     { name: 'Jadwal', roles: [3] },
+    { name: 'Antrian', roles: [3] },
     { name: 'Profile', roles: [3, 1] },
     { name: 'Logout', roles: [3, 1] },
   ];

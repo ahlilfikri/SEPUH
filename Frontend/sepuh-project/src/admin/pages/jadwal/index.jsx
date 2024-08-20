@@ -7,7 +7,6 @@ import EditModal from './component/modalEdit';
 import AddJadwalModal from './component/modalAdd';
 import DeleteModal from '../../../shared/modalDelete';
 import useDebounce from '../../../shared/debouncedValue';
-import Pagination from '../../../shared/pagination';
 
 const Jadwal = () => {
     const port = `${import.meta.env.VITE_BASE_URL}`;
@@ -26,24 +25,26 @@ const Jadwal = () => {
         dokter: '',
         status: ''
     });
-    const [currentPage, setCurrentPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
     const debouncedFilters = useDebounce(filters, 1500);
 
-    const fetchData = async (page = 1) => {
+    const fetchData = async () => {
         setLoading(true);
-        try {
-            const response = await axios.get(`${port}jadwal`, {
+        try {            
+            const response = await axios.get(`${port}jadwal/filter`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
+                },
+                params: {
+                    pasien: debouncedFilters.pasien,
+                    dokter: debouncedFilters.dokter,
+                    status: debouncedFilters.status,
                 }
             });
-            console.log(response);
 
             if (!response.data.data) {
                 setError('Tidak dapat mengambil data, coba muat ulang laman');
             } else {
-                setData(response.data.data);
+                setData(response.data.data.data);
             }
         } catch (error) {
             console.error('Fetch Error:', error);
@@ -55,9 +56,9 @@ const Jadwal = () => {
 
     useEffect(() => {
         if (token) {
-            fetchData(currentPage);
+            fetchData();
         }
-    }, [debouncedFilters, token, currentPage]);
+    }, [debouncedFilters, token]);
 
     const handleEditClick = (jadwal) => {
         setSelectedJadwal({ ...jadwal });
@@ -83,7 +84,7 @@ const Jadwal = () => {
             setError('Tidak dapat menyimpan perubahan, coba lagi');
         } finally {
             setLoading(false);
-            fetchData(currentPage);
+            fetchData();
         }
     };
 
@@ -92,6 +93,8 @@ const Jadwal = () => {
     };
 
     const handleSaveNewJadwal = async (newJadwal) => {
+        console.log(newJadwal);
+        
         setShowAddJadwalModal(false);
         setLoading(true);
         try {
@@ -111,7 +114,7 @@ const Jadwal = () => {
             setError('Tidak dapat menambahkan jadwal, coba lagi');
         } finally {
             setLoading(false);
-            fetchData(currentPage);
+            fetchData();
         }
     };
 
@@ -139,7 +142,7 @@ const Jadwal = () => {
         } finally {
             setLoading(false);
             setShowDeleteModal(false);
-            fetchData(currentPage);
+            fetchData();
         }
     };
 
@@ -168,10 +171,6 @@ const Jadwal = () => {
         setFilters({ pasien: '', dokter: '', status: '' });
     };
 
-    const onPageChange = (page) => {
-        setCurrentPage(page);
-    };
-
     return (
         <Fragment>
             <div className="container pt-4">
@@ -190,9 +189,18 @@ const Jadwal = () => {
                                         <input type="text" className="form-control" placeholder="Dokter" name="dokter" value={filters.dokter} onChange={handleInputChange} />
                                     </div>
                                 </div>
+                                {/* <div className="col-12 col-sm-6 col-md-3">
+                                    <div className="mb-3">
+                                        <select className="form-control" name="status" value={filters.status} onChange={handleInputChange}>
+                                            <option value="">Pilih Status</option>
+                                            <option value="Active">Active</option>
+                                            <option value="Finished">Finished</option>
+                                        </select>
+                                    </div>
+                                </div> */}
                                 <div className="col-12 col-sm-6 col-md-3">
                                     <div className="d-flex gap-3">
-                                        <button className="btn btn-success" onClick={() => fetchData(currentPage)}>Filter</button>
+                                        <button className="btn btn-success" onClick={() => fetchData()}>Filter</button>
                                         <button className="btn btn-danger" onClick={handleClearFilters}>Clear</button>
                                     </div>
                                 </div>
@@ -214,52 +222,47 @@ const Jadwal = () => {
                                         <th scope="col" style={{ fontWeight: 'normal', fontSize: '18px', textAlign: 'center', fontWeight: '600' }}>Pasien</th>
                                         <th scope="col" style={{ fontWeight: 'normal', fontSize: '18px', textAlign: 'center', fontWeight: '600' }}>Dokter</th>
                                         <th scope="col" style={{ fontWeight: 'normal', fontSize: '18px', textAlign: 'center', fontWeight: '600' }}>Waktu</th>
-                                        <th scope="col" style={{ fontWeight: 'normal', fontSize: '18px', textAlign: 'center', fontWeight: '600' }}>Antrian</th>
+                                        <th scope="col" style={{ fontWeight: 'normal', fontSize: '18px', textAlign: 'center', fontWeight: '600' }}>Status</th>
                                         <th scope="col" style={{ fontWeight: 'normal', fontSize: '18px', textAlign: 'center', fontWeight: '600' }}>Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {error === '' && data.map((jadwal, index) => (
-                                        <tr key={index}>
-                                            <td style={{ fontSize: '18px', fontWeight: '400' }}>{index + 1 + (currentPage - 1) * 20}</td>
-                                            <td style={{ fontSize: '18px', fontWeight: '400' }}>{jadwal?.pasien?.nama ? jadwal?.pasien?.nama : 'data tidak ditemukan'}</td>
-                                            <td style={{ fontSize: '18px', fontWeight: '400' }}>{jadwal?.dokter?.nama ? jadwal?.dokter?.nama : 'data tidak ditemukan'}</td>
-                                            <td style={{ fontSize: '18px', fontWeight: '400' }}>
-                                                {jadwal?.waktu?.hari}, {jadwal?.waktu?.jamMulai} - {jadwal?.waktu?.jamSelesai}
-                                            </td>                                            <td className="text-center" style={{ fontSize: '18px', fontWeight: '400' }}>{jadwal?.antrian}</td>
-                                            <td style={{ fontSize: '18px' }} className="text-center">
-                                                {jadwal.status === 'diajukan' ? (
-                                                    <>
-                                                        <button className="btn btn-success mr-2 m-1" onClick={() => handleApprove(jadwal)}>Setujui</button>
-                                                        <button className="btn btn-danger m-1" onClick={() => handleReject(jadwal)}>Tolak</button>
-                                                        <div className="btn m-1" onClick={() => handleEditClick(jadwal)}>
-                                                            <FaEdit style={{ cursor: 'pointer', marginRight: '10px', color: '#000' }} />
-                                                        </div>
-                                                        <FaTrashAlt className='m-1' style={{ cursor: 'pointer', color: '#B22222' }} onClick={() => handleDeleteClick(jadwal)} />
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        <div className="btn m-1" onClick={() => handleEditClick(jadwal)}>
-                                                            <FaEdit style={{ cursor: 'pointer', marginRight: '10px', color: '#000' }} />
-                                                        </div>
-                                                        <FaTrashAlt className='m-1' style={{ cursor: 'pointer', color: '#B22222' }} onClick={() => handleDeleteClick(jadwal)} />
-                                                    </>
-                                                )}
+                                    {loading ? (
+                                        <tr>
+                                            <td colSpan="6" className="text-center">
+                                                <Loading />
                                             </td>
                                         </tr>
-                                    ))}
+                                    ) : (
+                                        data.length > 0 ? (
+                                            data.map((jadwal, index) => (
+                                                <tr key={jadwal._id}>
+                                                    <th scope="row" style={{ fontSize: '16px', fontWeight: 'normal', textAlign: 'center' }}>{index + 1}</th>
+                                                    <td style={{ fontSize: '16px', fontWeight: 'normal', textAlign: 'center' }}>{jadwal?.pasien?.nama}</td>
+                                                    <td style={{ fontSize: '16px', fontWeight: 'normal', textAlign: 'center' }}>{jadwal?.dokter?.nama}</td>
+                                                    <td style={{ fontSize: '16px', fontWeight: 'normal', textAlign: 'center' }}>{jadwal?.waktu?.hari}, {jadwal?.waktu?.jamMulai}-{jadwal?.waktu?.jamSelesai}</td>
+                                                    <td style={{ fontSize: '16px', fontWeight: 'normal', textAlign: 'center' }}>{jadwal?.status ? 'Finished' : 'Active'}</td>
+                                                    <td style={{ fontSize: '16px', fontWeight: 'normal', textAlign: 'center' }}>
+                                                        <button className="btn btn-sm btn-warning me-2" onClick={() => handleEditClick(jadwal)}>
+                                                            <FaEdit />
+                                                        </button>
+                                                        <button className="btn btn-sm btn-danger" onClick={() => handleDeleteClick(jadwal)}>
+                                                            <FaTrashAlt />
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            ))
+                                        ) : (
+                                            <tr>
+                                                <td colSpan="6" className="text-center">No data available</td>
+                                            </tr>
+                                        )
+                                    )}
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
-                <div className="py-1"></div>
-                <Pagination
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    onPageChange={onPageChange}
-                />
-                <div className="py-3"></div>
             </div>
             {loading && <Loading />}
             {error && <Modal data={error} status={'error'} onClose={handleCloseModal} />}
@@ -269,18 +272,20 @@ const Jadwal = () => {
                 handleClose={handleCloseModal}
                 data={selectedJadwal}
                 handleSave={handleSaveChanges}
-            />
+            /> */}
+
             <AddJadwalModal
                 show={showAddJadwalModal}
                 handleClose={handleCloseAddJadwalModal}
                 handleSave={handleSaveNewJadwal}
             />
+
             <DeleteModal
                 show={showDeleteModal}
                 handleClose={handleCloseDeleteModal}
                 handleDelete={handleDeleteJadwal}
-                data={`Nama pasien: ${selectedJadwal?.pasien?.nama} pada ${new Date(selectedJadwal?.waktu).toLocaleString('id-ID', { timeZone: 'Asia/Jakarta', dateStyle: 'full', timeStyle: 'short' })}`}
-            /> */}
+                data="ini"
+            />
         </Fragment>
     );
 };

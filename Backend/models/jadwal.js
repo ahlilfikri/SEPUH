@@ -6,6 +6,7 @@ const jadwalSchema = new Schema({
     dokter: { type: mongoose.Schema.Types.ObjectId, ref: "user" },
     pasien: { type: mongoose.Schema.Types.ObjectId, ref: "user" },
     antrian : { type: Number, required: false },
+    status : { type: Boolean, required: true, default: false },
 }, { timestamps: true })
 
 const jadwal = mongoose.model('jadwal', jadwalSchema);
